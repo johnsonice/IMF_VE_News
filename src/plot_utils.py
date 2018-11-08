@@ -43,7 +43,7 @@ def crisis_plot(data, country=None, roll_avg=True, roll_window=20):
 
 
 def plot_frequency(data, words=(), roll_avg = True, roll_window=20, country=None, aggregate=True,
-                   z_score=False, slope=True, crisis_defs='kr', anomalies=True):
+                   z_score=False, slope=False, crisis_defs='kr', anomalies=True):
     """
     plot frequency of supplied words given supplied freq dataframe,
     including annotation for country crisis points.
@@ -58,7 +58,7 @@ def plot_frequency(data, words=(), roll_avg = True, roll_window=20, country=None
     num_colors = len(words)
     cm = ListedColormap(sns.color_palette("Paired", num_colors).as_hex())
     ax = plt.subplot(111)
-    ax.set_prop_cycle([cm(1. * i / num_colors) for i in range(num_colors)])
+    ax.set_prop_cycle('color',[cm(1. * i / num_colors) for i in range(num_colors)])
 
     if not aggregate:
         word_freqs = [(word, data.loc[word]) for word in words if word in data.index and sum(data.loc[word] != 0)]
@@ -72,7 +72,7 @@ def plot_frequency(data, words=(), roll_avg = True, roll_window=20, country=None
         try:
             if i == 13:
                 cm = ListedColormap(sns.color_palette("bright", num_colors).as_hex())
-                ax.set_color_cycle([cm(1. * i / num_colors) for i in range(num_colors)])
+                ax.set_color_cycle('color',[cm(1. * i / num_colors) for i in range(num_colors)])
             if roll_avg:
                 vals = vals.ewm(span=roll_window).mean()
                 if z_score:

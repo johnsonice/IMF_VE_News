@@ -35,7 +35,7 @@ def plot_similar_freqs(target_words, vecs, country, country_freqs, topn=10, roll
         word_freqs = [country_freqs.loc[word] for word in words if word in country_freqs.index and sum(country_freqs.loc[word] != 0)]
         grp_freq = sum(word_freqs)
         grp_rolling = grp_freq.rolling(window=roll_window).mean()
-        fig = crisis_plot(grp_rolling, country=COUNTRY)
+        fig = crisis_plot(grp_rolling, country=COUNTRY,roll_avg=False)
 
     # return plot
     fig.suptitle("{} Frequency of top {} words most similar to {}".format(country, topn, target))
@@ -53,6 +53,6 @@ if __name__ == '__main__':
         
     country_freqs = pd.read_pickle("../data/frequency/{}_processed_json_month_word_freqs.pkl".format(COUNTRY))
 
-    target = 'citizen imf'.split(" ")
+    target = 'citizen imf summit east'.split(" ")
     plot_similar_freqs(target, vecs=vecs, country=COUNTRY, country_freqs=country_freqs,
-                       roll_avg=False, roll_window=20)
+                       roll_avg=False, roll_window=5)
