@@ -5,13 +5,15 @@ from collections import Iterable
 import itertools
 import ujson as json
 from string import punctuation as punct
-import nltk
-nltk.download('punkt')
+
 from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.stem.snowball import SnowballStemmer
 import gensim
 import spacy
 from spacy.lang.en.stop_words import STOP_WORDS as stops
+
+from multiprocessing import Pool
+import time 
 
 #---- Base Classes
 class Streamer(ABC):
@@ -23,6 +25,7 @@ class Streamer(ABC):
                  region_inclusive=False, title_filter=None, verbose=False, 
                  stopwords=stops, tagged=True, parsed=False, ner=False, lemmatize=True, model="en_core_web_lg"):
         self.input = input
+        self.input_files = self.get_input_files()
         self.language = language
         self.max_docs = max_docs
         self.phraser = gensim.models.phrases.Phraser.load(phraser) if type(phraser) == str else phraser
@@ -46,7 +49,79 @@ class Streamer(ABC):
 
     def head(self, n=10):
         return list(itertools.islice(self,  n))
+    
+    def process_json(self,f):
+        with open(f, 'r', encoding="utf-8") as f:
+            data = json.loads(f.read())
+        
+        if self.language and data['language_code'] != self.language:
+                return None
+                    # Region Filter:
+        region_matched = 0
+        if self.regions:
+            region_codes = set(data['region_codes'].split(','))
+            if not any(region_codes.intersection(set(self.regions))):
+                   if not self.region_inclusive:
+                        return None
+            else:
+                region_matched = 1
+         
+        if self.title_filter and not region_matched:
+            snip = word_tokenize(data['snippet'].lower()) if data['snippet'] else None
+            title = word_tokenize(data['title'].lower()) if data['title'] else None
 
+            title_flag = True if title and any([tok.lower() in title for tok in self.title_filter]) else False
+            snip_flag = True if snip and any([tok.lower() in snip for tok in self.title_filter]) else False
+
+            if not any([title_flag, snip_flag]):
+                return None
+        # Retreive and yield output
+        output = self.retrieve_output(data)
+        return output
+    def chunks(self,l, n):
+        """Yield successive n-sized chunks from l."""
+        for i in range(0, len(l), n):
+            yield l[i:i + n]
+            
+    def multi_process_files(self,workers=os.cpu_count()-1,chunk_size=1000):
+        print('Start multiprocessing {} files in {} cores'.format(len(self.input_files),workers))
+        start = time.time()
+        batch_size = workers*chunk_size*5
+        batches = list(self.chunks(self.input_files, batch_size))
+        p = Pool(workers)
+        
+        res = list()
+        for i in range(len(batches)):
+            print('Processing {} - {} files ...'.format(i*batch_size,(i+1)*batch_size))
+            rs = p.map(self.process_json, batches[i],chunk_size)
+            res.extend(rs)
+        p.close()
+        p.join()
+        end = time.time()
+        
+        ## filter None items
+        res = [r for r in res if r is not None]
+        results=[]
+        for r in res:
+            results.extend(r)
+            
+        print(time.strftime('%H:%M:%S', time.gmtime(end - start)))
+
+        return results
+    
+    
+    def get_input_files(self):
+        # Check that valid dir or file or list of files is supplied
+        if isinstance(self.input, str) and os.path.isdir(self.input):
+            flist = glob(self.input + "/*.json")
+        elif isinstance(self.input, str) and os.path.isfile(self.input):
+            flist = [self.input]
+        elif isinstance(self.input, Iterable):
+            flist = self.input
+        else:
+            raise ValueError('INVALID FILE OR LIST OF FILES OR DIRECTORY PATH')
+        return flist
+    
     def __iter__(self):
         self.total_docs = 0
         
