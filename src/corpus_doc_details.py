@@ -9,24 +9,40 @@ from glob import glob
 from crisis_points import crisis_points
 from frequency_utils import list_crisis_docs
 import os
+from stream import FileStreamer_fast as FileStreamer
 
 #%%
+#def time_index(docs, lang=None, verbose=False):
+#    doc_details = {}
+#    tot = len(docs)
+#    for i, doc in enumerate(docs):
+#        if verbose:
+#            print('\r{} of {} processed'.format(i, tot), end='')
+#        with open(doc, 'r', encoding='utf-8') as f:
+#            art = json.loads(f.read())
+#            try:
+#                if lang:
+#                    if art['language_code'] != lang:
+#                        continue
+#                date = pd.to_datetime(dt.fromtimestamp(art['publication_date'] / 1e3))
+#                doc_details[art['an']] = {'date': date}
+#            except Exception as e:
+#                print(art['an'] + ': ' + e.characters_written)
+#    data = pd.DataFrame(doc_details).T
+#    return data
+## multi processed json input
 def time_index(docs, lang=None, verbose=False):
     doc_details = {}
     tot = len(docs)
     for i, doc in enumerate(docs):
         if verbose:
             print('\r{} of {} processed'.format(i, tot), end='')
-        with open(doc, 'r', encoding='utf-8') as f:
-            art = json.loads(f.read())
-            try:
-                if lang:
-                    if art['language_code'] != lang:
-                        continue
-                date = pd.to_datetime(dt.fromtimestamp(art['publication_date'] / 1e3))
-                doc_details[art['an']] = {'date': date}
-            except Exception as e:
-                print(art['an'] + ': ' + e.characters_written)
+        try:
+            date = pd.to_datetime(dt.fromtimestamp(doc['publication_date'] / 1e3))
+            doc_details[doc['an']] = {'date': date}
+        except Exception as e:
+            print(doc['an'] + ': ' + e.characters_written)
+            
     data = pd.DataFrame(doc_details).T
     return data
 #%%
@@ -50,7 +66,7 @@ def label_crisis(data, path, verbose=False, period='crisis'):
         crisis += crisis_ids
     data.loc[data.index.isin(crisis), 'crisis'] = 1
     return data
-
+ 
 class args_class(object):
     def __init__(self, in_dir,out_dir,period='crisis',verbose=True):
         self.in_dir = in_dir
@@ -68,10 +84,10 @@ if __name__ == '__main__':
         parser.add_argument('-v', '--verbose', action='store', dest='verbose', default=True)
         args = parser.parse_args()
     except:
-        args = args_class('../cleaned_small','../data/doc_meta', verbose = False)
- 
-    doc_paths = glob(args.in_dir + '/*.json')
-    deets = time_index(doc_paths, lang='en', verbose=args.verbose)
+        args = args_class('../cleaned','../data/doc_meta', verbose = True)
+    streamer = FileStreamer(args.in_dir, language='en',verbose=True)
+    j_files = streamer.multi_process_files()
+    deets = time_index(j_files, lang='en', verbose=args.verbose)
     deets = period_info(deets)
     deets = label_crisis(deets, path = args.in_dir, verbose=args.verbose, period=args.period)
     deets.to_pickle(os.path.join(args.out_dir, 'doc_details_{}.pkl'.format(args.period)))
