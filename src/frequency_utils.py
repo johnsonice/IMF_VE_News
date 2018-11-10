@@ -78,8 +78,8 @@ def list_crisis_docs(country, path,doc_data=None, period='crisis'):
     # Setup
     assert country in crisis_points.keys()
     assert period in ('crisis', 't-1', 't-2')
-    data = doc_data if doc_data is not None else pd.read_pickle(os.path.join(path,"doc_details.pkl")) ## this is still not right, will fix latter
-
+    data = doc_data if doc_data is not None else pd.read_pickle(os.path.join(path,"doc_details_crisis.pkl")) 
+    
     # Tag docs as within crisis periods
     data['crisis'] = 0
     for i, (start, peak) in enumerate(zip(crisis_points[country]['starts'], crisis_points[country]['peaks'])):
@@ -96,15 +96,24 @@ def list_crisis_docs(country, path,doc_data=None, period='crisis'):
         else:
             s = pd.Period(start)
             p = pd.Period(peak)
-
+        
+        print(s,p)
         data.loc[(data['month'] >= s) & (data['month'] <= p), 'crisis'] = 1
 
     crisis_period_docs = id2full_path(data[data['crisis'] == 1].index,path)
-    nocrisis_period_docs = id2full_path(data[data['crisis'] == 0].index,path)
+    #nocrisis_period_docs = id2full_path(data[data['crisis'] == 0].index,path)
+    
     print("Filtering crisis docs")
-    crisis = id2full_path([art['an'] for art in FileStreamer(crisis_period_docs, regions=[region[country]],
-                                                              region_inclusive=True, title_filter=[country])],
-                                                            path)
+    # multi process files
+    filtered_files = FileStreamer(crisis_period_docs, 
+                                  regions=[region[country]],
+                                  region_inclusive=True, 
+                                  title_filter=[country]).multi_process_files()
+    # get file ids
+    filtered_file_ids = [art['an'] for art in filtered_files]
+    # git file pathes
+    crisis = id2full_path(filtered_file_ids,path)
+    
     return crisis
 
 
@@ -113,7 +122,7 @@ def list_crisis_docs(country, path,doc_data=None, period='crisis'):
 #    
 def id2full_path(collection,path):
     doc_path = path
-    return [doc_path + os.path.sep + doc + ".json" for doc in collection]
+    return [os.path.join(doc_path, doc + ".json") for doc in collection]
 
 
 def crisis_noncrisis_freqs(crisis, non_crisis, country, save=True, path="/home/ubuntu/Documents/v_e/data/frequency"):

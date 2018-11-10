@@ -296,3 +296,4 @@ class FileStreamer_fast(Streamer):
         doc = word_tokenize(text)
         data['body'] = doc
         return [data]
+
