@@ -28,12 +28,12 @@ def ngram_phraser(n, corpus, scoring, thresh, min_count, common_terms, language=
 
     if n == 2:
         print('Working on {}grams...'.format(n))
-        phrase_model = gensim.models.Phrases(streamer, scoring=scoring, min_count=min_count, threshold=thresh,
+        phrase_model = gensim.models.Phrases(streamer.multi_process_files(), scoring=scoring, min_count=min_count, threshold=thresh,
                                              common_terms=common_terms)
     else:
         prev_phraser = ngram_phraser(n - 1, corpus, scoring, thresh, min_count, common_terms, language=language)
         print('Working on {}grams...'.format(n))
-        phrase_model = gensim.models.Phrases(prev_phraser[streamer], scoring=scoring, min_count=min_count,
+        phrase_model = gensim.models.Phrases(prev_phraser[streamer.multi_process_files()], scoring=scoring, min_count=min_count,
                                              threshold=thresh + thresh * 0.5,
                                              common_terms=common_terms)
 
@@ -66,7 +66,7 @@ if __name__ == '__main__':
         parser.add_argument('-v', '--verbose', action='store', dest='verbose', default=False)
         args = parser.parse_args()
     except:
-        args = args_class(in_dir='../cleaned_small',out_dir='../models/ngrams',verbose=True)
+        args = args_class(in_dir='../cleaned',out_dir='../models/ngrams',verbose=True)
  
     # construct model
     ngrams = ngram_phraser(args.n_rank, args.in_dir, args.scoring, args.thresh, args.min_count, 

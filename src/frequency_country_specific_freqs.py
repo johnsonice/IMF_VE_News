@@ -41,7 +41,7 @@ def get_country_freqs(countries, corpus, period_choice, period_dict, outdir,phra
             p_freqs = defaultdict(int)
             streamer = DocStreamer_fast(doc_list, language='en', regions=[region[country]], region_inclusive=True,
                                     title_filter=[country],
-                                    phraser=phraser)
+                                    phraser=phraser).multi_process_files(workers=4)
 
             # count
             for doc in streamer:

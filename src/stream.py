@@ -297,3 +297,7 @@ class FileStreamer_fast(Streamer):
         data['body'] = doc
         return [data]
 
+class MetaStreamer_fast(Streamer):
+    def retrieve_output(self, data):
+        data['body'] = None
+        return [data]

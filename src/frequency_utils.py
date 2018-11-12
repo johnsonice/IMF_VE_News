@@ -1,5 +1,6 @@
 from stream import SentStreamer_fast as SentStreamer
 from stream import FileStreamer_fast as FileStreamer
+from stream import MetaStreamer_fast as MetaStreamer
 import os
 from nltk.corpus import stopwords
 from region_mapping import region
@@ -105,7 +106,7 @@ def list_crisis_docs(country, path,doc_data=None, period='crisis'):
     
     print("Filtering crisis docs")
     # multi process files
-    filtered_files = FileStreamer(crisis_period_docs, 
+    filtered_files = MetaStreamer(crisis_period_docs, 
                                   regions=[region[country]],
                                   region_inclusive=True, 
                                   title_filter=[country]).multi_process_files()

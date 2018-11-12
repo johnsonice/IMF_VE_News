@@ -41,7 +41,7 @@ if __name__ == '__main__':
         args = parser.parse_args()
     except:
         ## give some default arguments
-        args = args_class('../cleaned_small','../data/processed_json', verbose = True)
+        args = args_class('../cleaned','../data/processed_json', verbose = True)
         
     flist = glob(args.in_dir + '/*.json')
     fl_len = len(flist)
