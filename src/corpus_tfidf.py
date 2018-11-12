@@ -34,7 +34,7 @@ def bow_to_tfidf(corp_bow, verbose=False):
     return corpus_tfidf
 
 class args_class(object):
-    def __init__(self, in_dir,out_dir,phraser,lemmatize=False,lang='en',verbose=True):
+    def __init__(self, in_dir,out_dir,phraser,lemmatize=True,lang='en',verbose=True):
         self.in_dir = in_dir
         self.out_dir = out_dir
         self.phraser = phraser
@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
     # Setup the streamer
     stream = DocStreamer_fast(args.in_dir, language=args.lang, phraser=args.phraser, 
-                              verbose=args.verbose, lemmatize=args.lemmatize)
+                              verbose=args.verbose, lemmatize=args.lemmatize).multi_process_files(chunk_size=2000)
 
     # Create dictionary, bow corpus, and tfidf corpus
     dictionary = create_dict(stream, verbose=args.verbose)

@@ -9,7 +9,7 @@ from glob import glob
 from crisis_points import crisis_points
 from frequency_utils import list_crisis_docs
 import os
-from stream import FileStreamer_fast as FileStreamer
+from stream import MetaStreamer_fast as MetaStreamer
 
 #%%
 #def time_index(docs, lang=None, verbose=False):
@@ -34,9 +34,10 @@ from stream import FileStreamer_fast as FileStreamer
 def time_index(docs, lang=None, verbose=False):
     doc_details = {}
     tot = len(docs)
+    print('Convert dates....')
     for i, doc in enumerate(docs):
         if verbose:
-            print('\r{} of {} processed'.format(i, tot), end='')
+            print('\r{} of {} processed'.format(i, tot), end='',flush=True)
         try:
             date = pd.to_datetime(dt.fromtimestamp(doc['publication_date'] / 1e3))
             doc_details[doc['an']] = {'date': date}
@@ -85,9 +86,8 @@ if __name__ == '__main__':
         args = parser.parse_args()
     except:
         args = args_class('../cleaned','../data/doc_meta', verbose = True)
-    streamer = FileStreamer(args.in_dir, language='en',verbose=True)
-    j_files = streamer.multi_process_files()
-    deets = time_index(j_files, lang='en', verbose=args.verbose)
+    streamer = MetaStreamer(args.in_dir, language='en',verbose=args.verbose)
+    deets = time_index(streamer.multi_process_files(), lang='en', verbose=False)
     deets = period_info(deets)
     deets = label_crisis(deets, path = args.in_dir, verbose=args.verbose, period=args.period)
     deets.to_pickle(os.path.join(args.out_dir, 'doc_details_{}.pkl'.format(args.period)))
