@@ -11,6 +11,7 @@ NOTE: can be done for as many countries at a time as you want.
 
 import os
 import sys
+sys.path.insert(0,'./libs')
 import pandas as pd
 from collections import defaultdict
 from stream import DocStreamer_fast
@@ -41,7 +42,7 @@ def get_country_freqs(countries, corpus, period_choice, period_dict, outdir,phra
             p_freqs = defaultdict(int)
             streamer = DocStreamer_fast(doc_list, language='en', regions=[region[country]], region_inclusive=True,
                                     title_filter=[country],
-                                    phraser=phraser).multi_process_files(workers=4)
+                                    phraser=phraser,lemmatize=False).multi_process_files(workers=int(os.cpu_count()/2),chunk_size = 500)
 
             # count
             for doc in streamer:
@@ -98,7 +99,7 @@ if __name__ == '__main__':
                             default='../data/phrase_model/2grams_default_10_20_NOSTOP',required=True)
         args = parser.parse_args()
     except:
-        args = args_class(corpus='../data/processed_json',doc_deets='../data/doc_meta/doc_details_crisis.pkl',period='quarter')
+        args = args_class(corpus='../data/processed_json',doc_deets='../data/doc_meta/doc_details_crisis.pkl',period='month')
 
 
     # Data setup

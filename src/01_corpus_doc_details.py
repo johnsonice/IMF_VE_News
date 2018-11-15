@@ -1,6 +1,8 @@
 """
 collate info for documents to speed things up downstream
 """
+import sys
+sys.path.insert(0,'./libs')
 import argparse
 import pandas as pd
 from datetime import datetime as dt

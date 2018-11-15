@@ -8,10 +8,10 @@ from string import punctuation as punct
 
 from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.stem.snowball import SnowballStemmer
+from nltk.stem import WordNetLemmatizer
 import gensim
 import spacy
 from spacy.lang.en.stop_words import STOP_WORDS as stops
-
 from multiprocessing import Pool
 import time 
 
@@ -50,6 +50,8 @@ class Streamer(ABC):
     def head(self, n=10):
         return list(itertools.islice(self,  n))
     
+    
+    
     def process_json(self,f):
         with open(f, 'r', encoding="utf-8") as f:
             data = json.loads(f.read())
@@ -78,6 +80,7 @@ class Streamer(ABC):
         # Retreive and yield output
         output = self.retrieve_output(data)
         return output
+    
     def chunks(self,l, n):
         """Yield successive n-sized chunks from l."""
         for i in range(0, len(l), n):
