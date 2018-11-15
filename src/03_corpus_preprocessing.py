@@ -1,13 +1,14 @@
 """
 Light preprocessing for corpus
 """
+import sys
+sys.path.insert(0,'./libs')
 import os
 from glob import glob
 import re
 import ujson as json
 import argparse
-
-
+#%%
 def preprocess(json_article):
     try:
         text = json_article['body']

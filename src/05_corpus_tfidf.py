@@ -4,7 +4,8 @@ convert text corpus into tfidf bow format
 -- saves corpus in gensim bow format
 -- saves tfidf transformation of bow corpus
 """
-
+import sys
+sys.path.insert(0,'./libs')
 import os 
 import gensim
 from stream import DocStreamer_fast
@@ -50,11 +51,12 @@ if __name__ == '__main__':
         parser.add_argument('-o', '--out_dir', action='store', dest='out_dir', required=True)
         parser.add_argument('-p', '--phraser', action='store', dest='phraser', default=None)
         parser.add_argument('-q', '--quiet', action='store_false', dest='verbose', default=True)
-        parser.add_argument('-l', '--lemmatize', action='store_true', dest='lemmatize', default=False)
+        parser.add_argument('-l', '--lemmatize', action='store_true', dest='lemmatize', default=True)
         parser.add_argument('-lang', '--language', action='store', dest='lang', default='en')
         args = parser.parse_args()
     except:
-        args = args_class(in_dir = '../data/processed_json',out_dir = '../data/bow_tfidf_docs',phraser='../models/ngrams/2grams_default_10_20_NOSTOP')
+        args = args_class(in_dir = '../data/processed_json',out_dir = '../data/bow_tfidf_docs',
+                          phraser='../models/ngrams/2grams_default_10_20_NOSTOP',lemmatize=False)
 
     # Setup the streamer
     stream = DocStreamer_fast(args.in_dir, language=args.lang, phraser=args.phraser, 

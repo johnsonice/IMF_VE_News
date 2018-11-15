@@ -2,13 +2,14 @@
 Create ngram phraser obj for input corpus
 Note: The phraser objects created here are what get passed to the streamer using the 'phraser' parameter.
 """
-
+import sys
+sys.path.insert(0,'./libs')
 import gensim
 import os
 from stream import SentStreamer_fast as SentStreamer
 import argparse
 
-
+#%%
 def ngram_phraser(n, corpus, scoring, thresh, min_count, common_terms, language=None,verbose=False):
     """
     Creates a Gensim phrasegram model

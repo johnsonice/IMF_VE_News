@@ -1,14 +1,16 @@
 ## install some packages 
-#conda install -c conda-forge spacy glob
+#conda install -c conda-forge spacy
 #conda install gensim nltk numpy pandas jupyter notebook spyder glob2 scikit-learn seaborn
 ## install language module 
 #python -m spacy download en_core_web_lg
 
-## all tho following are automatic now - no need to run 
+##
+## if spacy download function doesn't work, you will have to do it the hard way
+##
 ## pip install .tar.gz archive from path or URL
 #pip install /Users/you/en_core_web_sm-2.0.0.tar.gz
 ## set up shortcut link to load installed package as "en_default"
-#python -m spacy link en_core_web_sm en_default
+#python -m spacy link en_core_web_lg en_core_web_lg
 
 
 mkdir data models 
