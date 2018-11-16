@@ -90,7 +90,7 @@ if __name__ == '__main__':
         parser.add_argument('-corp', '--corpus', action='store', dest='corpus', 
                             default='../cleaned',required=True)
         parser.add_argument('-deets', '--doc_details', action='store', dest='doc_deets', 
-                            default='../data/doc_details_full.pkl',required=True)
+                            default='.../data/doc_meta/doc_details_full.pkl',required=True)
         parser.add_argument('-p', '--period', action='store', dest='period', 
                             default='quarter',required=True)
         parser.add_argument('-s', '--save_dir', action='store', dest='out_dir', 
@@ -99,7 +99,7 @@ if __name__ == '__main__':
                             default='../data/phrase_model/2grams_default_10_20_NOSTOP',required=True)
         args = parser.parse_args()
     except:
-        args = args_class(corpus='../data/processed_json',doc_deets='../data/doc_meta/doc_details_crisis.pkl',period='month')
+        args = args_class(corpus='../data/processed_json',doc_deets='../data/doc_meta/doc_details_crisis.pkl',period='quarter')
 
 
     # Data setup
