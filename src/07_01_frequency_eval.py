@@ -8,6 +8,8 @@ up to crisis.
 usage: python3 frequency_eval.py <TERM1> <TERM2> ...
 NOTE: to see an explanation of optional arguments, use python3 frequency_eval.py --help
 """
+import sys
+sys.path.insert(0,'./libs')
 import argparse
 from gensim.models.keyedvectors import KeyedVectors
 from crisis_points import crisis_points
@@ -22,17 +24,18 @@ def get_country_stats(countries, words, frequency_path, window, years_prior, met
                                    years_prior=years_prior, method=method, 
                                    crisis_defs=crisis_defs),
                           index=['recall','precision','fscore','tp','fp','fn'], 
-                          name=country)
+                          name=country)  ## default period = quarter
         country_stats.append(stats)
     all_stats = pd.DataFrame(country_stats)
     return all_stats
 
 class args_class(object):
-    def __init__(self, targets,frequency_path='../data/frequency',eval_path='../data/eval/word_groups',topn=15,years_prior=2,window=8,countries=crisis_points.keys(),
+    def __init__(self, targets,frequency_path='../data/frequency',eval_path='../data/eval/word_groups',wv_path = '../models/vsms/word_vecs_5_20_200',topn=15,years_prior=2,window=8,countries=crisis_points.keys(),
                  method='zscore',crisis_defs='kr',sims=True):
         self.targets = targets
         self.frequency_path = frequency_path
         self.eval_path=eval_path
+        self.wv_path = wv_path
         self.topn = topn
         self.years_prior = years_prior
         self.window = window
@@ -63,9 +66,13 @@ if __name__ == '__main__':
                             default='kr')
         parser.add_argument('-sims', '--sims', action='store', dest='sims', type=bool, 
                             default=True)
+        parser.add_argument('-wv', '--wv_path', action='store', dest='wv_path', 
+                            default='../models/vsms/word_vecs_5_20_200')
+        
         args = parser.parse_args()
     except:
-        args = args_class(targets=['fear', 'worry&risk'],frequency_path='../data/frequency',sims=False)
+        args = args_class(targets=['fear', 'worry&risk','crisis','stress'],frequency_path='../data/frequency',
+                          wv_path = '../models/vsms/word_vecs_5_20_200',sims=True)
 
     # Parse input word groups
     word_groups = [wg.split('&') for wg in args.targets]
@@ -74,16 +81,17 @@ if __name__ == '__main__':
     for wg in word_groups: 
         # use topn most similar terms as words for aggregate freq if args.sims
         if args.sims:
-            vecs = KeyedVectors.load('../models/vsms/word_vecs_5_10_200')
+            vecs = KeyedVectors.load(args.wv_path)
             try:
-                sims = [w[0] for w in vecs.most_similar(wg, topn=args.topn)]
+                sims = [w[0] for w in vecs.wv.most_similar(wg, topn=args.topn)]
             except KeyError:
                 continue
             words = sims + wg
         # otherwise the aggregate freq is just based on the term(s) in the current wg.
         else:
             words = wg
-
+        
+        
         # get dataframe of evaluation metrics for each indivicual country
         all_stats = get_country_stats(args.countries, words, args.frequency_path,args.window, 
                                       args.years_prior, args.method, args.crisis_defs)
@@ -100,5 +108,6 @@ if __name__ == '__main__':
 
         # Save to file and print results
         all_stats.to_csv(os.path.join(args.eval_path,'{}_evaluation.csv'.format('_'.join(wg))))
-        print('\n\n{}:\n\trecall: {}, precision: {}, f-score: {}'.format(wg, recall, prec, f2))
+        #print('evaluated words: {}'.format(words))
+        print('\n\n{}:\nevaluated words: {}\n\trecall: {}, precision: {}, f-score: {}'.format(wg,words,recall, prec, f2))
 

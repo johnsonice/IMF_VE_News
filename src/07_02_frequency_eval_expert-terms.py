@@ -8,6 +8,8 @@ up to crisis.
 usage: python3 frequency_eval_expert-terms.py <TERM_LIST_PATH>
 NOTE: to see an explanation of optional arguments, use python3 frequency_eval_expert-terms.py --help
 """
+import sys
+sys.path.insert(0,'./libs')
 import argparse
 from gensim.models.keyedvectors import KeyedVectors
 from crisis_points import crisis_points
@@ -46,8 +48,12 @@ if __name__ == '__main__':
                             default=crisis_points.keys())
         parser.add_argument('-m', '--method', action='store', dest='method', 
                             default='zscore')
-        parser.add_argument('-cd', '--crisis_defs', action='store', dest='crisis_defs', 
+        parser.add_argument('-cd', '--frequency_path', action='store', dest='frequency_path', 
                             default='kr')
+        parser.add_argument('-freqp', '--crisis_defs', action='store', dest='crisis_defs', 
+                            default='../data/frequency')
+        parser.add_argument('-evalp', '--eval_path', action='store', dest='eval_path', 
+                            default='../data/eval/experts')
         parser.add_argument('-wv', '--word_vectors', action='store', dest='wv', default=True,
                             type=bool, help='True for get topn most similar, False for \
                             just the words themselves')
@@ -60,7 +66,7 @@ if __name__ == '__main__':
     terms = [i[0].lower() for i in term_list.values]
 
     if args.wv:
-        vecs = KeyedVectors.load('../models/vsms/word_vecs_5_10_200')
+        vecs = KeyedVectors.load('../models/vsms/word_vecs_5_20_200')
     
     # Get prec, rec, and fscore for each country for each wg
     term_data = pd.DataFrame([], index=terms, columns=['recall','precision','fscore','tp','fp','fn'])
