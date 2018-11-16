@@ -1,11 +1,16 @@
 """
 Examine frequency of semantically related words in the corpus
 """
+import sys
+sys.path.insert(0,'./libs')
 from gensim.models.keyedvectors import KeyedVectors
 from gensim.models.word2vec import Word2Vec
 import pandas as pd
 #from frequency_utils import plot_frequency
 from plot_utils import crisis_plot,plot_frequency
+
+from pylab import rcParams
+rcParams['figure.figsize'] = 30,10
 
 #%%
 def plot_similar_freqs(target_words, vecs, country, country_freqs, topn=10, roll_avg=True, roll_window=20):
@@ -21,7 +26,7 @@ def plot_similar_freqs(target_words, vecs, country, country_freqs, topn=10, roll
     if vecs is not None:
         try:
             words = [w[0] for w in vecs.most_similar(target_words, topn=topn)]
-            words += target
+            words += target_words
         except:
             words = target_words
     else:
@@ -46,13 +51,15 @@ if __name__ == '__main__':
     #MODEL = "/home/ubuntu/Documents/v_e/models/vsms/word_vecs_5_10_200"
     MODEL = None
     COUNTRY = 'argentina'
+    period = 'month'
     if MODEL is not None:
         vecs = KeyedVectors.load(MODEL)
     else:
         vecs = None
-        
-    country_freqs = pd.read_pickle("../data/frequency/{}_processed_json_month_word_freqs.pkl".format(COUNTRY))
+    
+    country_freqs = pd.read_pickle("../data/frequency/{}_processed_json_{}_word_freqs.pkl".format(COUNTRY,period))
 
-    target = 'citizen imf summit east'.split(" ")
-    plot_similar_freqs(target, vecs=vecs, country=COUNTRY, country_freqs=country_freqs,
-                       roll_avg=False, roll_window=5)
+    target = 'worry fear crisis financial'.split(" ")
+    chart = plot_similar_freqs(target, vecs=vecs, country=COUNTRY, country_freqs=country_freqs,
+                       roll_avg=False, roll_window=12)
+    chart.savefig('../data/visualization/{}_{}.png'.format(COUNTRY,period))
