@@ -13,7 +13,7 @@ window = 5
 min_count = 20
 workers = 31
 
-sentences = SentStreamer(CORPUS, language='en', phraser=phraser, lemmatize = False, verbose=True).multi_process_files()
+sentences = SentStreamer(CORPUS, language='en', phraser=phraser, lemmatize = True, verbose=True).multi_process_files()
 vectors = gensim.models.Word2Vec(sentences, size=size, window=window, min_count=min_count, workers=workers)
 vectors.save(OUT_DIR + "/word_vecs_{}_{}_{}_lemmatized".format(window, min_count, size))
 
