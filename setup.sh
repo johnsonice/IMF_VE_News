@@ -1,6 +1,6 @@
 ## install some packages 
-#conda install -c conda-forge spacy
-#conda install gensim nltk numpy pandas jupyter notebook spyder glob2 scikit-learn seaborn
+#conda install -c conda-forge spacy langdetect
+#conda install gensim nltk numpy pandas jupyter notebook spyder glob2 scikit-learn seaborn lxml beautifulsoup4
 ## install language module 
 #python -m spacy download en_core_web_lg
 
