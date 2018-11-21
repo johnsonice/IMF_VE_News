@@ -93,7 +93,7 @@ if __name__ == '__main__':
         args = args_class('/data/News_data_raw/Financial_Times_processed/FT_json_historical','/data/News_data_raw/FT_WD/doc_meta', verbose = True)
     
     streamer = MetaStreamer(args.in_dir, language='en',verbose=args.verbose)  
-    deets = time_index(streamer.multi_process_files(workers=31), lang='en', verbose=False,date_format='DNA')
+    deets = time_index(streamer.multi_process_files(workers=31,chunk_size=5000), lang='en', verbose=False,date_format='FT')
     deets = period_info(deets)
     deets = label_crisis(deets, path = args.in_dir, verbose=args.verbose, period=args.period)
     deets.to_pickle(os.path.join(args.out_dir, 'doc_details_{}.pkl'.format(args.period)))
