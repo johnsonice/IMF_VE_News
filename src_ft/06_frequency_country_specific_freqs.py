@@ -99,7 +99,7 @@ if __name__ == '__main__':
                             default='../data/phrase_model/2grams_default_10_20_NOSTOP',required=True)
         args = parser.parse_args()
     except:
-        args = args_class(corpus='../data/processed_json',doc_deets='../data/doc_meta/doc_details_crisis.pkl',period='quarter')
+        args = args_class(corpus='../data/processed_json',doc_deets='../data/doc_meta/doc_details_crisis.pkl',out_dir='../data/frequency',period='quarter')
 
 
     # Data setup

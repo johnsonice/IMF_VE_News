@@ -60,7 +60,7 @@ if __name__ == '__main__':
 
     # Setup the streamer
     stream = DocStreamer_fast(args.in_dir, language=args.lang, phraser=args.phraser, 
-                              verbose=args.verbose, lemmatize=args.lemmatize).multi_process_files(chunk_size=2000)
+                              verbose=args.verbose, lemmatize=args.lemmatize).multi_process_files(chunk_size=5000)
 
     # Create dictionary, bow corpus, and tfidf corpus
     dictionary = create_dict(stream, verbose=args.verbose)
