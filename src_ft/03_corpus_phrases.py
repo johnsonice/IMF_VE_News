@@ -67,7 +67,7 @@ if __name__ == '__main__':
         parser.add_argument('-v', '--verbose', action='store', dest='verbose', default=False)
         args = parser.parse_args()
     except:
-        args = args_class(in_dir='../cleaned',out_dir='../models/ngrams',verbose=True)
+        args = args_class(in_dir='/data/News_data_raw/FT_WD/json_lemma',out_dir='/data/News_data_raw/FT_WD/models/ngrams',verbose=True)
  
     # construct model
     ngrams = ngram_phraser(args.n_rank, args.in_dir, args.scoring, args.thresh, args.min_count, 

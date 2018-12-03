@@ -13,6 +13,7 @@ from frequency_utils import list_crisis_docs
 import os
 from stream import MetaStreamer_fast as MetaStreamer
 
+#pd.set_option('display.max_columns', 15)
 #%%
 #def time_index(docs, lang=None, verbose=False):
 #    doc_details = {}
@@ -90,7 +91,7 @@ if __name__ == '__main__':
         parser.add_argument('-v', '--verbose', action='store', dest='verbose', default=True)
         args = parser.parse_args()
     except:
-        args = args_class('/data/News_data_raw/Financial_Times_processed/FT_json_historical','/data/News_data_raw/FT_WD/doc_meta', verbose = True)
+        args = args_class('../data/processed_json','../data/doc_meta', verbose = True)
     
     streamer = MetaStreamer(args.in_dir, language='en',verbose=args.verbose)  
     deets = time_index(streamer.multi_process_files(workers=31), lang='en', verbose=False,date_format='DNA')

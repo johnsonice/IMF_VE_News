@@ -101,6 +101,29 @@ crisis_points = {
     },
 }
 
+country_dict = {
+    'argentina': ['argentina'],
+    'bolivia': ['bolivia'],
+    'brazil': ['brazil'],
+    'chile': ['chile'],
+    'colombia': ['colombia'],
+    'denmark': ['denmark'],
+    'finland': ['finland'],
+    'indonesia': ['indonesia'],
+    'israel': ['israel'],
+    'malaysia': ['malaysia'],
+    'mexico': ['mexico'],
+    'norway': ['norway'],
+    'peru': ['peru'],
+    'philippines': ['philippines'],
+    'spain': ['spain'],
+    'sweden': ['sweden'],
+    'thailand': ['thailand'],
+    'turkey': ['turkey'],
+    'uruguay': ['uruguay'],
+    'venezuela': ['venezuela'],
+}
+
 if __name__ == '__main__':
     import ujson as json
     with open('crisis_points.json', 'w') as f:

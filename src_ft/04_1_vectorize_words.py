@@ -4,13 +4,13 @@ import gensim
 from stream import SentStreamer_fast as SentStreamer
 import sys
 
-CORPUS = '../cleaned'
-OUT_DIR = "../models/vsms"
-phraser = '../models/ngrams/2grams_default_10_20_NOSTOP'
+CORPUS = '/data/News_data_raw/FT_WD/json_lemma'
+OUT_DIR = "/data/News_data_raw/FT_WD/models/vsms"
+phraser = '/data/News_data_raw/FT_WD/models/ngrams/2grams_default_10_20_NOSTOP'
 
 size = 200
 window = 5
-min_count = 20
+min_count = 100
 workers = 31
 
 sentences = SentStreamer(CORPUS, language='en', phraser=phraser, lemmatize = False, verbose=True).multi_process_files()

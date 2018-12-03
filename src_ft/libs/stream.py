@@ -23,7 +23,7 @@ class Streamer(ABC):
     """
     def __init__(self, input, language=None, max_docs=None, phraser=None, regions=[],
                  region_inclusive=False, title_filter=None, verbose=False, 
-                 stopwords=stops, tagged=True, parsed=False, ner=False, lemmatize=True, model="en_core_web_lg"):
+                 stopwords=stops, tagged=True, parsed=False, ner=False, lemmatize=False, model="en_core_web_lg"):
         self.input = input
         self.input_files = self.get_input_files()
         self.language = language
