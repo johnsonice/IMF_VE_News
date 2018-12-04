@@ -3,6 +3,8 @@ import os
 import pandas as pd
 import sys
 sys.path.insert(0,'../libs')
+sys.path.insert(0,'..')
+import config
 from stream import FileStreamer_fast as FileStreamer
 import ujson as json
 from nltk.tokenize import word_tokenize
@@ -21,16 +23,18 @@ class args_class(object):
         self.period=period
         self.verbose = verbose
 
-args = args_class('/data/News_data_raw/FT_WD/json_lemma','../../data/doc_meta', verbose = False)
+args = args_class(config.JSON_LEMMA,config.AUG_DOC_META_FILE, verbose = False)
 
 #%%
 streamer = FileStreamer(args.in_dir,verbose=True)
 files = streamer.input_files
 #%%
 
-with open(files[10], 'r', encoding="utf-8") as f:
+with open(files[10002], 'r', encoding="utf-8") as f:
     data = json.loads(f.read())
+data['body']
 
+#nlp(data['body'])
 #%%
 ## used mata fields 
 ## 'language_code' 'region_codes''snippet''title' 'body' 'an' 'publication_date'

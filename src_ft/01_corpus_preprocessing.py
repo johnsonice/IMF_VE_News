@@ -3,6 +3,7 @@ Light preprocessing for corpus
 """
 import sys
 sys.path.insert(0,'./libs')
+import config
 import os
 from glob import glob
 import re
@@ -10,7 +11,7 @@ import ujson as json
 import argparse
 from mp_utils import Mp
 import spacy
-from spacy.lang.en.stop_words import STOP_WORDS as stops
+#from spacy.lang.en.stop_words import STOP_WORDS as stops
 nlp = spacy.load("en_core_web_lg",disable=['tagger','ner','parser','textcat'])
 #nlp.remove_pipe('tagger')
 #nlp.remove_pipe("ner")
@@ -27,9 +28,11 @@ def preprocess(json_article,lemma = True):
         
         # Normalize spacing
         text = re.sub("\s+", " ", text)
+        text = re.sub("\'+", " ", text)
+        #text = re.sub("\.+", " ", text)
         
         # Normalize numbers (the fact that a number appears may be important, but not the actual number)
-        text = re.sub("(\d+[,./]?)+", " __NUMBER__ ", text)
+        text = re.sub("([',./]?\d+[',./]?)+", " __NUMBER__ ", text)
         
         # lemmentize 
         if lemma:
@@ -61,7 +64,7 @@ if __name__ == '__main__':
         args = parser.parse_args()
     except:
         ## give some default arguments
-        args = args_class('/data/News_data_raw/Financial_Times_processed/FT_json_historical','/data/News_data_raw/FT_WD/json_lemma', verbose = True)
+        args = args_class(config.RAW_DATA_PATH,config.JSON_LEMMA, verbose = True)
         
     ## grab all files 
     flist = glob(args.in_dir + '/*.json')
@@ -83,7 +86,7 @@ if __name__ == '__main__':
             
     ## multi process files 
     mp = Mp(flist,process_jsons) 
-    res = mp.multi_process_files(workers=30,chunk_size=1000)
+    res = mp.multi_process_files(workers=30,chunk_size=5000)
     
 
 

@@ -10,6 +10,7 @@ Created on Mon Nov 26 11:00:33 2018
 
 import sys,os
 sys.path.insert(0,'./libs')
+import config
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn; seaborn.set()
@@ -57,9 +58,9 @@ def get_countries(article,country_dict=country_dict):
 
 #%%
 if __name__ == '__main__':
-    meta_root = "/data/News_data_raw/FT_WD/doc_meta"
-    meta_pkl = os.path.join(meta_root, "doc_details_crisis.pkl")
-    json_data_path = '/data/News_data_raw/Financial_Times_processed/FT_json_historical/'
+    meta_root = config.DOC_META
+    meta_pkl = config.DOC_META_FILE
+    json_data_path = config.JSON_LEMMA
     
     df = pd.read_pickle(meta_pkl)
     #%%

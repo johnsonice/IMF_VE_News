@@ -25,7 +25,7 @@ def ngram_phraser(n, corpus, scoring, thresh, min_count, common_terms, language=
     assert n >= 2
 
     # use sent_stream generator to feed data to the phraser
-    streamer = SentStreamer(corpus, language=language,verbose=verbose)
+    streamer = SentStreamer(corpus, language=language,stopwords=[], verbose=verbose)
 
     if n == 2:
         print('Working on {}grams...'.format(n))

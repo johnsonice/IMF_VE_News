@@ -3,6 +3,7 @@ collate info for documents to speed things up downstream
 """
 import sys
 sys.path.insert(0,'./libs')
+import config
 import argparse
 import pandas as pd
 from datetime import datetime as dt
@@ -90,7 +91,7 @@ if __name__ == '__main__':
         parser.add_argument('-v', '--verbose', action='store', dest='verbose', default=True)
         args = parser.parse_args()
     except:
-        args = args_class('/data/News_data_raw/Financial_Times_processed/FT_json_historical','/data/News_data_raw/FT_WD/doc_meta', verbose = True)
+        args = args_class(config.JSON_LEMMA,config.DOC_META, verbose = True)
     
     streamer = MetaStreamer(args.in_dir, language='en',verbose=args.verbose)  
     deets = time_index(streamer.multi_process_files(workers=31,chunk_size=5000), lang='en', verbose=False,date_format='FT')
