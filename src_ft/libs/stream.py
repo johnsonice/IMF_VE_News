@@ -53,12 +53,17 @@ class Streamer(ABC):
     
     
     def process_json(self,f):
+<<<<<<< HEAD
         try:
             with open(f, 'r', encoding="utf-8") as f:
                 data = json.loads(f.read())
         except:
             print('File not found:{}'.format(f))
             return None
+=======
+        with open(f, 'r', encoding="utf-8") as f:
+            data = json.loads(f.read())
+>>>>>>> 6c0fb2e5047bb403b4513e09123597e321d8e66a
         
         if self.language and data['language_code'] != self.language:
                 return None
@@ -156,6 +161,7 @@ class Streamer(ABC):
                 break
 
             # Load the data
+<<<<<<< HEAD
             try:
                 with open(f, 'r', encoding="utf-8") as f:
                     data = json.loads(f.read())
@@ -166,6 +172,13 @@ class Streamer(ABC):
                 print('File not found:{}'.format(f))
                 continue
         
+=======
+            with open(f, 'r', encoding="utf-8") as f:
+                data = json.loads(f.read())
+                if self.verbose:
+                    print("\rProcessing " + str(i) + " of " + str(flist_length), end='',flush=True)
+                text = data['body']
+>>>>>>> 6c0fb2e5047bb403b4513e09123597e321d8e66a
 
             # Language Filter
             if self.language and data['language_code'] != self.language:
