@@ -16,11 +16,7 @@ def aggregate_freq(word_list, country,period='quarter', stemmed=False,frequency_
     assert isinstance(word_list, list), 'Must pass a list to aggregate_freq'
     s_flag = '_stemmed' if stemmed else ''
     #data_path = '/home/ubuntu/Documents/v_e/data/frequency/{}_cleaned_{}_word_freqs{}.pkl'.format(country, period, s_flag)
-<<<<<<< HEAD
     data_path = os.path.join(frequency_path,'{}_{}_word_freqs{}.pkl'.format(country, period, s_flag))
-=======
-    data_path = os.path.join(frequency_path,'{}_processed_json_{}_word_freqs{}.pkl'.format(country, period, s_flag))
->>>>>>> 6c0fb2e5047bb403b4513e09123597e321d8e66a
     data = pd.read_pickle(data_path)
     freqs = [data.loc[word] for word in word_list if word in data.index]
     grp_freq = sum(freqs)

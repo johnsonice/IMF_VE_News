@@ -16,10 +16,7 @@ from crisis_points import crisis_points
 from evaluate import evaluate, get_recall, get_precision, get_fscore 
 import pandas as pd
 import os
-<<<<<<< HEAD
 import config
-=======
->>>>>>> 6c0fb2e5047bb403b4513e09123597e321d8e66a
 
 def get_country_stats(countries, words, frequency_path, window, years_prior, method, crisis_defs):
     country_stats = []
@@ -34,12 +31,8 @@ def get_country_stats(countries, words, frequency_path, window, years_prior, met
     return all_stats
 
 class args_class(object):
-<<<<<<< HEAD
     def __init__(self, targets,frequency_path=config.FREQUENCY,eval_path=config.EVAL_WG,wv_path = config.W2V,topn=config.topn,years_prior=config.years_prior,
                  window=config.smooth_window_size,countries=config.countries,
-=======
-    def __init__(self, targets,frequency_path='../data/frequency',eval_path='../data/eval/word_groups',wv_path = '../models/vsms/word_vecs_5_20_200',topn=15,years_prior=2,window=8,countries=crisis_points.keys(),
->>>>>>> 6c0fb2e5047bb403b4513e09123597e321d8e66a
                  method='zscore',crisis_defs='kr',sims=True):
         self.targets = targets
         self.frequency_path = frequency_path
@@ -80,13 +73,8 @@ if __name__ == '__main__':
         
         args = parser.parse_args()
     except:
-<<<<<<< HEAD
         args = args_class(targets=['fear', 'worry&risk','crisis','stress'],frequency_path=config.FREQUENCY,
                           countries = ['argentina'],wv_path = config.W2V,sims=True)
-=======
-        args = args_class(targets=['fear', 'worry&risk','crisis','stress'],frequency_path='../data/frequency',
-                          wv_path = '../models/vsms/word_vecs_5_20_200',sims=True)
->>>>>>> 6c0fb2e5047bb403b4513e09123597e321d8e66a
 
     # Parse input word groups
     word_groups = [wg.split('&') for wg in args.targets]
