@@ -8,6 +8,7 @@ import gensim
 import os
 from stream import SentStreamer_fast as SentStreamer
 import argparse
+import config 
 
 #%%
 def ngram_phraser(n, corpus, scoring, thresh, min_count, common_terms, language=None,verbose=False):
@@ -26,7 +27,10 @@ def ngram_phraser(n, corpus, scoring, thresh, min_count, common_terms, language=
 
     # use sent_stream generator to feed data to the phraser
     streamer = SentStreamer(corpus, language=language,stopwords=[], verbose=verbose)
-
+    if len(streamer.input_files) > config.SAMPLE_LIMIT:
+        streamer.input_files = streamer.input_files[-config.SAMPLE_LIMIT:]
+        print("number of input files is too large: only load last {}".format(config.SAMPLE_LIMIT))
+        
     if n == 2:
         print('Working on {}grams...'.format(n))
         phrase_model = gensim.models.Phrases(streamer.multi_process_files(), scoring=scoring, min_count=min_count, threshold=thresh,

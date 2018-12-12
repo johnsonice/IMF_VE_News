@@ -73,8 +73,8 @@ if __name__ == '__main__':
         
         args = parser.parse_args()
     except:
-        args = args_class(targets=['fear', 'worry&risk','crisis','stress'],frequency_path=config.FREQUENCY,
-                          countries = ['argentina'],wv_path = config.W2V,sims=True)
+        args = args_class(targets=config.targets,frequency_path=config.FREQUENCY,
+                          countries = config.countries,wv_path = config.W2V,sims=True)
 
     # Parse input word groups
     word_groups = [wg.split('&') for wg in args.targets]
@@ -87,7 +87,15 @@ if __name__ == '__main__':
             try:
                 sims = [w[0] for w in vecs.wv.most_similar(wg, topn=args.topn)]
             except KeyError:
-                continue
+                try:
+                    print(wg)
+                    wg_update = list()
+                    for w in wg:
+                        wg_update.extend(w.split('_'))
+                    sims = [w[0] for w in vecs.wv.most_similar(wg_update, topn=args.topn)]
+                except:
+                    print('Not in vocabulary: {}'.format(wg_update))
+                    continue
             words = sims + wg
         # otherwise the aggregate freq is just based on the term(s) in the current wg.
         else:
@@ -113,3 +121,4 @@ if __name__ == '__main__':
         #print('evaluated words: {}'.format(words))
         print('\n\n{}:\nevaluated words: {}\n\trecall: {}, precision: {}, f-score: {}'.format(wg,words,recall, prec, f2))
 
+        

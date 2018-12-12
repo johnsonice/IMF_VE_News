@@ -66,7 +66,7 @@ if __name__ == '__main__':
     #%%
     
     #df= df.head(5000)
-    df['data_path'] = json_data_path +df.index + '.json'
+    df['data_path'] = json_data_path+'/'+df.index + '.json'
     print('see one example : \n',df['data_path'].iloc[0])
     streamer = MetaStreamer(df['data_path'].tolist())
     news = streamer.multi_process_files(workers=31,chunk_size=5000)

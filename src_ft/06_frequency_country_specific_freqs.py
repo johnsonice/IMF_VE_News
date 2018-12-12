@@ -20,21 +20,21 @@ from region_mapping import region
 import argparse
 import config 
 
-def list_period_docs(time_df, corp_path, period, countries = config.countries):
-    # Gather lists of docs belonging to each period
-    print("gathering doc lists...")
-           
-    total_docs = len(time_df)
-    
-    for i, (id, data) in enumerate(time_df.iterrows()):
-        print('\r\t{} of {} processed'.format(i, total_docs), end=' ')
-        period_dict[data[period]].append(corp_path + "/" + id + ".json")
-    return period_dict
+#def list_period_docs(time_df, corp_path, period, countries = config.countries):
+#    # Gather lists of docs belonging to each period
+#    print("gathering doc lists...")
+#           
+#    total_docs = len(time_df)
+#    
+#    for i, (id, data) in enumerate(time_df.iterrows()):
+#        print('\r\t{} of {} processed'.format(i, total_docs), end=' ')
+#        period_dict[data[period]].append(corp_path + "/" + id + ".json")
+#    return period_dict
 
 def country_period_filter(time_df,country,period):
     
     time_df['filter_country'] = time_df['country'].apply(lambda c: country in c)
-    df = time_df['data_path'][(time_df['filter_country'] == True)&(time_df['quarter'] == period)]
+    df = time_df['data_path'][(time_df['filter_country'] == True)&(time_df[args.period] == period)]
     
     return df.tolist()
     
