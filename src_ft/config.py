@@ -36,6 +36,7 @@ BOW_TFIDF_DOCS = os.path.join(PROCESSING_FOLDER,'bow_tfidf_docs')
 FREQUENCY = os.path.join(PROCESSING_FOLDER,'frequency')
 EVAL = os.path.join(PROCESSING_FOLDER,'eval')
 EVAL_WG = os.path.join(EVAL,'word_groups')
+EVAL_TS = os.path.join(EVAL,'time_series')
 
 ## global file path ##
 DOC_META_FILE = os.path.join(DOC_META,'doc_details_crisis.pkl')
@@ -45,7 +46,7 @@ W2V = os.path.join(VS_MODELS,'word_vecs_5_50_200')
 EXPERT_TERMS = os.path.join(PROCESSING_FOLDER,'search_terms','expert_terms.csv')
 
 ## file specific inputs ##
-countries=crisis_points.keys()
+countries=list(crisis_points.keys())
 targets= ['fear','worry','concern','risk','threat','warn','maybe','may','possibly','could',
          'perhaps','uncertain','say','feel','predict','tell','believe','think','recession',
          'financial_crisis','crisis','depression','shock']
@@ -65,7 +66,7 @@ def maybe_create(f):
         
 if __name__ == "__main__":
     folders = [RAW_DATA_PATH,PROCESSING_FOLDER,SEARCH_TERMS,DOC_META,DOC_META,JSON_LEMMA,MODELS,NGRAMS,VS_MODELS,BOW_TFIDF_DOCS,
-               FREQUENCY,EVAL,EVAL_WG]
+               FREQUENCY,EVAL,EVAL_WG,EVAL_TS]
     weights = [DOC_META_FILE,PHRASER,W2V]
     
     for f in folders:

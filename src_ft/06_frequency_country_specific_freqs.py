@@ -58,7 +58,7 @@ def get_country_freqs(countries, period_choice, time_df, uniq_periods,outdir,phr
 #                                    title_filter=[country],
 #                                    phraser=phraser,lemmatize=False).multi_process_files(workers=int(os.cpu_count()/2),chunk_size = 500)
             streamer = DocStreamer_fast(doc_list, language='en',phraser=phraser,
-                                        lemmatize=False)#.multi_process_files(workers=2,chunk_size = 100)
+                                        stopwords=[], lemmatize=False)#.multi_process_files(workers=2,chunk_size = 100)
             # count
             for doc in streamer:
                 for token in doc:
