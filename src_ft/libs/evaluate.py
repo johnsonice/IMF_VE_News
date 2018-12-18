@@ -12,7 +12,7 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 def evaluate(word_list, country, frequency_path,method='zscore', crisis_defs='kr', period='quarter', 
-             stemmed=False, window=8, direction='incr', years_prior=2, fbeta=2):
+             stemmed=False, window=8, direction='incr', years_prior=2, fbeta=2,weights=None):
     """
     evaluates how the aggregate frequency of the provided word list performs based on the evaluation method
     and the crisis definitions provided.
@@ -40,7 +40,7 @@ def evaluate(word_list, country, frequency_path,method='zscore', crisis_defs='kr
     assert crisis_defs in ('kr', 'fund')
 
     # Setup
-    ag_freq = aggregate_freq(word_list, country, period, stemmed,frequency_path) ## sum frequency for specified words - it is pd series with time as index
+    ag_freq = aggregate_freq(word_list, country, period, stemmed,frequency_path,weights=weights) ## sum frequency for specified words - it is pd series with time as index
     if not isinstance(ag_freq, pd.Series):
         print('\nno data for {}\n'.format(country))
         return np.nan, np.nan, np.nan, np.nan, np.nan, np.nan # return NAN if no mentions of topic words in country data

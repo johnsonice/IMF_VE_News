@@ -120,7 +120,7 @@ class Streamer(ABC):
     def get_input_files(self):
         # Check that valid dir or file or list of files is supplied
         if isinstance(self.input, str) and os.path.isdir(self.input):
-            flist = glob(self.input + "/*.json")
+            flist = glob(os.path.join(self.input, "**/*.json"),recursive=True)
         elif isinstance(self.input, str) and os.path.isfile(self.input):
             flist = [self.input]
         elif isinstance(self.input, Iterable):

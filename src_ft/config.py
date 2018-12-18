@@ -14,14 +14,16 @@ pd.set_option('display.max_columns',10)
 sys.path.insert(0,'./libs')
 from crisis_points import crisis_points
 
-
+## global arguments
 MODE = 'test'# 'real'
-SAMPLE_LIMIT= 1500000           ## set max doc number, to fit into your memory 
-COUNTRY_FREQ_PERIOD = 'month'   ## for country specific bow calculation 
+SAMPLE_LIMIT= 500000           ## set max doc number, to fit into your memory 
+COUNTRY_FREQ_PERIOD = 'quarter'   ## for country specific bow calculation 
+WEIGHTED = True               ## do we want to weighted average on similar words when doing evaluation
+
 
 
 ## Global folder path ##
-RAW_DATA_PATH = '/data/News_data_raw/Financial_Times_processed/FT_json_historical'
+RAW_DATA_PATH = '/data/News_data_raw/Financial_Times_processed'
 
 PROCESSING_FOLDER = '/data/News_data_raw/FT_WD'
 DOC_META = os.path.join(PROCESSING_FOLDER,'doc_meta')
@@ -34,7 +36,11 @@ VS_MODELS = os.path.join(MODELS,'vsms')
 SEARCH_TERMS = os.path.join(PROCESSING_FOLDER,'search_terms')
 BOW_TFIDF_DOCS = os.path.join(PROCESSING_FOLDER,'bow_tfidf_docs')
 FREQUENCY = os.path.join(PROCESSING_FOLDER,'frequency')
+
 EVAL = os.path.join(PROCESSING_FOLDER,'eval')
+if WEIGHTED:
+    EVAL = os.path.join(PROCESSING_FOLDER,'eval_weighted')
+
 EVAL_WG = os.path.join(EVAL,'word_groups')
 EVAL_TS = os.path.join(EVAL,'time_series')
 
@@ -47,6 +53,8 @@ EXPERT_TERMS = os.path.join(PROCESSING_FOLDER,'search_terms','expert_terms.csv')
 
 ## file specific inputs ##
 countries=list(crisis_points.keys())
+common_terms = ['he','him','she','her','that','if','me','about','over']
+
 targets= ['fear','worry','concern','risk','threat','warn','maybe','may','possibly','could',
          'perhaps','uncertain','say','feel','predict','tell','believe','think','recession',
          'financial_crisis','crisis','depression','shock']

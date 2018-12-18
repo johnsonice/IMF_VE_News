@@ -12,15 +12,24 @@ from collections import defaultdict
 #from plot_utils import plot_frequency
 
 
-def aggregate_freq(word_list, country,period='quarter', stemmed=False,frequency_path='../data/frequency'):
+def aggregate_freq(word_list,country, period='quarter', stemmed=False,frequency_path='../data/frequency', weights=None):
     assert isinstance(word_list, list), 'Must pass a list to aggregate_freq'
     s_flag = '_stemmed' if stemmed else ''
+    if weights is None:
+        weights = [1]*len(word_list)
+    assert isinstance(weights, list), 'Must pass a list to aggregate_freq'
+    assert len(weights)==len(word_list), 'Weights list must have the same length as word list'
+    
+    ww = zip(word_list,weights)
+
     #data_path = '/home/ubuntu/Documents/v_e/data/frequency/{}_cleaned_{}_word_freqs{}.pkl'.format(country, period, s_flag)
     data_path = os.path.join(frequency_path,'{}_{}_word_freqs{}.pkl'.format(country, period, s_flag))
     data = pd.read_pickle(data_path)
-    freqs = [data.loc[word] for word in word_list if word in data.index]
+    freqs = [data.loc[word]*weight for word,weight in ww if word in data.index]
     grp_freq = sum(freqs)
+    
     return grp_freq
+
 
 def rolling_z_score(freqs, window=8):
     def z_func(x):

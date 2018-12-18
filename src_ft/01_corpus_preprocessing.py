@@ -8,8 +8,8 @@ import os
 from glob import glob
 import re
 import ujson as json
-import argparse
 from mp_utils import Mp
+from stream import SentStreamer_fast as SentStreamer
 import spacy
 #from spacy.lang.en.stop_words import STOP_WORDS as stops
 nlp = spacy.load("en_core_web_lg",disable=['tagger','ner','parser','textcat'])
@@ -56,18 +56,11 @@ class args_class(object):
         self.verbose = verbose
 
 if __name__ == '__main__':
-    try:
-        parser = argparse.ArgumentParser()
-        parser.add_argument('-i', '--in_dir', action='store', dest='in_dir', required=True)
-        parser.add_argument('-o', '--out_dir', action='store', dest='out_dir', required=True)
-        parser.add_argument('-o', '--verbose', action='store', dest='verbose', default=False)
-        args = parser.parse_args()
-    except:
-        ## give some default arguments
-        args = args_class(config.RAW_DATA_PATH,config.JSON_LEMMA, verbose = True)
+
+    args = args_class(config.RAW_DATA_PATH,config.JSON_LEMMA, verbose = True)
         
     ## grab all files 
-    flist = glob(args.in_dir + '/*.json')
+    flist = SentStreamer(args.in_dir).input_files
     fl_len = len(flist)
     print('Total number of files to process {}.\n'.format(fl_len))
 
