@@ -23,11 +23,12 @@ import random
 import statistics as stats
 
 #%%
-def get_stats(starts,ends,preds,offset,fbeta=2):
+def get_stats(starts,ends,preds,offset,period,fbeta=2):
     tp, fn, mid_crisis  = [], [], []
+    fq = period[0].lower()
     for s, e in zip(starts, ends):
-        forecast_window = pd.PeriodIndex(pd.date_range(s.to_timestamp() - offset, s.to_timestamp(), freq='q'), freq='q')
-        crisis_window = pd.PeriodIndex(pd.date_range(s.to_timestamp(), e.to_timestamp(), freq='q'), freq='q')
+        forecast_window = pd.PeriodIndex(pd.date_range(s.to_timestamp() - offset, s.to_timestamp(), freq=fq), freq=fq)
+        crisis_window = pd.PeriodIndex(pd.date_range(s.to_timestamp(), e.to_timestamp(), freq=fq), freq=fq)
     
         period_tp = []
         # Collect True positives and preds happening during crisis
@@ -62,35 +63,48 @@ def get_country_vocab(country,period='quarter',frequency_path=config.FREQUENCY):
 
 #%%
 if __name__ == "__main__":
-    period = 'quarter'
+    period = config.COUNTRY_FREQ_PERIOD
     vecs = KeyedVectors.load(config.W2V)
     vocabs =list(vecs.wv.vocab.keys())
+
     
     def average_score(country,vocabs=vocabs,period=period,n_words=20,n_iter = 100):
+        fq = period[0].lower()
         fscores = list()
-        c_vocab = get_country_vocab(country)
+        c_vocab = get_country_vocab(country,period=period)
         for seed in range(0,n_iter):
             random.seed(seed)
             word_groups = random.sample(vocabs,n_words*5)
             word_groups = [w for w in word_groups if w in c_vocab][:n_words]
-            #print(word_groups)
-            #word_groups = ['finance']
-            df = aggregate_freq(word_groups, country,period='quarter',stemmed=False,frequency_path=config.FREQUENCY)
-            offset = pd.DateOffset(years=2)
-            starts = list(pd.PeriodIndex(crisis_points[country]['starts'], freq='q'))
-            ends = list(pd.PeriodIndex(crisis_points[country]['peaks'], freq='q'))
-            preds = list(signif_change(df, window=8, direction='incr').index)
-            recall,precision,fscore = get_stats(starts,ends,preds,offset)
+            df = aggregate_freq(word_groups, 
+                                country,
+                                period=period,
+                                stemmed=False,
+                                frequency_path=config.FREQUENCY)
+            
+            ## make data ends at when crisis data ends 
+            df = df[:config.eval_end_date[fq]]
+            
+            if seed == 0: 
+                print(country)
+                print(df.head(2))
+            offset = pd.DateOffset(months=config.months_prior)
+            starts = list(pd.PeriodIndex(crisis_points[country]['starts'], freq=fq))
+            ends = list(pd.PeriodIndex(crisis_points[country]['peaks'], freq=fq))
+            preds = list(signif_change(df, window=config.smooth_window_size, direction='incr').index)
+            recall,precision,fscore = get_stats(starts,ends,preds,offset,period)
             #print(recall,precision,fscore)
             fscores.append(fscore)
+            
         
         return country,fscores,stats.mean(fscores),stats.stdev(fscores)
-
+    
+    #res = [average_score(config.countries[0])]
     
     mp = Mp(config.countries,average_score)
     res = mp.multi_process_files(chunk_size=1)
     df = pd.DataFrame(res,columns=['country','fscores','mean','std'])
-    out_csv = os.path.join(config.EVAL, 'ramdom_sampling_bench_mark.csv')
+    out_csv = os.path.join(config.EVAL, '{}_offset_{}_smooth_{}_ramdom_sampling_bench_mark.csv'.format(period,config.months_prior,config.smooth_window_size))
     df.to_csv(out_csv)
     
     print(df['mean'].mean())

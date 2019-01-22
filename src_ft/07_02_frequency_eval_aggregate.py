@@ -13,66 +13,34 @@ sys.path.insert(0,'./libs')
 #import argparse
 from gensim.models.keyedvectors import KeyedVectors
 from crisis_points import crisis_points
-from evaluate import evaluate, get_recall, get_precision, get_fscore 
+from evaluate import evaluate, get_recall, get_precision, get_fscore ,get_input_words_weights,get_country_stats
 import pandas as pd
 import os
 import config
 
-def get_country_stats(countries, words, frequency_path, window, months_prior, method, 
-                      crisis_defs,period,eval_end_date=None,weights=None):
-    country_stats = []
-    for country in countries:
-        stats = pd.Series(evaluate(words, 
-                                   country, 
-                                   frequency_path,
-                                   window=window, 
-                                   months_prior=months_prior, 
-                                   method=method, 
-                                   period=period,
-                                   crisis_defs=crisis_defs,
-                                   eval_end_date=eval_end_date,
-                                   weights=weights),
-                          index=['recall','precision','fscore','tp','fp','fn'], 
-                          name=country)  ## default period = quarter
-        country_stats.append(stats)
-    all_stats = pd.DataFrame(country_stats)
-    return all_stats
+#%%
+def read_grouped_search_words(file_path):
+    df = pd.read_csv(file_path)
+    search_groups = df.to_dict()
+    for k,v in search_groups.items():
+        temp_list = [i for i in list(v.values()) if not pd.isna(i)]
+        temp_list = [wg.split('&') for wg in temp_list]   ## split & for wv search 
+        search_groups[k]=temp_list
+    return search_groups
 
-def get_input_words_weights(args,wg,vecs=None,weighted=False):
-    # use topn most similar terms as words for aggregate freq if args.sims
-    if args.sims:
-        #vecs = KeyedVectors.load(args.wv_path)
-        try:
-            sims = [w for w in vecs.wv.most_similar(wg, topn=args.topn)]    ## get similar words and weights 
-        except KeyError:
-            try:
-                print(wg)
-                wg_update = list()
-                for w in wg:
-                    wg_update.extend(w.split('_'))
-                sims = [w for w in vecs.wv.most_similar(wg_update, topn=args.topn)]
-            except:
-                #print('Not in vocabulary: {}'.format(wg_update))
-                raise Exception('Not in vocabulary: {}'.format(wg_update))
-                
-        wgw = [(w,1) for w in wg]  ## assign weight 1 for original words
-        words_weights = sims + wgw   
-    # otherwise the aggregate freq is just based on the term(s) in the current wg.
-    else:
-        wgw = [(w,1) for w in wg]  ## assign weight 1 for original words
-        words_weights = wgw
+def get_sim_words_set(args,word_group):
+    assert isinstance(word_group,list)     
+    sim_word_group = list()
+    for w in word_group:
+        words, weights = get_input_words_weights(args,
+                                             w,
+                                             vecs=vecs,
+                                             weighted=args.weighted)
+        sim_word_group.extend(words)
+    sim_word_set = set(sim_word_group)
+    return sim_word_set
     
-    ## get words and weights as seperate list
-    words = [w[0] for w in words_weights]
-    
-    if weighted:    
-        weights = [w[1] for w in words_weights]
-    else:
-        weights= None
-    
-    return words,weights
-        
-    
+
 class args_class(object):
     def __init__(self, targets,frequency_path=config.FREQUENCY,eval_path=config.EVAL_WG,
                  wv_path = config.W2V,topn=config.topn,months_prior=config.months_prior,
@@ -95,7 +63,7 @@ class args_class(object):
         self.crisis_defs = crisis_defs
         self.sims = sims
         self.weighted = weighted
-
+#%%
 if __name__ == '__main__':
     
     ## load config arguments
@@ -109,36 +77,32 @@ if __name__ == '__main__':
 
     # Parse input word groups, word_gropus is a list of list:
     # something like this: [['fear'],['worry'],['concern'],['risk'],['threat'],['warn'],['maybe']]
-    word_groups = [wg.split('&') for wg in args.targets]
-    
-    if args.weighted:    
-        print('Weighted flag = True ; Results are aggregated by weighted sum....')
-        
+    file_path = os.path.join(config.SEARCH_TERMS,'grouped_search_words.csv')
+    search_groups = read_grouped_search_words(file_path)  
+    ## it is a dictionary list:
+#       {'fear_language': ['fear'],
+#       'risk_language': ['threat', 'warn'],
+#       'hedging_language': ['could', 'perhaps', 'may', 'possibly', 'uncertain'],
+#       'opinion_language': ['say', 'predict', 'tell', 'believe'],
+#       'risis_language': ['financial_crisis', 'depression']}
     if args.sims:
         vecs = KeyedVectors.load(args.wv_path)
+        
+    if args.weighted:   
+        raise Exception('for now, this module only works for unweighted calculation')
+        print('Weighted flag = True ; Results are aggregated by weighted sum....')
+    else:
+        search_words_sets = dict()
+        for k,v in search_groups.items():
+            search_words_sets[k]=list(get_sim_words_set(args,search_groups[k])) ## turn set to list
+        weights = None
     
+    #%%
     # Get prec, rec, and fscore for each country for each word group
-    
     overall_res = list()
     
-    for wg in word_groups: 
-        if args.sims:
-            # use topn most similar terms as words for aggregate freq if args.sims
-            try:
-                # get words and weights. weights will be 1s if weight flag is false
-                # otherwise weights will be cos distance 
-                words, weights = get_input_words_weights(args,
-                                                         wg,
-                                                         vecs=vecs,
-                                                         weighted=args.weighted)
-            except:
-                print('Not in vocabulary: {}'.format(wg))
-                continue
-        else:
-            if isinstance(wg,list):
-                words = wg 
-            else:
-                words = [wg]
+    for k,words in search_words_sets.items(): 
+        # use topn most similar terms as words for aggregate freq if args.sims
         
         # get dataframe of evaluation metrics for each indivicual country
         all_stats = get_country_stats(args.countries, words, 
@@ -164,18 +128,18 @@ if __name__ == '__main__':
 
         # Save to file and print results
         all_stats.to_csv(os.path.join(args.eval_path,
-                                      '{}_offset_{}_smoothwindow_{}_{}_evaluation.csv'.format(args.period,
+                                      'agg_{}_offset_{}_smoothwindow_{}_{}_evaluation.csv'.format(args.period,
                                                                                args.months_prior,
                                                                                args.window,
-                                                                               '_'.join(wg))))
+                                                                               k)))
 
         #print('evaluated words: {}'.format(words))
         if args.weighted: 
-            overall_res.append((wg,list(zip(words,weights)),recall, prec, f2))
+            overall_res.append((k,list(zip(words,weights)),recall, prec, f2))
         else:
-            overall_res.append((wg,words,recall, prec, f2))
-        print('\n\n{}:\nevaluated words: {}\n\trecall: {}, precision: {}, f-score: {}'.format(wg,words,recall, prec, f2))
+            overall_res.append((k,words,recall, prec, f2))
+        print('\n\n{}:\nevaluated words: {}\n\trecall: {}, precision: {}, f-score: {}'.format(k,words,recall, prec, f2))
 
     ## export over all resoults to csv
     df = pd.DataFrame(overall_res,columns=['word','sim_words','recall','prec','f2'])
-    df.to_csv(os.path.join(args.eval_path,'overall_{}_offset_{}_smoothwindow_{}_evaluation.csv'.format(args.period,args.months_prior,args.window)))
+    df.to_csv(os.path.join(args.eval_path,'agg_overall_{}_offset_{}_smoothwindow_{}_evaluation.csv'.format(args.period,args.months_prior,args.window)))

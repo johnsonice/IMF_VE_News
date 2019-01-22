@@ -10,7 +10,7 @@ from gensim.models.keyedvectors import KeyedVectors
 from sklearn.cluster import KMeans
 from collections import defaultdict
 #from plot_utils import plot_frequency
-
+#%%
 
 def aggregate_freq(word_list,country, period='quarter', stemmed=False,frequency_path='../data/frequency', weights=None):
     assert isinstance(word_list, list), 'Must pass a list to aggregate_freq'
@@ -31,12 +31,12 @@ def aggregate_freq(word_list,country, period='quarter', stemmed=False,frequency_
     return grp_freq
 
 
-def rolling_z_score(freqs, window=8):
+def rolling_z_score(freqs, window=24):
     def z_func(x):
         return (x[-1] - x[:-1].mean()) / x[:-1].std(ddof=0)
     return freqs.rolling(window=window+1).apply(z_func, raw=True)
 
-def signif_change(freqs, window=8, direction=None):
+def signif_change(freqs, window=24,period='month', direction=None):
     """
     find periods for which there was a significant change wrt the rolling average.
 
@@ -45,6 +45,13 @@ def signif_change(freqs, window=8, direction=None):
     direction: (str or NoneType) None for both signif increase and decrease, otherwise 'incr' or 'decr'
     """
     assert isinstance(freqs, pd.Series)
+    fq = period[0].lower()
+    assert fq in ['m','q']
+    if fq == 'q':
+        window = int(window/3)
+    
+#    print('rolling z score window: {} {}'.format(window,period))
+    
     z_scores = rolling_z_score(freqs, window)
     if not direction:
         result = z_scores[(z_scores >= 1.96) | (z_scores <= -1.96)]

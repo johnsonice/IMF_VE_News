@@ -11,8 +11,10 @@ from anomaly_detection_hpfilter_mad import anomaly_detection
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-def evaluate(word_list, country, frequency_path,method='zscore', crisis_defs='kr', period='quarter', 
-             stemmed=False, window=8, direction='incr', years_prior=2, fbeta=2,weights=None):
+def evaluate(word_list, country, frequency_path,method='zscore', 
+             crisis_defs='kr',period='month', stemmed=False, 
+             window=24, direction='incr', months_prior=24, fbeta=2,
+             eval_end_date=None,weights=None):
     """
     evaluates how the aggregate frequency of the provided word list performs based on the evaluation method
     and the crisis definitions provided.
@@ -38,28 +40,33 @@ def evaluate(word_list, country, frequency_path,method='zscore', crisis_defs='kr
     assert period in ('quarter','month','week','year')
     assert direction in ('incr', 'decr', None)
     assert crisis_defs in ('kr', 'fund')
-
+    fq = period[0].lower()
+    assert fq in ('q','m')  ## make sure period is set to eight quarter or month
+    
     # Setup
-    ag_freq = aggregate_freq(word_list, country, period, stemmed,frequency_path,weights=weights) ## sum frequency for specified words - it is pd series with time as index
+    ag_freq = aggregate_freq(word_list, country, period, stemmed,frequency_path,weights=weights)        ## sum frequency for specified words - it is pd series with time as index
     if not isinstance(ag_freq, pd.Series):
         print('\nno data for {}\n'.format(country))
         return np.nan, np.nan, np.nan, np.nan, np.nan, np.nan # return NAN if no mentions of topic words in country data
-    offset = pd.DateOffset(years=years_prior)
+    offset = pd.DateOffset(months=months_prior)
 
     # Get start and 'end' periods for crises depending on definition
     if crisis_defs == 'kr':
-        ag_freq = ag_freq[:'1999Q2'] # Don't look beyond when Kaminsky and Reinhart puyblished in 1999
-        starts = list(pd.PeriodIndex(crisis_points[country]['starts'], freq='q'))
-        ends = list(pd.PeriodIndex(crisis_points[country]['peaks'], freq='q'))
-    elif crisis_defs == 'fund':
-        crises = pd.read('../data/crises.csv')
-        country_crises = crises[crises['country_name'] == country]['years']
-        starts = [pd.Period('{}-01'.format(year), freq='q') for year in set(country_crises)]
-        ends = [pd.Period('{}-01'.format(int(year) + 1), freq='q') for year in set(country_crises)]
+        ag_freq = ag_freq[:eval_end_date[fq]] # Don't look beyond when Kaminsky and 
+        starts = list(pd.PeriodIndex(crisis_points[country]['starts'], freq=fq))
+        ends = list(pd.PeriodIndex(crisis_points[country]['peaks'], freq=fq))
+#    elif crisis_defs == 'fund':
+#        crises = pd.read('../data/crises.csv')
+#        country_crises = crises[crises['country_name'] == country]['years']
+#        starts = [pd.Period('{}-01'.format(year), freq=fq) for year in set(country_crises)]
+#        ends = [pd.Period('{}-01'.format(int(year) + 1), freq=fq) for year in set(country_crises)]
 
     # Get periods for which desired method detects outliers
     if method == 'zscore':
-        preds = list(signif_change(ag_freq, window, direction).index) ## it return a list of time stamp e.g: [Period('2001Q3', 'Q-DEC')]
+        preds = list(signif_change(ag_freq, 
+                                   window, 
+                                   period=period,
+                                   direction=direction).index) ## it return a list of time stamp e.g: [Period('2001Q3', 'Q-DEC')] or [Period('2001-03', 'M-DEC')]
     elif method == 'hpfilter':
         preds = anomaly_detection(ag_freq)
 
@@ -69,8 +76,8 @@ def evaluate(word_list, country, frequency_path,method='zscore', crisis_defs='kr
     # False Negatives: The number of crises without an anomaly occuring in the forecast window
     tp, fn, mid_crisis  = [], [], []
     for s, e in zip(starts, ends):
-        forecast_window = pd.PeriodIndex(pd.date_range(s.to_timestamp() - offset, s.to_timestamp()), freq='q')
-        crisis_window = pd.PeriodIndex(pd.date_range(s.to_timestamp(), e.to_timestamp()), freq='q')
+        forecast_window = pd.PeriodIndex(pd.date_range(s.to_timestamp() - offset, s.to_timestamp()), freq=fq)
+        crisis_window = pd.PeriodIndex(pd.date_range(s.to_timestamp(), e.to_timestamp()), freq=fq)
 
         period_tp = []
         # Collect True positives and preds happening during crisis
@@ -113,3 +120,60 @@ def get_fscore(tp, fp, fn, beta):
         return ((1+beta**2) * tp) / ((1+beta**2) * tp + (beta**2 * fn) + fp)
     except Zero :
         return np.nan
+
+
+## get country specific statistics
+def get_country_stats(countries, words, frequency_path, window, months_prior, method, 
+                      crisis_defs,period,eval_end_date=None,weights=None):
+    country_stats = []
+    for country in countries:
+        stats = pd.Series(evaluate(words, 
+                                   country, 
+                                   frequency_path,
+                                   window=window, 
+                                   months_prior=months_prior, 
+                                   method=method, 
+                                   period=period,
+                                   crisis_defs=crisis_defs,
+                                   eval_end_date=eval_end_date,
+                                   weights=weights),
+                          index=['recall','precision','fscore','tp','fp','fn'], 
+                          name=country)  ## default period = quarter
+        country_stats.append(stats)
+    all_stats = pd.DataFrame(country_stats)
+    return all_stats
+
+## get w2v related words with wieghts 
+def get_input_words_weights(args,wg,vecs=None,weighted=False):
+    # use topn most similar terms as words for aggregate freq if args.sims
+    if args.sims:
+        #vecs = KeyedVectors.load(args.wv_path)
+        try:
+            sims = [w for w in vecs.wv.most_similar(wg, topn=args.topn)]    ## get similar words and weights 
+        except KeyError:
+            try:
+                print('{} was splited for sim words searching..'.format(wg))
+                wg_update = list()
+                for w in wg:
+                    wg_update.extend(w.split('_'))
+                sims = [w for w in vecs.wv.most_similar(wg_update, topn=args.topn)]
+            except:
+                #print('Not in vocabulary: {}'.format(wg_update))
+                raise Exception('Not in vocabulary: {}'.format(wg_update))
+                
+        wgw = [(w,1) for w in wg]  ## assign weight 1 for original words
+        words_weights = sims + wgw   
+    # otherwise the aggregate freq is just based on the term(s) in the current wg.
+    else:
+        wgw = [(w,1) for w in wg]  ## assign weight 1 for original words
+        words_weights = wgw
+    
+    ## get words and weights as seperate list
+    words = [w[0] for w in words_weights]
+    
+    if weighted:    
+        weights = [w[1] for w in words_weights]
+    else:
+        weights= None
+    
+    return words,weights

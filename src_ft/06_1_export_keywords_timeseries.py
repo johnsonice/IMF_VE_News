@@ -61,11 +61,11 @@ def get_stats(starts,ends,preds,offset,fbeta=2):
     
     return recall,precision,fscore
 
-def get_country_vocab(country,period='quarter',frequency_path=config.FREQUENCY):
-    data_path = os.path.join(frequency_path,'{}_{}_word_freqs.pkl'.format(country, period))
-    data = pd.read_pickle(data_path)
-    vocab = list(data.index)
-    return vocab
+#def get_country_vocab(country,period='quarter',frequency_path=config.FREQUENCY):
+#    data_path = os.path.join(frequency_path,'{}_{}_word_freqs.pkl'.format(country, period))
+#    data = pd.read_pickle(data_path)
+#    vocab = list(data.index)
+#    return vocab
 
 def get_sim_words(vecs,wg,topn):
     if not isinstance(wg,list): 
@@ -74,11 +74,11 @@ def get_sim_words(vecs,wg,topn):
         sims = [w[0] for w in vecs.wv.most_similar(wg, topn=topn)]
     except KeyError:
         try:
-            print(wg)
             wg_update = list()
             for w in wg:
                 wg_update.extend(w.split('_'))
             sims = [w[0] for w in vecs.wv.most_similar(wg_update, topn=topn)]
+            print('Warning: {} not in the vocabulary, split the word with _'.format(wg))
         except:
             print('Not in vocabulary: {}'.format(wg_update))
             return wg
@@ -87,7 +87,7 @@ def get_sim_words(vecs,wg,topn):
 
 #%%
 if __name__ == "__main__":
-    period = 'quarter'
+    period = config.COUNTRY_FREQ_PERIOD
     vecs = KeyedVectors.load(config.W2V)
     
     def export_country_ts(country,period=period,vecs=vecs):
@@ -99,7 +99,7 @@ if __name__ == "__main__":
             series_wg.append(df)
         
         df_all = pd.concat(series_wg,axis=1)
-        out_csv = os.path.join(config.EVAL_TS, '{}_time_series.csv'.format(country))
+        out_csv = os.path.join(config.EVAL_TS, '{}_{}_time_series.csv'.format(country,period))
         df_all.to_csv(out_csv)
         
         return country,df_all
