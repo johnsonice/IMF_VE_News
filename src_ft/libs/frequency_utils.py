@@ -36,7 +36,7 @@ def rolling_z_score(freqs, window=24):
         return (x[-1] - x[:-1].mean()) / x[:-1].std(ddof=0)
     return freqs.rolling(window=window+1).apply(z_func, raw=True)
 
-def signif_change(freqs, window=24,period='month', direction=None):
+def signif_change(freqs, window=24,period='month', direction=None,z_thresh=1.96):
     """
     find periods for which there was a significant change wrt the rolling average.
 
@@ -54,12 +54,12 @@ def signif_change(freqs, window=24,period='month', direction=None):
     
     z_scores = rolling_z_score(freqs, window)
     if not direction:
-        result = z_scores[(z_scores >= 1.96) | (z_scores <= -1.96)]
+        result = z_scores[(z_scores >= z_thresh) | (z_scores <= -z_thresh)]
     else:
         if 'incr' in direction:
-            result = z_scores[z_scores >= 1.96]
+            result = z_scores[z_scores >= z_thresh]
         elif 'decr' in direction:
-            result = z_scores[z_scores <= -1.96]
+            result = z_scores[z_scores <= -z_thresh]
         else: 
             raise ValueError
 

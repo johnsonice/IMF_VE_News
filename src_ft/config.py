@@ -19,18 +19,24 @@ MODE = 'test'# 'real'
 SAMPLE_LIMIT= 500000            ## set max doc number, to fit into your memory 
 COUNTRY_FREQ_PERIOD = 'month'   ## for country specific bow calculation 
 WEIGHTED = False                 ## do we want to weighted average on similar words when doing evaluation
+SIM = True
 VERBOSE = True
 
 ## file specific inputs ##
 countries=list(crisis_points.keys())
 common_terms = ['he','him','she','her','that','if','me','about','over']
 
-targets= ['fear','worry','concern','risk','threat','warn','maybe','may','possibly','could',
-         'perhaps','uncertain','say','feel','predict','tell','believe','think','recession',
-         'financial_crisis','crisis','depression','shock']
+#targets= ['fear','worry','concern','risk','threat','warn','maybe','may','possibly','could',
+#         'perhaps','uncertain','say','feel','predict','tell','believe','think','recession',
+#         'financial_crisis','crisis','depression','shock']
+
+targets= ['able', 'enable', 'grow', 'adequately', 'benign', 'buoyant', 'buoyancy', 'calm', 'comfortable', 'confidence', 'confident', 'effective', 'enhance', 'favorable', 'favourable', 'favourably', 'healthy', 'improve', 'improvement', 'mitigate', 'mitigation', 'positive', 'positively', 'profits', 'profitable', 'rally', 'rebound', 'recover', 'recovery', 'resilience', 'resilient', 'smooth', 'solid', 'sound', 'stabilise', 'stabilize', 'stable', 'success', 'successful', 'successfully']
+
+
 smooth_window_size = 24 # put as months , even if for quarterly data, put it as months
                         # it will automatically convert to quarterly
-months_prior = 24        # same here, put as months
+months_prior = 24       # same here, put as months
+z_thresh = 2            # how many standard deviations away we think that is a spike 
 topn = 15
 eval_end_date = {'q':'2001Q4',
                  'm':'2001-12'}  # or None

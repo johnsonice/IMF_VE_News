@@ -43,6 +43,38 @@ def get_sim_words_set(args,word_group):
     sim_word_set = set(sim_word_group)
     return sim_word_set
     
+def get_crisis_wondiws(args,crisis_points,country):
+    
+    starts = list(pd.PeriodIndex(crisis_points[country]['starts'], freq=args.period[0]))
+    ends = list(pd.PeriodIndex(crisis_points[country]['peaks'], freq=args.period[0]))
+    
+    crisis_windows=None
+    for s, e in zip(starts, ends):
+        if crisis_windows is None:
+            crisis_windows = pd.PeriodIndex(pd.date_range(s.to_timestamp(), e.to_timestamp()), freq=args.period[0])
+        else:
+            crisis_window = pd.PeriodIndex(pd.date_range(s.to_timestamp(), e.to_timestamp()), freq=args.period[0])
+            crisis_windows= crisis_windows.append(crisis_window)
+    
+    ## drop duplicates
+    crisis_windows=crisis_windows.drop_duplicates()
+    
+    ## create crisis df for merging
+    crisis_df = pd.DataFrame(np.ones(len(crisis_windows)),index=crisis_windows,columns=['crisis_window'])
+    crisis_df.sort_index(inplace=True)
+    
+    return crisis_df
+
+def get_bop_crisis(args,crisis_points,country):
+    
+    bop_crisis = list(pd.PeriodIndex(crisis_points[country]['bop'], freq=args.period[0]))
+    if len(bop_crisis) == 0: 
+        return None
+    else:
+        bop_crisis_df = pd.DataFrame(np.ones(len(bop_crisis)),index=bop_crisis,columns=['bop_crisis'])
+        bop_crisis_df.sort_index(inplace=True)
+    
+    return bop_crisis_df
 
 class args_class(object):
     def __init__(self, targets,frequency_path=config.FREQUENCY,eval_path=config.EVAL_WG,
@@ -67,6 +99,17 @@ class args_class(object):
         self.sims = sims
         self.weighted = weighted
 #%%
+args = args_class(targets=config.targets,frequency_path=config.FREQUENCY,
+              countries = config.countries,wv_path = config.W2V,
+              sims=True,period=config.COUNTRY_FREQ_PERIOD, 
+              months_prior=config.months_prior,
+              window=config.smooth_window_size,
+              eval_end_date=config.eval_end_date,
+              weighted= config.WEIGHTED)
+
+test = get_crisis_wondiws(args,crisis_points,'argentina')
+        
+        #%%
 if __name__ == '__main__':
     
     ## load config arguments
@@ -100,7 +143,6 @@ if __name__ == '__main__':
             search_words_sets[k]=list(get_sim_words_set(args,search_groups[k])) ## turn set to list
         weights = None
     
-#%% 
     def export_country_ts(country,search_words_sets=search_words_sets,period=args.period,export=True):
         series_wg = list()
         for k,words in search_words_sets.items(): 
@@ -119,6 +161,17 @@ if __name__ == '__main__':
             series_wg.append(df)
 
         df_all = pd.concat(series_wg,axis=1)
+        crisis_df = get_crisis_wondiws(args,crisis_points,country)
+        bop_crisis_df = get_bop_crisis(args,crisis_points,country)
+        
+        ## merge crisis events 
+        df_all=df_all.join(crisis_df)
+        
+        if bop_crisis_df is None:
+            df_all['bop_crisis'] = 0 
+        else:
+            df_all=df_all.join(bop_crisis_df)
+            
         df_all.fillna(0,inplace=True)
         
         if export:
@@ -127,8 +180,14 @@ if __name__ == '__main__':
         
         return country,df_all
 
+#    country = "argentina"
+#    c,d = export_country_ts(country)
+#    
+
+        mp = Mp(config.countries,export_country_ts)
+        res = mp.multi_process_files(chunk_size=1)
     
-    mp = Mp(config.countries,export_country_ts)
-    res = mp.multi_process_files(chunk_size=1)
-    
-    
+
+
+
+        

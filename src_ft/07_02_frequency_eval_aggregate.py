@@ -39,7 +39,7 @@ def get_sim_words_set(args,word_group):
         sim_word_group.extend(words)
     sim_word_set = set(sim_word_group)
     return sim_word_set
-    
+
 
 class args_class(object):
     def __init__(self, targets,frequency_path=config.FREQUENCY,eval_path=config.EVAL_WG,
@@ -48,7 +48,8 @@ class args_class(object):
                  countries=config.countries,
                  period=config.COUNTRY_FREQ_PERIOD,
                  eval_end_date=config.eval_end_date,
-                 method='zscore',crisis_defs='kr',sims=True,weighted=False):
+                 method='zscore',crisis_defs='kr',
+                 sims=True,weighted=False,z_thresh=config.z_thresh):
         self.targets = targets
         self.frequency_path = frequency_path
         self.eval_path=eval_path
@@ -63,28 +64,28 @@ class args_class(object):
         self.crisis_defs = crisis_defs
         self.sims = sims
         self.weighted = weighted
+        self.z_thresh= z_thresh
 #%%
 if __name__ == '__main__':
     
     ## load config arguments
     args = args_class(targets=config.targets,frequency_path=config.FREQUENCY,
                           countries = config.countries,wv_path = config.W2V,
-                          sims=True,period=config.COUNTRY_FREQ_PERIOD, 
+                          sims=config.SIM,period=config.COUNTRY_FREQ_PERIOD, 
                           months_prior=config.months_prior,
                           window=config.smooth_window_size,
                           eval_end_date=config.eval_end_date,
-                          weighted= config.WEIGHTED)
+                          weighted= config.WEIGHTED,
+                          z_thresh=config.z_thresh)
 
     # Parse input word groups, word_gropus is a list of list:
     # something like this: [['fear'],['worry'],['concern'],['risk'],['threat'],['warn'],['maybe']]
     file_path = os.path.join(config.SEARCH_TERMS,'grouped_search_words.csv')
     search_groups = read_grouped_search_words(file_path)  
     ## it is a dictionary list:
-#       {'fear_language': ['fear'],
-#       'risk_language': ['threat', 'warn'],
-#       'hedging_language': ['could', 'perhaps', 'may', 'possibly', 'uncertain'],
-#       'opinion_language': ['say', 'predict', 'tell', 'believe'],
-#       'risis_language': ['financial_crisis', 'depression']}
+#       {'fear_language': [['fear']],
+#       'risk_language': [['threat'], ['warn']]}
+
     if args.sims:
         vecs = KeyedVectors.load(args.wv_path)
         
@@ -94,9 +95,13 @@ if __name__ == '__main__':
     else:
         search_words_sets = dict()
         for k,v in search_groups.items():
-            search_words_sets[k]=list(get_sim_words_set(args,search_groups[k])) ## turn set to list
+            if args.sims:
+                search_words_sets[k]=list(get_sim_words_set(args,search_groups[k])) ## turn set to list
+            else:
+                search_words_sets[k] = [t for tl in v for t in tl] ## flattern the list of list 
         weights = None
     
+    #print(search_words_sets)
     #%%
     # Get prec, rec, and fscore for each country for each word group
     overall_res = list()
@@ -128,10 +133,11 @@ if __name__ == '__main__':
 
         # Save to file and print results
         all_stats.to_csv(os.path.join(args.eval_path,
-                                      'agg_{}_offset_{}_smoothwindow_{}_{}_evaluation.csv'.format(args.period,
-                                                                               args.months_prior,
-                                                                               args.window,
-                                                                               k)))
+                                      'agg_sim_{}_{}_offset_{}_smoothwindow_{}_{}_evaluation.csv'.format(args.sims,
+                                                                                                       args.period,
+                                                                                                       args.months_prior,
+                                                                                                       args.window,
+                                                                                                       k)))
 
         #print('evaluated words: {}'.format(words))
         if args.weighted: 
@@ -142,4 +148,4 @@ if __name__ == '__main__':
 
     ## export over all resoults to csv
     df = pd.DataFrame(overall_res,columns=['word','sim_words','recall','prec','f2'])
-    df.to_csv(os.path.join(args.eval_path,'agg_overall_{}_offset_{}_smoothwindow_{}_evaluation.csv'.format(args.period,args.months_prior,args.window)))
+    df.to_csv(os.path.join(args.eval_path,'agg_sim_{}_overall_{}_offset_{}_smoothwindow_{}_evaluation.csv'.format(args.sims,args.period,args.months_prior,args.window)))
