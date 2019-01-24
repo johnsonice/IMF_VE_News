@@ -137,8 +137,7 @@ if __name__ == '__main__':
     
     # Get prec, rec, and fscore for each country for each word group
     iter_items = get_key_sim_pair(word_groups,args,vecs)
-    
-    #%%
+
     #overall_res = list()
     # run in multi process
     def multi_run_eval(wg,args=args):
@@ -146,68 +145,8 @@ if __name__ == '__main__':
         return res_stats
     
     mp = Mp(iter_items,multi_run_eval)
-    overall_res = mp.multi_process_files(workers=5, chunk_size=1)  ## do not set workers to be too high, your memory will explode
+    overall_res = mp.multi_process_files(workers=10, chunk_size=1)  ## do not set workers to be too high, your memory will explode
     
     ## export over all resoults to csv
     df = pd.DataFrame(overall_res,columns=['word','sim_words','recall','prec','f2'])
-    df.to_csv(os.path.join(args.eval_path,'overall_{}_offset_{}_smoothwindow_{ _evaluation.csv'.format(args.period,args.months_prior,args.window)))
-#    for wg in word_groups: 
-        
-#        if args.sims:
-#            # use topn most similar terms as words for aggregate freq if args.sims
-#            try:
-#                # get words and weights. weights will be 1s if weight flag is false
-#                # otherwise weights will be cos distance 
-#                words, weights = get_input_words_weights(args,
-#                                                         wg,
-#                                                         vecs=vecs,
-#                                                         weighted=args.weighted)
-#            except:
-#                print('Not in vocabulary: {}'.format(wg))
-#                continue
-#        else:
-#            weights= None  ## if not using w2v , set weights to None
-#            if isinstance(wg,list):
-#                words = wg 
-#            else:
-#                words = [wg]
-#            
-#        # get dataframe of evaluation metrics for each indivicual country
-#        all_stats = get_country_stats(args.countries, words, 
-#                                      args.frequency_path,
-#                                      args.window, 
-#                                      args.months_prior, 
-#                                      args.method, 
-#                                      args.crisis_defs, 
-#                                      period=args.period,
-#                                      eval_end_date=args.eval_end_date,
-#                                      weights=weights)
-#
-#
-#        # Aggregate tp, fp, fn numbers for all countries to calc overall eval metrics
-#        tp, fp, fn = all_stats['tp'].sum(), all_stats['fp'].sum(), all_stats['fn'].sum()
-#        recall = get_recall(tp, fn)
-#        prec = get_precision(tp, fp)
-#        f2 = get_fscore(tp, fp, fn, beta=2)
-#        avg = pd.Series([recall, prec, f2, tp, fp, fn], 
-#                        name='aggregate', 
-#                        index=['recall','precision','fscore','tp','fp','fn'])
-#        all_stats = all_stats.append(avg)
-#
-#        # Save to file and print results
-#        all_stats.to_csv(os.path.join(args.eval_path,
-#                                      '{}_offset_{}_smoothwindow_{}_{}_evaluation.csv'.format(args.period,
-#                                                                               args.months_prior,
-#                                                                               args.window,
-#                                                                               '_'.join(wg))))
-#
-#        #print('evaluated words: {}'.format(words))
-#        if args.weighted: 
-#            overall_res.append((wg,list(zip(words,weights)),recall, prec, f2))
-#        else:
-#            overall_res.append((wg,words,recall, prec, f2))
-#        print('\n\n{}:\nevaluated words: {}\n\trecall: {}, precision: {}, f-score: {}'.format(wg,words,recall, prec, f2))
-#
-#    ## export over all resoults to csv
-#    df = pd.DataFrame(overall_res,columns=['word','sim_words','recall','prec','f2'])
-#    df.to_csv(os.path.join(args.eval_path,'overall_{}_offset_{}_smoothwindow_{}_evaluation.csv'.format(args.period,args.months_prior,args.window)))
+    df.to_csv(os.path.join(args.eval_path,'overall_{}_offset_{}_smoothwindow_{} _evaluation.csv'.format(args.period,args.months_prior,args.window)))
