@@ -22,25 +22,13 @@ WEIGHTED = False                 ## do we want to weighted average on similar wo
 SIM = True
 VERBOSE = True
 
-## file specific inputs ##
-countries=list(crisis_points.keys())
-common_terms = ['he','him','she','her','that','if','me','about','over']
-
-#targets= ['fear','worry','concern','risk','threat','warn','maybe','may','possibly','could',
-#         'perhaps','uncertain','say','feel','predict','tell','believe','think','recession',
-#         'financial_crisis','crisis','depression','shock']
-
-targets= ['able', 'enable', 'grow', 'adequately', 'benign', 'buoyant', 'buoyancy', 'calm', 'comfortable', 'confidence', 'confident', 'effective', 'enhance', 'favorable', 'favourable', 'favourably', 'healthy', 'improve', 'improvement', 'mitigate', 'mitigation', 'positive', 'positively', 'profits', 'profitable', 'rally', 'rebound', 'recover', 'recovery', 'resilience', 'resilient', 'smooth', 'solid', 'sound', 'stabilise', 'stabilize', 'stable', 'success', 'successful', 'successfully']
-
-
 smooth_window_size = 24 # put as months , even if for quarterly data, put it as months
                         # it will automatically convert to quarterly
 months_prior = 24       # same here, put as months
-z_thresh = 2            # how many standard deviations away we think that is a spike 
+z_thresh = 2.5            # how many standard deviations away we think that is a spike 
 topn = 15
 eval_end_date = {'q':'2001Q4',
                  'm':'2001-12'}  # or None
-
 
 ## Global folder path ##
 RAW_DATA_PATH = '/data/News_data_raw/Financial_Times_processed'
@@ -72,6 +60,44 @@ W2V = os.path.join(VS_MODELS,'word_vecs_5_50_200')
 EXPERT_TERMS = os.path.join(PROCESSING_FOLDER,'search_terms','expert_terms.csv')
 
 
+## file specific inputs ##
+countries=list(crisis_points.keys())
+common_terms = ['he','him','she','her','that','if','me','about','over']
+
+
+def load_search_words(folder,path):
+    file_path = os.path.join(folder,path)
+    if os.path.exists(file_path):
+        df = pd.read_csv(file_path)
+        search_groups = df.to_dict()
+        words_list = list()
+        for k,v in search_groups.items():
+            temp_list = [i for i in list(v.values()) if not pd.isna(i)]
+            #temp_list = [wg.split('&') for wg in temp_list]   ## split & for wv search 
+            words_list.extend(temp_list)
+    else:
+        words_list = None
+        print('file path does not exist:{}'.format(file_path))
+    return words_list
+
+targets = load_search_words(SEARCH_TERMS,'grouped_search_words_extended.csv')
+
+#targets= ['fear','worry','concern','afraid','trouble','uneasy','nervous','anxious',
+#          'risk','threat','warn','hazard','contagious','impact','infect','transmate','terror','danger',
+#          'maybe','may','possibly','could','perhaps','uncertain','doubt','unsure',
+#          'say','feel','predict','tell','believe','think','suggest','decide','propose','advise','hint','clue','speak','announce',
+#          'financial&recession','financial_crisis','depression','financial&shock','financial&slump','financial&slack','financial&fall']
+
+#targets= ['fear','worry','concern',
+#          'risk','threat','warn',
+#          'maybe','may','possibly','could','perhaps','uncertain',
+#         'say','feel','predict','tell','believe','think','recession',
+#         'financial_crisis','crisis','depression','shock']
+
+#targets= ['able', 'enable', 'grow', 'adequately', 'benign', 'buoyant', 'buoyancy', 'calm', 'comfortable', 'confidence', 'confident', 'effective', 'enhance', 'favorable', 'favourable', 'favourably', 'healthy', 'improve', 'improvement', 'mitigate', 'mitigation', 'positive', 'positively', 'profits', 'profitable', 'rally', 'rebound', 'recover', 'recovery', 'resilience', 'resilient', 'smooth', 'solid', 'sound', 'stabilise', 'stabilize', 'stable', 'success', 'successful', 'successfully']
+
+
+
 
 #%%
 
@@ -81,8 +107,7 @@ def maybe_create(f):
     else:
         os.mkdir(f)
         print('New folder created: {}'.format(f))
-        
-        
+    
 if __name__ == "__main__":
     folders = [RAW_DATA_PATH,PROCESSING_FOLDER,SEARCH_TERMS,DOC_META,DOC_META,JSON_LEMMA,MODELS,NGRAMS,VS_MODELS,BOW_TFIDF_DOCS,
                FREQUENCY,EVAL,EVAL_WG,EVAL_TS]

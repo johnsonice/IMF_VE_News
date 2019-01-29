@@ -83,7 +83,8 @@ class args_class(object):
                  countries=config.countries,
                  period=config.COUNTRY_FREQ_PERIOD,
                  eval_end_date=config.eval_end_date,
-                 method='zscore',crisis_defs='kr',sims=True,weighted=False):
+                 method='zscore',crisis_defs='kr',sims=True,weighted=False,
+                 z_thresh=config.z_thresh):
         self.targets = targets
         self.frequency_path = frequency_path
         self.eval_path=eval_path
@@ -98,16 +99,17 @@ class args_class(object):
         self.crisis_defs = crisis_defs
         self.sims = sims
         self.weighted = weighted
+        self.z_thresh=z_thresh
 #%%
-args = args_class(targets=config.targets,frequency_path=config.FREQUENCY,
-              countries = config.countries,wv_path = config.W2V,
-              sims=True,period=config.COUNTRY_FREQ_PERIOD, 
-              months_prior=config.months_prior,
-              window=config.smooth_window_size,
-              eval_end_date=config.eval_end_date,
-              weighted= config.WEIGHTED)
-
-test = get_crisis_wondiws(args,crisis_points,'argentina')
+#args = args_class(targets=config.targets,frequency_path=config.FREQUENCY,
+#              countries = config.countries,wv_path = config.W2V,
+#              sims=True,period=config.COUNTRY_FREQ_PERIOD, 
+#              months_prior=config.months_prior,
+#              window=config.smooth_window_size,
+#              eval_end_date=config.eval_end_date,
+#              weighted= config.WEIGHTED)
+#
+#test = get_crisis_wondiws(args,crisis_points,'argentina')
         
         #%%
 if __name__ == '__main__':
@@ -119,11 +121,12 @@ if __name__ == '__main__':
                           months_prior=config.months_prior,
                           window=config.smooth_window_size,
                           eval_end_date=config.eval_end_date,
-                          weighted= config.WEIGHTED)
+                          weighted= config.WEIGHTED,
+                          z_thresh=config.z_thresh)
 
     # Parse input word groups, word_gropus is a list of list:
     # something like this: [['fear'],['worry'],['concern'],['risk'],['threat'],['warn'],['maybe']]
-    file_path = os.path.join(config.SEARCH_TERMS,'grouped_search_words.csv')
+    file_path = os.path.join(config.SEARCH_TERMS,'grouped_search_words.csv')  ## searh words name
     search_groups = read_grouped_search_words(file_path)  
     ## it is a dictionary list:
 #       {'fear_language': ['fear'],
@@ -143,7 +146,7 @@ if __name__ == '__main__':
             search_words_sets[k]=list(get_sim_words_set(args,search_groups[k])) ## turn set to list
         weights = None
     
-    def export_country_ts(country,search_words_sets=search_words_sets,period=args.period,export=True):
+    def export_country_ts(country,search_words_sets=search_words_sets,period=args.period,z_thresh=args.z_thresh,export=True):
         series_wg = list()
         for k,words in search_words_sets.items(): 
             word_groups = words
@@ -155,7 +158,8 @@ if __name__ == '__main__':
             preds = list(signif_change(df, 
                                    args.window, 
                                    period=args.period,
-                                   direction='incr').index) 
+                                   direction='incr',
+                                   z_thresh=z_thresh).index) 
             pred_df = pd.DataFrame(np.ones(len(preds)),index=preds,columns=[k+'_pred_crisis'])
             df = pred_df.join(df,how='right')
             series_wg.append(df)
@@ -179,13 +183,13 @@ if __name__ == '__main__':
             df_all.to_csv(out_csv)
         
         return country,df_all
-
+        # end of function 
+        
 #    country = "argentina"
 #    c,d = export_country_ts(country)
-#    
 
-        mp = Mp(config.countries,export_country_ts)
-        res = mp.multi_process_files(chunk_size=1)
+    mp = Mp(config.countries,export_country_ts)
+    res = mp.multi_process_files(chunk_size=1,workers=10)
     
 
 

@@ -40,9 +40,9 @@ def read_grouped_search_words(file_path):
 vecs = KeyedVectors.load(config.W2V)
 
 ## check if all words are in vocabulary 
-file_path = os.path.join(config.SEARCH_TERMS,'grouped_search_words.csv')
+file_path = os.path.join(config.SEARCH_TERMS,'grouped_search_words_extended.csv')
 search_groups = read_grouped_search_words(file_path)  
-wordlist = [w for wg in search_groups['positive_sentiment_language'] for w in wg]
+wordlist = [w for wg in search_groups['negative_sentiment_language'] for w in wg]
 res = get_list_if_in_vocab(vecs,wordlist)
 
 #%%

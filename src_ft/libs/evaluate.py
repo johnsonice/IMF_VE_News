@@ -14,7 +14,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 def evaluate(word_list, country, frequency_path,method='zscore', 
              crisis_defs='kr',period='month', stemmed=False, 
              window=24, direction='incr', months_prior=24, fbeta=2,
-             eval_end_date=None,weights=None):
+             eval_end_date=None,weights=None,z_thresh=1.96):
     """
     evaluates how the aggregate frequency of the provided word list performs based on the evaluation method
     and the crisis definitions provided.
@@ -66,7 +66,8 @@ def evaluate(word_list, country, frequency_path,method='zscore',
         preds = list(signif_change(ag_freq, 
                                    window, 
                                    period=period,
-                                   direction=direction).index) ## it return a list of time stamp e.g: [Period('2001Q3', 'Q-DEC')] or [Period('2001-03', 'M-DEC')]
+                                   direction=direction,
+                                   z_thresh=z_thresh).index) ## it return a list of time stamp e.g: [Period('2001Q3', 'Q-DEC')] or [Period('2001-03', 'M-DEC')]
     elif method == 'hpfilter':
         preds = anomaly_detection(ag_freq)
 
@@ -124,7 +125,7 @@ def get_fscore(tp, fp, fn, beta):
 
 ## get country specific statistics
 def get_country_stats(countries, words, frequency_path, window, months_prior, method, 
-                      crisis_defs,period,eval_end_date=None,weights=None):
+                      crisis_defs,period,eval_end_date=None,weights=None,z_thresh=1.96):
     country_stats = []
     for country in countries:
         stats = pd.Series(evaluate(words, 
@@ -136,7 +137,8 @@ def get_country_stats(countries, words, frequency_path, window, months_prior, me
                                    period=period,
                                    crisis_defs=crisis_defs,
                                    eval_end_date=eval_end_date,
-                                   weights=weights),
+                                   weights=weights,
+                                   z_thresh=z_thresh),
                           index=['recall','precision','fscore','tp','fp','fn'], 
                           name=country)  ## default period = quarter
         country_stats.append(stats)

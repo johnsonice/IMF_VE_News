@@ -60,7 +60,8 @@ def run_evaluation(iter_item,args):
                                   args.crisis_defs, 
                                   period=args.period,
                                   eval_end_date=args.eval_end_date,
-                                  weights=weights)
+                                  weights=weights,
+                                  z_thresh=args.z_thresh)
 
 
     # Aggregate tp, fp, fn numbers for all countries to calc overall eval metrics
@@ -145,7 +146,7 @@ if __name__ == '__main__':
         return res_stats
     
     mp = Mp(iter_items,multi_run_eval)
-    overall_res = mp.multi_process_files(workers=10, chunk_size=1)  ## do not set workers to be too high, your memory will explode
+    overall_res = mp.multi_process_files(workers=5, chunk_size=1)  ## do not set workers to be too high, your memory will explode
     
     ## export over all resoults to csv
     df = pd.DataFrame(overall_res,columns=['word','sim_words','recall','prec','f2'])
