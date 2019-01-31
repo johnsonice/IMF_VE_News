@@ -126,7 +126,7 @@ if __name__ == '__main__':
 
     # Parse input word groups, word_gropus is a list of list:
     # something like this: [['fear'],['worry'],['concern'],['risk'],['threat'],['warn'],['maybe']]
-    file_path = os.path.join(config.SEARCH_TERMS,'grouped_search_words.csv')  ## searh words name
+    file_path = os.path.join(config.SEARCH_TERMS,config.GROUPED_SEARCH_FILE)  ## searh words name
     search_groups = read_grouped_search_words(file_path)  
     ## it is a dictionary list:
 #       {'fear_language': ['fear'],
@@ -179,7 +179,7 @@ if __name__ == '__main__':
         df_all.fillna(0,inplace=True)
         
         if export:
-            out_csv = os.path.join(config.EVAL_TS, 'agg_{}_{}_time_series.csv'.format(country,period))
+            out_csv = os.path.join(config.EVAL_TS, 'agg_{}_{}_z{}_time_series.csv'.format(country,period))
             df_all.to_csv(out_csv)
         
         return country,df_all

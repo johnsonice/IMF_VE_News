@@ -21,16 +21,20 @@ COUNTRY_FREQ_PERIOD = 'month'   ## for country specific bow calculation
 WEIGHTED = False                 ## do we want to weighted average on similar words when doing evaluation
 SIM = True
 VERBOSE = True
+GROUPED_SEARCH_FILE = 'grouped_search_words_large.csv'
 
 smooth_window_size = 24 # put as months , even if for quarterly data, put it as months
                         # it will automatically convert to quarterly
 months_prior = 24       # same here, put as months
-z_thresh = 2.5            # how many standard deviations away we think that is a spike 
+z_thresh = 2.1            # how many standard deviations away we think that is a spike 
 topn = 15
 eval_end_date = {'q':'2001Q4',
                  'm':'2001-12'}  # or None
 
+
+########################
 ## Global folder path ##
+########################
 RAW_DATA_PATH = '/data/News_data_raw/Financial_Times_processed'
 
 PROCESSING_FOLDER = '/data/News_data_raw/FT_WD'
@@ -75,15 +79,16 @@ def load_search_words(folder,path):
             temp_list = [i for i in list(v.values()) if not pd.isna(i)]
             #temp_list = [wg.split('&') for wg in temp_list]   ## split & for wv search 
             words_list.extend(temp_list)
+        words_list = list(set(words_list))
     else:
         words_list = None
         print('file path does not exist:{}'.format(file_path))
     return words_list
 
-targets = load_search_words(SEARCH_TERMS,'grouped_search_words_extended.csv')
+targets = load_search_words(SEARCH_TERMS,GROUPED_SEARCH_FILE)
 
 #targets= ['fear','worry','concern','afraid','trouble','uneasy','nervous','anxious',
-#          'risk','threat','warn','hazard','contagious','impact','infect','transmate','terror','danger',
+#          'risk','threat','warn','hazard','contagious','impact','infect','terror','danger',
 #          'maybe','may','possibly','could','perhaps','uncertain','doubt','unsure',
 #          'say','feel','predict','tell','believe','think','suggest','decide','propose','advise','hint','clue','speak','announce',
 #          'financial&recession','financial_crisis','depression','financial&shock','financial&slump','financial&slack','financial&fall']

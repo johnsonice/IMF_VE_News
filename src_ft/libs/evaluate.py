@@ -68,6 +68,7 @@ def evaluate(word_list, country, frequency_path,method='zscore',
                                    period=period,
                                    direction=direction,
                                    z_thresh=z_thresh).index) ## it return a list of time stamp e.g: [Period('2001Q3', 'Q-DEC')] or [Period('2001-03', 'M-DEC')]
+
     elif method == 'hpfilter':
         preds = anomaly_detection(ag_freq)
 
@@ -75,10 +76,46 @@ def evaluate(word_list, country, frequency_path,method='zscore',
     # True Positives: The number of anomalies that occured within t years of a crisis onset (i.e. within forecast window)
     # False positives: The number of anomalies occuring ouside of either crisis or forecast windows
     # False Negatives: The number of crises without an anomaly occuring in the forecast window
+    
+    # recall, precision, fscore, len(tp), len(fp), len(fn)
+    return get_eval_stats(fq,starts,ends,preds,offset,period,fbeta) 
+
+#    tp, fn, mid_crisis  = [], [], []
+#    for s, e in zip(starts, ends):
+#        forecast_window = pd.PeriodIndex(pd.date_range(s.to_timestamp(how='s') - offset, s.to_timestamp(how='s'),freq=fq), freq=fq) ## add freq = fa. 
+#        crisis_window = pd.PeriodIndex(pd.date_range(s.to_timestamp(how='s'), e.to_timestamp(how='e'),freq=fq), freq=fq) ## do not add frq=fq
+#
+#        period_tp = []
+#        # Collect True positives and preds happening during crisis
+#        for p in preds:
+#            if p in forecast_window: # True Positive if prediction occurs in forecast window
+#                period_tp.append(p)
+#            elif p in crisis_window: # if pred happened during crisis, don't count as fp
+#                mid_crisis.append(p)
+#
+#        # Crisis counts as a false negative if no anomalies happen during forecast window
+#        if not any(period_tp): 
+#            fn.append(s)
+#        # True Positives for this crisis added to global list of TPs for the country
+#        tp += period_tp 
+#
+#    # Any anomaly not occuring within forecast window (TPs) or happening mid-crisis is a false positive
+#    fp = set(preds) - set(tp) - set(mid_crisis)
+#
+#    # Calc recall, precision, fscore
+#    recall = get_recall(len(tp), len(fn))
+#    precision = get_precision(len(tp), len(fp))
+#    fscore = get_fscore(len(tp), len(fp), len(fn), fbeta)
+#    
+#    print(recall, precision, fscore, len(tp), len(fp), len(fn))
+#    return recall, precision, fscore, len(tp), len(fp), len(fn)
+
+def get_eval_stats(fq,starts,ends,preds,offset,period,fbeta=2):
+    
     tp, fn, mid_crisis  = [], [], []
     for s, e in zip(starts, ends):
-        forecast_window = pd.PeriodIndex(pd.date_range(s.to_timestamp() - offset, s.to_timestamp()), freq=fq)
-        crisis_window = pd.PeriodIndex(pd.date_range(s.to_timestamp(), e.to_timestamp()), freq=fq)
+        forecast_window = pd.PeriodIndex(pd.date_range(s.to_timestamp(how='s') - offset, s.to_timestamp(how='s'),freq=fq), freq=fq) ## add freq = fa. 
+        crisis_window = pd.PeriodIndex(pd.date_range(s.to_timestamp(how='s'), e.to_timestamp(how='e'),freq=fq), freq=fq) ## do not add frq=fq
 
         period_tp = []
         # Collect True positives and preds happening during crisis
@@ -101,7 +138,8 @@ def evaluate(word_list, country, frequency_path,method='zscore',
     recall = get_recall(len(tp), len(fn))
     precision = get_precision(len(tp), len(fp))
     fscore = get_fscore(len(tp), len(fp), len(fn), fbeta)
-
+    
+    print(recall, precision, fscore, len(tp), len(fp), len(fn))
     return recall, precision, fscore, len(tp), len(fp), len(fn)
 
 def get_recall(tp, fn):
