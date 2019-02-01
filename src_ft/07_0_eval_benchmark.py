@@ -54,7 +54,7 @@ def get_stats(starts,ends,preds,offset,period,fbeta=2):
     
     return recall,precision,fscore
 
-def get_country_vocab(country,period='quarter',frequency_path=config.FREQUENCY):
+def get_country_vocab(country,period='month',frequency_path=config.FREQUENCY):
     data_path = os.path.join(frequency_path,'{}_{}_word_freqs.pkl'.format(country, period))
     data = pd.read_pickle(data_path)
     vocab = list(data.index)
