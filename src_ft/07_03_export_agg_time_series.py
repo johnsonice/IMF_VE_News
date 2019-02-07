@@ -179,7 +179,7 @@ if __name__ == '__main__':
         df_all.fillna(0,inplace=True)
         
         if export:
-            out_csv = os.path.join(config.EVAL_TS, 'agg_{}_{}_z{}_time_series.csv'.format(country,period))
+            out_csv = os.path.join(config.EVAL_TS, 'agg_{}_{}_z{}_time_series.csv'.format(country,period,z_thresh))
             df_all.to_csv(out_csv)
         
         return country,df_all
@@ -189,7 +189,7 @@ if __name__ == '__main__':
 #    c,d = export_country_ts(country)
 
     mp = Mp(config.countries,export_country_ts)
-    res = mp.multi_process_files(chunk_size=1,workers=10)
+    res = mp.multi_process_files(chunk_size=1,workers=15)
     
 
 

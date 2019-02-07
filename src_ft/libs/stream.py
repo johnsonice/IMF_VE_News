@@ -90,7 +90,7 @@ class Streamer(ABC):
         for i in range(0, len(l), n):
             yield l[i:i + n]
             
-    def multi_process_files(self,workers=os.cpu_count()-1,chunk_size=1000):
+    def multi_process_files(self,workers=os.cpu_count()-1,chunk_size=1000,efficient=False):
         print('Start multiprocessing {} files in {} cores'.format(len(self.input_files),workers))
         start = time.time()
         batch_size = workers*chunk_size*5
@@ -102,6 +102,7 @@ class Streamer(ABC):
             print('Processing {} - {} files ...'.format(i*batch_size,(i+1)*batch_size))
             rs = p.map(self.process_json, batches[i],chunk_size)
             res.extend(rs)
+            del rs
         p.close()
         p.join()
         end = time.time()
@@ -111,7 +112,7 @@ class Streamer(ABC):
         results=[]
         for r in res:
             results.extend(r)
-            
+        del res
         print(time.strftime('%H:%M:%S', time.gmtime(end - start)))
 
         return results
@@ -284,7 +285,10 @@ class FileStreamer(SpacyStreamer):
 class SentStreamer_fast(Streamer):
     def retrieve_output(self, data):
         text = data['body']
-        sents = [[tok for tok in word_tokenize(sent) if tok not in self.stopwords and tok not in punct] for sent in sent_tokenize(text)]
+        if self.stopwords:
+            sents = [[tok for tok in word_tokenize(sent) if tok not in self.stopwords and tok not in punct] for sent in sent_tokenize(text)]
+        else:
+            sents = [[tok for tok in word_tokenize(sent) if tok not in punct] for sent in sent_tokenize(text)]
         if self.phraser:
             sents = [self.phraser[sent] for sent in sents]
         if self.lemmatize:
@@ -295,7 +299,10 @@ class SentStreamer_fast(Streamer):
 class DocStreamer_fast(Streamer):
     def retrieve_output(self, data):
         text = word_tokenize(data['body'])
-        text = [tok for tok in text if tok not in self.stopwords and tok not in punct]
+        if self.stopwords:
+            text = [tok for tok in text if tok not in self.stopwords and tok not in punct]
+        else:
+            text = [tok for tok in text if tok not in punct]
         if self.phraser:
             text = self.phraser[text]
         if self.lemmatize:

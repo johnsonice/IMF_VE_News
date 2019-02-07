@@ -90,7 +90,7 @@ def run_evaluation(iter_item,args):
     
     
 class args_class(object):
-    def __init__(self, targets,frequency_path=config.FREQUENCY,eval_path=config.EVAL_WG,
+    def __init__(self, targets=config.targets,frequency_path=config.FREQUENCY,eval_path=config.EVAL_WG,
                  wv_path = config.W2V,topn=config.topn,months_prior=config.months_prior,
                  window=config.smooth_window_size,
                  countries=config.countries,

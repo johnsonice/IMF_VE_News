@@ -15,7 +15,7 @@ sys.path.insert(0,'./libs')
 import ujson as json
 import config
 from frequency_utils import rolling_z_score, aggregate_freq, signif_change
-from evaluate import get_recall,get_precision,get_fscore,get_eval_stats,get_preds_from_pd
+from evaluate import get_recall,get_precision,get_fscore
 from gensim.models.keyedvectors import KeyedVectors
 from  crisis_points import crisis_points
 from mp_utils import Mp
@@ -54,29 +54,12 @@ def get_stats(starts,ends,preds,offset,period,fbeta=2):
     
     return recall,precision,fscore
 
-def get_country_vocab(country,period='quarter',frequency_path=config.FREQUENCY):
+def get_country_vocab(country,period='month',frequency_path=config.FREQUENCY):
     data_path = os.path.join(frequency_path,'{}_{}_word_freqs.pkl'.format(country, period))
     data = pd.read_pickle(data_path)
     vocab = list(data.index)
     return vocab
 
-def collapse_scores(df):
-    """
-    use pandas to calculate aggregated f scores 
-    """
-    used_columns=['country','tp','fp','fn']
-    agg_df = df[used_columns].groupby(['country']).sum()
-    agg_df['recall'] = get_recall(agg_df['tp'], agg_df['fn'])
-    agg_df['precision'] = get_precision(agg_df['tp'], agg_df['fp'])
-    agg_df['f2'] = get_fscore(agg_df['tp'], agg_df['fp'], agg_df['fn'], beta=2)
-    ## this is by country
-    
-    agg_df_all = df[['tp','fp','fn']].sum()
-    agg_df_all['recall'] = get_recall(agg_df_all['tp'], agg_df_all['fn'])
-    agg_df_all['precision'] = get_precision(agg_df_all['tp'], agg_df_all['fp'])
-    agg_df_all['f2'] = get_fscore(agg_df_all['tp'], agg_df_all['fp'], agg_df_all['fn'], beta=2)
-    
-    return agg_df,agg_df_all
 
 #%%
 if __name__ == "__main__":
@@ -85,9 +68,9 @@ if __name__ == "__main__":
     vocabs =list(vecs.wv.vocab.keys())
 
     
-    def get_country_stats(country,vocabs=vocabs,period=period,n_words=50,n_iter=100):
+    def average_score(country,vocabs=vocabs,period=period,n_words=20,n_iter = 100):
         fq = period[0].lower()
-        country_stats = list()
+        fscores = list()
         c_vocab = get_country_vocab(country,period=period)
         for seed in range(0,n_iter):
             random.seed(seed)
@@ -105,52 +88,25 @@ if __name__ == "__main__":
             if seed == 0: 
                 print(country)
                 print(df.head(2))
-            #offset = pd.DateOffset(months=config.months_prior)
+            offset = pd.DateOffset(months=config.months_prior)
             starts = list(pd.PeriodIndex(crisis_points[country]['starts'], freq=fq))
             ends = list(pd.PeriodIndex(crisis_points[country]['peaks'], freq=fq))
-            #preds = list(signif_change(df, window=config.smooth_window_size, direction='incr').index)
-            preds = get_preds_from_pd(df,
-                          country,
-                          method='zscore', 
-                          crisis_defs='kr',
-                          period=period, 
-                          window=config.smooth_window_size, 
-                          direction='incr', 
-                          months_prior=config.months_prior, 
-                          fbeta=2,
-                          weights=None,
-                          z_thresh=config.z_thresh)
-            res_stats = list(get_eval_stats(fq,starts,ends,preds,period,months_prior=config.months_prior,fbeta=2))
-            res_stats.insert(0,country)
-
-            country_stats.append(res_stats)
-            #recall, precision, fscore, len(tp), len(fp), len(fn)
-            
-            #recall,precision,fscore = get_stats(starts,ends,preds,offset,period)
+            preds = list(signif_change(df, window=config.smooth_window_size, direction='incr').index)
+            recall,precision,fscore = get_stats(starts,ends,preds,offset,period)
             #print(recall,precision,fscore)
-            #country_stats.append(res_stats)
+            fscores.append(fscore)
             
         
-        return country_stats
+        return country,fscores,stats.mean(fscores),stats.stdev(fscores)
     
-    #res = [average_score(c) for c in config.countries[:5]]
+    #res = [average_score(config.countries[0])]
     
-    mp = Mp(config.countries,get_country_stats)
-    overall_res = mp.multi_process_files(workers=5,chunk_size=1)
-    overall_res = [r for rl in overall_res for r in rl]
-    
-    res_df = pd.DataFrame(overall_res,columns=['country','recall','precision','f2','tp','fp','fn'])
-    ## aggregate by country 
-    country_df,agg_df_all = collapse_scores(res_df)
+    mp = Mp(config.countries,average_score)
+    res = mp.multi_process_files(chunk_size=1)
+    df = pd.DataFrame(res,columns=['country','fscores','mean','std'])
     out_csv = os.path.join(config.EVAL, '{}_offset_{}_smooth_{}_ramdom_sampling_bench_mark.csv'.format(period,config.months_prior,config.smooth_window_size))
-    agg_df_all.to_csv(out_csv)
-    print(agg_df_all)
-    #final_df.to_csv('temp_data/agg_tuning_res.csv')
-#%%
-#    df = pd.DataFrame(res,columns=['country','fscores','mean','std'])
-#    out_csv = os.path.join(config.EVAL, '{}_offset_{}_smooth_{}_ramdom_sampling_bench_mark.csv'.format(period,config.months_prior,config.smooth_window_size))
-#    df.to_csv(out_csv)
-#    
-#    print(df['mean'].mean())
+    df.to_csv(out_csv)
+    
+    print(df['mean'].mean())
 
     

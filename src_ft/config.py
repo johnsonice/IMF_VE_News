@@ -21,7 +21,7 @@ COUNTRY_FREQ_PERIOD = 'month'   ## for country specific bow calculation
 WEIGHTED = False                 ## do we want to weighted average on similar words when doing evaluation
 SIM = True
 VERBOSE = True
-GROUPED_SEARCH_FILE = 'grouped_search_words_large.csv'
+GROUPED_SEARCH_FILE = 'grouped_search_words_final.csv'
 
 smooth_window_size = 24 # put as months , even if for quarterly data, put it as months
                         # it will automatically convert to quarterly
@@ -40,10 +40,13 @@ RAW_DATA_PATH = '/data/News_data_raw/Financial_Times_processed'
 PROCESSING_FOLDER = '/data/News_data_raw/FT_WD'
 DOC_META = os.path.join(PROCESSING_FOLDER,'doc_meta')
 JSON_LEMMA = os.path.join(PROCESSING_FOLDER,'json_lemma')
+JSON_LEMMA_SMALL = os.path.join(PROCESSING_FOLDER,'json_lemma_small')
 
 MODELS = os.path.join(PROCESSING_FOLDER,'models')
 NGRAMS = os.path.join(MODELS,'ngrams')
 VS_MODELS = os.path.join(MODELS,'vsms')
+TOPIC_MODELS = os.path.join(MODELS,'topics')
+
 
 SEARCH_TERMS = os.path.join(PROCESSING_FOLDER,'search_terms')
 BOW_TFIDF_DOCS = os.path.join(PROCESSING_FOLDER,'bow_tfidf_docs')
@@ -55,6 +58,7 @@ if WEIGHTED:
 
 EVAL_WG = os.path.join(EVAL,'word_groups')
 EVAL_TS = os.path.join(EVAL,'time_series')
+
 
 ## global file path ##
 DOC_META_FILE = os.path.join(DOC_META,'doc_details_crisis.pkl')
@@ -114,7 +118,9 @@ def maybe_create(f):
         print('New folder created: {}'.format(f))
     
 if __name__ == "__main__":
-    folders = [RAW_DATA_PATH,PROCESSING_FOLDER,SEARCH_TERMS,DOC_META,DOC_META,JSON_LEMMA,MODELS,NGRAMS,VS_MODELS,BOW_TFIDF_DOCS,
+    folders = [RAW_DATA_PATH,PROCESSING_FOLDER,SEARCH_TERMS,DOC_META,
+               DOC_META,JSON_LEMMA,JSON_LEMMA_SMALL,MODELS,NGRAMS,TOPIC_MODELS,
+               VS_MODELS,BOW_TFIDF_DOCS,
                FREQUENCY,EVAL,EVAL_WG,EVAL_TS]
     weights = [DOC_META_FILE,PHRASER,W2V]
     
