@@ -21,7 +21,7 @@ COUNTRY_FREQ_PERIOD = 'month'   ## for country specific bow calculation
 WEIGHTED = False                 ## do we want to weighted average on similar words when doing evaluation
 SIM = True
 VERBOSE = True
-GROUPED_SEARCH_FILE = 'final_topic_words.csv'
+GROUPED_SEARCH_FILE = 'final_topic_words_final.csv'
 
 smooth_window_size = 24 # put as months , even if for quarterly data, put it as months
                         # it will automatically convert to quarterly
