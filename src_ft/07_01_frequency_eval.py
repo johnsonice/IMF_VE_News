@@ -142,12 +142,25 @@ if __name__ == '__main__':
     #overall_res = list()
     # run in multi process
     def multi_run_eval(wg,args=args):
-        res_stats = run_evaluation(wg,args)
+        try:
+            res_stats = run_evaluation(wg,args)
+        except Exception as e:
+            raise Exception("{} something is wrong: {}".format(wg,e))
         return res_stats
-    
-    mp = Mp(iter_items,multi_run_eval)
-    overall_res = mp.multi_process_files(workers=5, chunk_size=1)  ## do not set workers to be too high, your memory will explode
-    
+#%%    
+    test = False
+    if test:
+        overall_res = list()
+        for i in iter_items:
+            if i[0][0]=='steinhoff':
+                print(i[0])
+                overall_res.append(multi_run_eval(i))
+            else:
+                pass
+    else:
+        mp = Mp(iter_items,multi_run_eval)
+        overall_res = mp.multi_process_files(workers=6, chunk_size=1)  ## do not set workers to be too high, your memory will explode
+        
     ## export over all resoults to csv
     df = pd.DataFrame(overall_res,columns=['word','sim_words','recall','prec','f2'])
     df.to_csv(os.path.join(args.eval_path,'overall_{}_offset_{}_smoothwindow_{} _evaluation.csv'.format(args.period,args.months_prior,args.window)))

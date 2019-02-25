@@ -6,13 +6,13 @@ python 03_corpus_phrases.py
 python 04_1_vectorize_words.py 
 python 06_frequency_country_specific_freqs.py 
 
-
-
-
 #python corpus_tfidf.py
 #python frequency_country_specific_freqs.py
 
 #python frequency_eval.py
 #python frequency_eval_expert-terms.py
 
+
+## run evaluation on specific word groups 
+python 07_02_frequency_eval_aggregate.py -gsf final_topic_words_small.csv -tn 10
 

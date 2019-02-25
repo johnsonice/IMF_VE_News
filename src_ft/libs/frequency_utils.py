@@ -27,7 +27,8 @@ def aggregate_freq(word_list,country, period='quarter', stemmed=False,frequency_
     data = pd.read_pickle(data_path)
     freqs = [data.loc[word]*weight for word,weight in ww if word in data.index]
     grp_freq = sum(freqs)
-    
+
+    ##if none of the words are in corpus, frp_freq qill return 0 need to check befor proceed
     return grp_freq
 
 

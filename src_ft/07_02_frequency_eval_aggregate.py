@@ -10,7 +10,7 @@ NOTE: to see an explanation of optional arguments, use python3 frequency_eval.py
 """
 import sys
 sys.path.insert(0,'./libs')
-#import argparse
+import argparse
 from gensim.models.keyedvectors import KeyedVectors
 from crisis_points import crisis_points
 from evaluate import evaluate, get_recall, get_precision, get_fscore ,get_input_words_weights,get_country_stats
@@ -89,46 +89,67 @@ def run_evaluation(item,args,weights=None,export=True):
     #print('evaluated words: {}'.format(words))
     
 
-class args_class(object):
-    def __init__(self, targets,frequency_path=config.FREQUENCY,eval_path=config.EVAL_WG,
-                 wv_path = config.W2V,topn=config.topn,months_prior=config.months_prior,
-                 window=config.smooth_window_size,
-                 countries=config.countries,
-                 period=config.COUNTRY_FREQ_PERIOD,
-                 eval_end_date=config.eval_end_date,
-                 method='zscore',crisis_defs='kr',
-                 sims=True,weighted=False,z_thresh=config.z_thresh):
-        self.targets = targets
-        self.frequency_path = frequency_path
-        self.eval_path=eval_path
-        self.wv_path = wv_path
-        self.topn = topn
-        self.months_prior = months_prior
-        self.window = window
-        self.countries = countries
-        self.method = method
-        self.period = period
-        self.eval_end_date=eval_end_date
-        self.crisis_defs = crisis_defs
-        self.sims = sims
-        self.weighted = weighted
-        self.z_thresh= z_thresh
+#class args_class(object):
+#    def __init__(self, targets,frequency_path=config.FREQUENCY,eval_path=config.EVAL_WG,
+#                 wv_path = config.W2V,topn=config.topn,months_prior=config.months_prior,
+#                 window=config.smooth_window_size,
+#                 countries=config.countries,
+#                 period=config.COUNTRY_FREQ_PERIOD,
+#                 eval_end_date=config.eval_end_date,
+#                 method='zscore',crisis_defs='kr',
+#                 sims=True,weighted=False,z_thresh=config.z_thresh):
+#        self.targets = targets
+#        self.frequency_path = frequency_path
+#        self.eval_path=eval_path
+#        self.wv_path = wv_path
+#        self.topn = topn
+#        self.months_prior = months_prior
+#        self.window = window
+#        self.countries = countries
+#        self.method = method
+#        self.period = period
+#        self.eval_end_date=eval_end_date
+#        self.crisis_defs = crisis_defs
+#        self.sims = sims
+#        self.weighted = weighted
+#        self.z_thresh= z_thresh        
+#        
 #%%
 if __name__ == '__main__':
     
     ## load config arguments
-    args = args_class(targets=config.targets,frequency_path=config.FREQUENCY,
-                          countries = config.countries,wv_path = config.W2V,
-                          sims=config.SIM,period=config.COUNTRY_FREQ_PERIOD, 
-                          months_prior=config.months_prior,
-                          window=config.smooth_window_size,
-                          eval_end_date=config.eval_end_date,
-                          weighted= config.WEIGHTED,
-                          z_thresh=config.z_thresh)
+#    args = args_class(targets=config.targets,frequency_path=config.FREQUENCY,
+#                          countries = config.countries,wv_path = config.W2V,
+#                          sims=config.SIM,period=config.COUNTRY_FREQ_PERIOD, 
+#                          months_prior=config.months_prior,
+#                          window=config.smooth_window_size,
+#                          eval_end_date=config.eval_end_date,
+#                          weighted= config.WEIGHTED,
+#                          z_thresh=config.z_thresh)
+    
+    parser = argparse.ArgumentParser()
+    #parser.add_argument('-t', '--targets', action='store', dest='targets', default=config.targets)
+    parser.add_argument('-f', '--frequency_path', action='store', dest='frequency_path', default=config.FREQUENCY)
+    parser.add_argument('-c', '--countries', action='store', dest='countries', default=config.countries)
+    parser.add_argument('-wv', '--wv_path', action='store', dest='wv_path', default=config.W2V)
+    parser.add_argument('-ep', '--eval_path', action='store', dest='eval_path', default=config.EVAL_WG)
+    parser.add_argument('-md', '--method', action='store', dest='method', default='zscore')
+    parser.add_argument('-cd', '--crisis_defs', action='store', dest='crisis_defs', default='kr')
+    parser.add_argument('-sims', '--sims', action='store', dest='sims', default=config.SIM)
+    parser.add_argument('-tn', '--topn', action='store', dest='topn',type=int, default=config.topn)    
+    parser.add_argument('-p', '--period', action='store', dest='period', default=config.COUNTRY_FREQ_PERIOD)
+    parser.add_argument('-mp', '--months_prior', action='store', dest='months_prior', default=config.months_prior)
+    parser.add_argument('-w', '--window', action='store', dest='window',default=config.smooth_window_size)
+    parser.add_argument('-eed', '--eval_end_date', action='store', dest='eval_end_date',default=config.eval_end_date)
+    parser.add_argument('-wed', '--weighted', action='store_true', dest='weighted',default=config.WEIGHTED)
+    parser.add_argument('-z', '--z_thresh', action='store', dest='z_thresh',type=int, default=config.z_thresh)
+    parser.add_argument('-gsf', '--search_file', action='store', dest='search_file',default=config.GROUPED_SEARCH_FILE)
+    args = parser.parse_args()
 
     # Parse input word groups, word_gropus is a list of list:
     # something like this: [['fear'],['worry'],['concern'],['risk'],['threat'],['warn'],['maybe']]
-    file_path = os.path.join(config.SEARCH_TERMS,config.GROUPED_SEARCH_FILE)
+ 
+    file_path = os.path.join(config.SEARCH_TERMS,args.search_file)
     search_groups = read_grouped_search_words(file_path)  
     ## it is a dictionary list:
 #       {'fear_language': [['fear']],
@@ -148,6 +169,8 @@ if __name__ == '__main__':
             else:
                 search_words_sets[k] = [t for tl in v for t in tl] ## flattern the list of list 
         weights = None
+
+
     
     #print(search_words_sets)
     #%%
@@ -164,6 +187,6 @@ if __name__ == '__main__':
     
         ## export over all resoults to csv
     df = pd.DataFrame(overall_res,columns=['word','sim_words','recall','prec','f2'])
-    df.to_csv(os.path.join(args.eval_path,'agg_sim_{}_overall_{}_offset_{}_smoothwindow_{}_evaluation.csv'.format(args.sims,args.period,args.months_prior,args.window)))
-    
+    df.to_csv(os.path.join(args.eval_path,'overall_agg_sim_{}_overall_{}_offset_{}_smoothwindow_{}_evaluation.csv'.format(args.sims,args.period,args.months_prior,args.window)))
+#    
 

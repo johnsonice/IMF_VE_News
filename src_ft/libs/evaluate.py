@@ -45,7 +45,10 @@ def evaluate(word_list, country, frequency_path,method='zscore',
     
     # Setup
     ag_freq = aggregate_freq(word_list, country, period, stemmed,frequency_path,weights=weights)        ## sum frequency for specified words - it is pd series with time as index
-
+    
+    if type(ag_freq) != pd.core.series.Series:
+        return np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
+    
     if crisis_defs == 'kr':
         ag_freq = ag_freq[:eval_end_date[fq]] # Don't look beyond when Kaminsky and 
         # Get start and 'end' periods for crises depending on definition
