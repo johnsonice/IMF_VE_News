@@ -21,11 +21,14 @@ COUNTRY_FREQ_PERIOD = 'month'   ## for country specific bow calculation
 WEIGHTED = False                 ## do we want to weighted average on similar words when doing evaluation
 SIM = True
 VERBOSE = True
-GROUPED_SEARCH_FILE = 'final_topic_words_final.csv'
+##GROUPED_SEARCH_FILE = 'final_topic_words_final.csv'
+GROUPED_SEARCH_FILE = 'grouped_search_words_final.csv'
+#GROUPED_SEARCH_FILE = 'expert_terms_final.csv'
 
 smooth_window_size = 24 # put as months , even if for quarterly data, put it as months
                         # it will automatically convert to quarterly
 months_prior = 24       # same here, put as months
+#months_prior = 12 
 z_thresh = 2.1            # how many standard deviations away we think that is a spike 
 topn = 15
 eval_end_date = {'q':'2001Q4',
