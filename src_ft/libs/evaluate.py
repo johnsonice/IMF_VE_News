@@ -6,7 +6,7 @@ description: collection of functions used in evaluation scripts
 import numpy as np
 import pandas as pd
 from frequency_utils import rolling_z_score, aggregate_freq, signif_change
-from crisis_points import crisis_points
+from crisis_points import crisis_points,ll_crisis_points
 from anomaly_detection_hpfilter_mad import anomaly_detection
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -39,7 +39,7 @@ def evaluate(word_list, country, frequency_path,method='zscore',
     assert method in ('zscore','hpfilter')
     assert period in ('quarter','month','week','year')
     assert direction in ('incr', 'decr', None)
-    assert crisis_defs in ('kr', 'fund')
+    assert crisis_defs in ('kr','ll')
     fq = period[0].lower()
     assert fq in ('q','m')  ## make sure period is set to eight quarter or month
     
@@ -54,11 +54,11 @@ def evaluate(word_list, country, frequency_path,method='zscore',
         # Get start and 'end' periods for crises depending on definition
         starts = list(pd.PeriodIndex(crisis_points[country]['starts'], freq=fq))
         ends = list(pd.PeriodIndex(crisis_points[country]['peaks'], freq=fq))
-#    elif crisis_defs == 'fund':
-#        crises = pd.read('../data/crises.csv')
-#        country_crises = crises[crises['country_name'] == country]['years']
-#        starts = [pd.Period('{}-01'.format(year), freq=fq) for year in set(country_crises)]
-#        ends = [pd.Period('{}-01'.format(int(year) + 1), freq=fq) for year in set(country_crises)]
+    elif crisis_defs == 'll':
+        ag_freq = ag_freq[:eval_end_date[fq]] # Don't look beyond when ll ends
+        # Get start and 'end' periods for crises depending on definition
+        starts = list(pd.PeriodIndex(ll_crisis_points[country]['starts'], freq=fq))
+        ends = list(pd.PeriodIndex(ll_crisis_points[country]['peaks'], freq=fq))
 
     preds  = get_preds_from_pd(ag_freq,country,method, crisis_defs,period, 
                              window, direction, months_prior, fbeta,
@@ -77,7 +77,7 @@ def get_preds_from_pd(ag_freq,country,method='zscore', crisis_defs='kr',period='
     assert method in ('zscore','hpfilter')
     assert period in ('quarter','month','week','year')
     assert direction in ('incr', 'decr', None)
-    assert crisis_defs in ('kr', 'fund')
+    assert crisis_defs in ('kr', 'll')
     fq = period[0].lower()
     assert fq in ('q','m')  ## make sure period is set to eight quarter or month
     

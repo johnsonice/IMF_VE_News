@@ -12,7 +12,7 @@ pd.set_option('display.max_columns',10)
 #import warnings 
 #%%
 sys.path.insert(0,'./libs')
-from crisis_points import crisis_points
+from crisis_points import crisis_points,country_dict,ll_crisis_points
 
 ## global arguments
 MODE = 'test'# 'real'
@@ -21,6 +21,8 @@ COUNTRY_FREQ_PERIOD = 'month'   ## for country specific bow calculation
 WEIGHTED = False                 ## do we want to weighted average on similar words when doing evaluation
 SIM = True
 VERBOSE = True
+## crisis defination 
+crisis_defs = 'rr'
 ##GROUPED_SEARCH_FILE = 'final_topic_words_final.csv'
 GROUPED_SEARCH_FILE = 'grouped_search_words_final.csv'
 #GROUPED_SEARCH_FILE = 'expert_terms_final.csv'
@@ -72,7 +74,7 @@ EXPERT_TERMS = os.path.join(PROCESSING_FOLDER,'search_terms','expert_terms.csv')
 
 
 ## file specific inputs ##
-countries=list(crisis_points.keys())
+countries=list(country_dict.keys())
 common_terms = ['he','him','she','her','that','if','me','about','over']
 
 

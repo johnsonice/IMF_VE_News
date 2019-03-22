@@ -1,3 +1,6 @@
+from load_ll_crisis_util import get_ll_crisis_points
+
+
 crisis_points = {
     'argentina': {
         'starts': ['1980-03', '1985-05', '1994-12', '2001-12'],
@@ -68,7 +71,7 @@ crisis_points = {
         'starts': ['1981-01'],
         'peaks': ['1985-06'],
         'bop': ['1983-10']
-    },
+    }, 
     'spain': {
         'starts': ['1978-11'],
         'peaks': ['1983-01'],
@@ -101,6 +104,8 @@ crisis_points = {
     },
 }
 
+
+
 country_dict = {
     'argentina': ['argentina'],
     'bolivia': ['bolivia'],
@@ -124,7 +129,14 @@ country_dict = {
     'venezuela': ['venezuela'],
 }
 
+import os 
+cd = os.path.dirname(os.path.abspath(__file__))
+ll_crisis_points=get_ll_crisis_points(os.path.join(cd ,'ll_crisis_dates.xlsx'),'import',list(country_dict.keys()))
+
+
+#%%
 if __name__ == '__main__':
     import ujson as json
     with open('crisis_points.json', 'w') as f:
         f.write(json.dumps(crisis_points))
+    
