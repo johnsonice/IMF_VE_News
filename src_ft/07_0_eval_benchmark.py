@@ -85,7 +85,7 @@ if __name__ == "__main__":
     vocabs =list(vecs.wv.vocab.keys())
 
     
-    def get_country_stats(country,vocabs=vocabs,period=period,n_words=50,n_iter=100):
+    def get_country_stats(country,vocabs=vocabs,period=period,n_words=50,n_iter=100,crisis_defs=config.crisis_defs):
         fq = period[0].lower()
         country_stats = list()
         c_vocab = get_country_vocab(country,period=period)
@@ -106,13 +106,19 @@ if __name__ == "__main__":
                 print(country)
                 print(df.head(2))
             #offset = pd.DateOffset(months=config.months_prior)
-            starts = list(pd.PeriodIndex(crisis_points[country]['starts'], freq=fq))
-            ends = list(pd.PeriodIndex(crisis_points[country]['peaks'], freq=fq))
+            
+            if crisis_defs == 'kr':
+                starts = list(pd.PeriodIndex(crisis_points[country]['starts'], freq=fq))
+                ends = list(pd.PeriodIndex(crisis_points[country]['peaks'], freq=fq))
+            elif crisis_defs == 'll':
+                starts = list(pd.PeriodIndex(ll_crisis_points[country]['starts'], freq=fq))
+                ends = list(pd.PeriodIndex(ll_crisis_points[country]['peaks'], freq=fq))
+                
             #preds = list(signif_change(df, window=config.smooth_window_size, direction='incr').index)
             preds = get_preds_from_pd(df,
                           country,
                           method='zscore', 
-                          crisis_defs='kr',
+                          crisis_defs=crisis_defs,
                           period=period, 
                           window=config.smooth_window_size, 
                           direction='incr', 

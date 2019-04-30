@@ -148,11 +148,11 @@ def multi_process_files(files,out_dir,workers,chunksize=1000):
 #%%
 if __name__ == "__main__":
     ## global variables
-    in_dir = '/data/News_data_raw/Financial_Times/all_current'
+    in_dir = '/data/News_data_raw/Financial_Times/all_18m6_19m4/'
     #content_dir = '/data/News_data_raw/Financial_Times/FT-archive-concepts'
-    out_dir = '/data/News_data_raw/FT_json_current'
-    out_log = '/data/News_data_raw/FT_log'
-    workers = 30
+    out_dir = '/data/News_data_raw/Financial_Times_processed/FT_json_18m6_19m4/'
+    out_log = '/data/News_data_raw/Financial_Times_processed/FT_log'
+    workers = 25
     
     ## set timer
     startTime = time.time()
@@ -171,7 +171,7 @@ if __name__ == "__main__":
         
     ## dump log file
     res = [r for r in res if r is not None]
-    with open(os.path.join(out_log,'log_current.pkl'), 'wb') as f:
+    with open(os.path.join(out_log,'log_18m6_19m4.pkl'), 'wb') as f:
         pickle.dump(res, f)
     
     print("Total files written: {}".format(len(files)))

@@ -22,7 +22,7 @@ WEIGHTED = False                 ## do we want to weighted average on similar wo
 SIM = True
 VERBOSE = True
 ## crisis defination 
-crisis_defs = 'rr'
+crisis_defs = 'll' # or 'll' or 'kr'
 ##GROUPED_SEARCH_FILE = 'final_topic_words_final.csv'
 GROUPED_SEARCH_FILE = 'grouped_search_words_final.csv'
 #GROUPED_SEARCH_FILE = 'expert_terms_final.csv'

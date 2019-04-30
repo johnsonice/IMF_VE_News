@@ -79,7 +79,7 @@ if __name__ == '__main__':
             
     ## multi process files 
     mp = Mp(flist,process_jsons) 
-    res = mp.multi_process_files(workers=30,chunk_size=5000)
+    res = mp.multi_process_files(workers=25,chunk_size=5000)
     
 
 

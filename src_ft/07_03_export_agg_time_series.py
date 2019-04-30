@@ -12,7 +12,7 @@ import sys
 sys.path.insert(0,'./libs')
 #import argparse
 from gensim.models.keyedvectors import KeyedVectors
-from crisis_points import crisis_points
+from crisis_points import crisis_points,ll_crisis_points
 from evaluate import evaluate, get_recall, get_precision, get_fscore ,get_input_words_weights,get_country_stats
 from frequency_utils import rolling_z_score, aggregate_freq, signif_change
 import pandas as pd
@@ -122,8 +122,17 @@ if __name__ == '__main__':
                           window=config.smooth_window_size,
                           eval_end_date=config.eval_end_date,
                           weighted= config.WEIGHTED,
+                          crisis_defs=config.crisis_defs,
                           z_thresh=config.z_thresh)
 
+    # check config crisis defination and chenge variable crisis_defs to correspond defination
+    if args.crisis_defs =="ll":
+        print("crisis defs: {}".format(args.crisis_defs))
+        crisis_points = ll_crisis_points
+    else:
+        print("crisis defs: {}".format(args.crisis_defs))
+
+#%%
     # Parse input word groups, word_gropus is a list of list:
     # something like this: [['fear'],['worry'],['concern'],['risk'],['threat'],['warn'],['maybe']]
     file_path = os.path.join(config.SEARCH_TERMS,config.GROUPED_SEARCH_FILE)  ## searh words name
@@ -166,7 +175,11 @@ if __name__ == '__main__':
 
         df_all = pd.concat(series_wg,axis=1)
         crisis_df = get_crisis_wondiws(args,crisis_points,country)
-        bop_crisis_df = get_bop_crisis(args,crisis_points,country)
+        try:
+            bop_crisis_df = get_bop_crisis(args,crisis_points,country)
+        except:
+            print('no bop crisis data; assign to 0s')
+            bop_crisis_df= None
         
         ## merge crisis events 
         df_all=df_all.join(crisis_df)
@@ -185,7 +198,7 @@ if __name__ == '__main__':
         return country,df_all
         # end of function 
         
-#    country = "argentina"
+#    country = "brazil"
 #    c,d = export_country_ts(country)
 
     mp = Mp(config.countries,export_country_ts)

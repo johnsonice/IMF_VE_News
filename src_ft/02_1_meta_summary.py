@@ -69,11 +69,11 @@ if __name__ == '__main__':
     df['data_path'] = json_data_path+'/'+df.index + '.json'
     print('see one example : \n',df['data_path'].iloc[0])
     streamer = MetaStreamer(df['data_path'].tolist())
-    news = streamer.multi_process_files(workers=31,chunk_size=5000)
+    news = streamer.multi_process_files(workers=30,chunk_size=5000)
     #%%
     #country_meta = [(a['an'],get_countries(a,country_dict)) for a in news]
     mp = Mp(news,get_countries)
-    country_meta = mp.multi_process_files(workers= 31,chunk_size=5000)
+    country_meta = mp.multi_process_files(workers= 30,chunk_size=5000)
     #%%
     index = [i[0] for i in country_meta]
     country_list = [i[1] for i in country_meta]
