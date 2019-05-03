@@ -62,9 +62,9 @@ def rename_column_rule(c_name):
     
 #test = config.CURRENT_TS_PS
 #df = aggregate_all_countries(test)
-        
-#%%
-var_name_map={
+def export_tableau_data(ts_path,output_path):
+    
+    var_name_map={
         'agg_all_other_sentiments':'All sentiment (w/o pos and neg)',
         'agg_other_and_negative':'Negative sentiment +',
         'all_language':'All sentiment',
@@ -77,6 +77,20 @@ var_name_map={
         'risk_language':'Risk sentiment'
         }
 
+    merge_df = aggregate_all_countries(ts_path)
+    #vns = [f.replace('_pred_crisis',"") for f in merge_df.columns.values if '_pred_crisis' in f]
+    new_vns = [rename_column_rule(f) for f in merge_df.columns.values]
+    merge_df.columns.values[:] = new_vns
+    keep_names = [n for n in new_vns if n not in ['pred-crisis_window','pred-bop_crisis','index-crisis_window','index-bop_crisis']]
+    keep_names = ['time','country_name'] + keep_names[1:-1]
+    merge_df=merge_df[keep_names]
+    
+    new_df = pd.wide_to_long(df=merge_df,stubnames=['index','pred'],i=['time','country_name'],j='indexes',sep='-',suffix='\\w+')
+    new_df.reset_index(inplace=True)
+    new_df['indexes'] = new_df['indexes'].apply(lambda s:var_name_map[s])
+
+    new_df.to_csv(os.path.join(output_path,'contry_data_long.csv'))
+
 
 #%%
 
@@ -85,22 +99,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-ts_path', '--ts_path', action='store', dest='ts_path', 
                         default=config.CURRENT_TS_PS)
+    parser.add_argument('-out_dir', '--out_dir', action='store', dest='out_dir', 
+                        default=os.path.join(config.PROCESSING_FOLDER,'data'))
     
     args = parser.parse_args()
-    merge_df = aggregate_all_countries(args.ts_path)
-    #%%
-    #vns = [f.replace('_pred_crisis',"") for f in merge_df.columns.values if '_pred_crisis' in f]
-    new_vns = [rename_column_rule(f) for f in merge_df.columns.values]
-    merge_df.columns.values[:] = new_vns
-    keep_names = [n for n in new_vns if n not in ['pred-crisis_window','pred-bop_crisis','index-crisis_window','index-bop_crisis']]
-    keep_names = ['time','country_name'] + keep_names[1:-1]
-    merge_df=merge_df[keep_names]
-    
-    #%%
-    new_df = pd.wide_to_long(df=merge_df,stubnames=['index','pred'],i=['time','country_name'],j='indexes',sep='-',suffix='\\w+')
-    new_df.reset_index(inplace=True)
-    new_df['indexes'] = new_df['indexes'].apply(lambda s:var_name_map[s])
-
-    #%%
-    new_df.to_csv('/data/News_data_raw/Production/data/contry_data_long.csv')
-    
+    export_tableau_data(args.ts_path,args.out_dir)

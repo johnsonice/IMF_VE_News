@@ -38,7 +38,7 @@ class Data_processor (object):
     basic clean up and text normalization
     """
     
-    def __init__(self,transformer):
+    def __init__(self,transformer=transformer):
         self.transformer = transformer
     
     @staticmethod
@@ -60,9 +60,9 @@ class Data_processor (object):
             print('Total number of documents to process: {}'.format(len(files)))
         ## multiprocess or single process
         if n_worker > 1:
-            res = dp.transformer.multi_process_files(files,out_dir,workers=n_worker,chunksize=2000)
+            res = self.transformer.multi_process_files(files,out_dir,workers=n_worker,chunksize=2000)
         else:
-            res = dp.transformer.single_process_files(files,out_dir,print_iter=5000)
+            res = self.transformer.single_process_files(files,out_dir,print_iter=5000)
             
         ## dump log file
         res = [r for r in res if r is not None]

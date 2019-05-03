@@ -33,18 +33,19 @@ import infer_utils
 
 class Freq_generator():
     
-    def __init__(self,doc_meta):
+    def __init__(self,doc_meta,period = config.COUNTRY_FREQ_PERIOD):
         self.full_time_df = pd.read_pickle(doc_meta)
-        self.uniq_periods = set(self.full_time_df[args.period])
+        self.uniq_periods = set(self.full_time_df[period])
+        self.period_freq = period
         ## get only docs with country labels 
         self.time_df = self.full_time_df[self.full_time_df['country_n']>0]
         print('Frequency generator initialized...')
         
-    @staticmethod
-    def country_period_filter(time_df,country,period):
+    
+    def country_period_filter(self,time_df,country,period):
         
         time_df['filter_country'] = time_df['country'].apply(lambda c: country in c)
-        df = time_df['data_path'][(time_df['filter_country'] == True)&(time_df[args.period] == period)]
+        df = time_df['data_path'][(time_df['filter_country'] == True)&(time_df[self.period_freq] == period)]
         
         return df.tolist()
     

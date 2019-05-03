@@ -18,7 +18,7 @@ sys.path.insert(0,os.path.join(cwd,'..'))
 
 import pandas as pd
 import numpy as np
-from crisis_points import country_dict
+#from crisis_points import country_dict
 import argparse
 from frequency_utils import signif_change
 import infer_config as config 
@@ -72,8 +72,8 @@ class data_updator():
     
     def export_all_updated_data(self):
         for c in self.args.countries:
-            new_ts_path = os.path.join(args.new_ts_folder,"agg_{}_month_z{}_time_series.csv".format(c,self.args.z_thresh))
-            old_ts_path = os.path.join(args.old_ts_folder,"agg_{}_month_z2.1_time_series.csv".format(c))
+            new_ts_path = os.path.join(self.args.new_ts_folder,"agg_{}_month_z{}_time_series.csv".format(c,self.args.z_thresh))
+            old_ts_path = os.path.join(self.args.old_ts_folder,"agg_{}_month_z2.1_time_series.csv".format(c))
             
             country_res = self.append_update_data(new_ts_path,old_ts_path)
             new_res = self.cal_merge_all_signals(country_res)
@@ -81,36 +81,29 @@ class data_updator():
             new_res.to_csv(out_file,encoding='utf-8')
         
         print('all file updated at {}'.format(self.args.out_dir))
-            
-#%%
 
-if __name__ == '__main__':
-
+def get_dm_args(config):
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--countries', nargs='+', 
                         help='countries to get freq for',
-                        default=country_dict.keys())
+                        default=config.countries)
     parser.add_argument('-nts', '--ts_folder', action='store', dest='new_ts_folder', 
                         default=config.CURRENT_TS_PS)
     parser.add_argument('-o', '--out_dir', action='store', dest='out_dir', 
                         default=config.CURRENT_TS_PS)
     parser.add_argument('-ots', '--old_ts_folder', action='store', dest='old_ts_folder', 
-                        default='/data/News_data_raw/Production/data/time_series_historical/')
+                        default=config.HISTORICAL_TS_PS)
     parser.add_argument('-w', '--window', action='store', dest='window', type=int,
                         default=config.smooth_window_size)
     parser.add_argument('-z', '--z_thresh', action='store', dest='z_thresh', type=int,
                         default=config.z_thresh)
     args = parser.parse_args()
-    
-    
-#    new_ts_path = os.path.join(args.new_ts_folder,"agg_{}_month_z2.1_time_series.csv".format('argentina'))
-#    old_ts_path = os.path.join(args.old_ts_folder,"agg_{}_month_z2.1_time_series.csv".format('argentina'))
-#
-#    du = data_updator(args)
-#    res = du.append_update_data(new_ts_path,old_ts_path)
-#    #%%
-#    
-#    new_res = du.cal_merge_all_signals(res)
-    
+    return args
+
+#%%
+
+if __name__ == '__main__':
+
+    args = get_dm_args(config)
     du = data_updator(args)
     du.export_all_updated_data()

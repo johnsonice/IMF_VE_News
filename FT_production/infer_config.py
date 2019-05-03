@@ -37,8 +37,8 @@ months_prior = 24       # same here, put as months
 #months_prior = 12 
 z_thresh = 2.1            # how many standard deviations away we think that is a spike 
 topn = 15
-eval_end_date = {'q':'2001Q4',
-                 'm':'2001-12'}  # or None
+#eval_end_date = {'q':'2001Q4',
+#                 'm':'2001-12'}  # or None
 
 
 ########################
@@ -47,10 +47,14 @@ eval_end_date = {'q':'2001Q4',
 #RAW_DATA_PATH = '/data/News_data_raw/Financial_Times_processed'
 
 PROCESSING_FOLDER = '/data/News_data_raw/Production'
+HISTORICAL_INPUT = os.path.join(PROCESSING_FOLDER,'data/raw_input_historical')
+JSON_RAW = os.path.join(PROCESSING_FOLDER,'data/raw_input_current_month')
 DOC_META = os.path.join(PROCESSING_FOLDER,'data/meta')
 JSON_LEMMA = os.path.join(PROCESSING_FOLDER,'data/input_processed_current_month')
 FREQUENCY = os.path.join(PROCESSING_FOLDER,'data/frequency_current_month')
 CURRENT_TS_PS = os.path.join(PROCESSING_FOLDER,'data/time_series_current_month')
+HISTORICAL_TS_PS = os.path.join(PROCESSING_FOLDER,'data/time_series_historical')
+BACKUP_TS_PS = os.path.join(PROCESSING_FOLDER,'data/time_series_backup')
 SEARCH_TERMS = os.path.join(PROCESSING_FOLDER,'search_terms')
 MODELS = os.path.join(PROCESSING_FOLDER,'models')
 NGRAMS = os.path.join(MODELS,'ngrams')
@@ -61,12 +65,12 @@ VS_MODELS = os.path.join(MODELS,'vsms')
 DOC_META_FILE = os.path.join(DOC_META,'doc_details_crisis.pkl')
 PHRASER = os.path.join(NGRAMS,'2grams_default_10_20_NOSTOP')
 W2V = os.path.join(VS_MODELS,'word_vecs_5_50_200')
-EXPERT_TERMS = os.path.join(PROCESSING_FOLDER,'search_terms','expert_terms.csv')
+#EXPERT_TERMS = os.path.join(PROCESSING_FOLDER,'search_terms','expert_terms.csv')
 
 
 ## file specific inputs ##
 countries=list(country_dict.keys())
-common_terms = ['he','him','she','her','that','if','me','about','over']
+#common_terms = ['he','him','she','her','that','if','me','about','over']
 
 
 def load_search_words(folder,path):

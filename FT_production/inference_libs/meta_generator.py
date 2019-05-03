@@ -128,13 +128,13 @@ class Meta_processor(object):
         return None
     
     
-    def generate_meta(self,in_dir,out_dir=None,period='crisis',save=True):
+    def generate_meta(self,in_dir,out_dir=None,period='crisis',save=True,verbose=True):
         self._maybe_create(out_dir)
         streamer = MetaStreamer(in_dir, language='en',verbose=True)  
         date_df = self.time_index(streamer.multi_process_files(workers=25,chunk_size=5000), lang='en', verbose=False,date_format='FT')
         date_df = self.period_info(date_df)
         print('label crisis')
-        date_df = self.label_crisis(date_df, path = args.in_dir,verbose=args.verbose, period=args.period)
+        date_df = self.label_crisis(date_df, path = in_dir,verbose=verbose, period=period)
         date_df['data_path'] = in_dir +'/'+date_df.index + '.json'
         print('see one example : \n',date_df['data_path'].iloc[0])
         date_df = self.label_country(date_df)

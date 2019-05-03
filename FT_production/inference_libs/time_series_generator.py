@@ -95,109 +95,8 @@ def aggregate_freq(word_list,country, period='quarter', stemmed=False,frequency_
     
     return grp_freq
 
-class TS_generator(object):
-    def __init__(self,args):
-        self.args = args
-        self.weights = None
-        self.search_words_sets = self._get_search_words_sets()
-        
-        
-        print('TS_generator created')
-    
-    def _get_search_words_sets(self):
-        file_path = os.path.join(config.SEARCH_TERMS,config.GROUPED_SEARCH_FILE)  ## searh words name
-        search_groups = read_grouped_search_words(file_path) 
-        if self.args.sims:
-            self.vecs = KeyedVectors.load(self.args.wv_path)
-            
-        if self.args.weighted:   
-            raise Exception('for now, this module only works for unweighted calculation')
-            print('Weighted flag = True ; Results are aggregated by weighted sum....')
-        else:
-            search_words_sets = dict()
-            for k,v in search_groups.items():
-                search_words_sets[k]=list(get_sim_words_set(args,search_groups[k],self.vecs)) ## turn set to list
-
-        return search_words_sets
-        
-    def export_country_ts(self,country,export=True):
-        series_wg = list()
-        for k,words in self.search_words_sets.items(): 
-            word_groups = words
-            df = aggregate_freq(word_groups, country,period=self.args.period,stemmed=False,
-                                frequency_path=args.frequency_path,
-                                weights=None)
-
-            df.name = k
-            series_wg.append(df)
-
-        df_all = pd.concat(series_wg,axis=1)
-        #df_all.fillna(0,inplace=True)
-        
-        ####################################################
-        ####################################################
-        ## need to change latter, it is hard coded 
-        ####################################################
-        ####################################################
-        
-        if export:
-            out_csv = os.path.join('/data/News_data_raw/Production/data/time_series_current_month/', 
-                                   'agg_{}_{}_z{}_time_series.csv'.format(country,
-                                                                            self.args.period,
-                                                                            self.args.z_thresh))
-            df_all.to_csv(out_csv)
-        
-        return country,df_all
-
-
-
-#class args_class(object):
-#    def __init__(self, targets,frequency_path=config.FREQUENCY,eval_path=config.EVAL_WG,
-#                 wv_path = config.W2V,topn=config.topn,months_prior=config.months_prior,
-#                 window=config.smooth_window_size,
-#                 countries=config.countries,
-#                 period=config.COUNTRY_FREQ_PERIOD,
-#                 eval_end_date=config.eval_end_date,
-#                 method='zscore',crisis_defs='kr',sims=True,weighted=False,
-#                 z_thresh=config.z_thresh):
-#        self.targets = targets
-#        self.frequency_path = frequency_path
-#        self.eval_path=eval_path
-#        self.wv_path = wv_path
-#        self.topn = topn
-#        self.months_prior = months_prior
-#        self.window = window
-#        self.countries = countries
-#        self.method = method
-#        self.period = period
-#        self.eval_end_date=eval_end_date
-#        self.crisis_defs = crisis_defs
-#        self.sims = sims
-#        self.weighted = weighted
-#        self.z_thresh=z_thresh
-#
-#        #%%
-#if __name__ == '__main__':
-#    
-#    ## load config arguments
-#    args = args_class(targets=config.targets,frequency_path='/data/News_data_raw/Production/data/frequency_current_month/',
-#                          countries = config.countries,wv_path = config.W2V,
-#                          sims=True,period=config.COUNTRY_FREQ_PERIOD, 
-#                          months_prior=config.months_prior,
-#                          window=config.smooth_window_size,
-#                          eval_end_date=config.eval_end_date,
-#                          weighted= config.WEIGHTED,
-#                          crisis_defs=config.crisis_defs,
-#                          z_thresh=config.z_thresh)
-    
-#%%
-        
-if __name__ == '__main__':
-        
+def get_ts_args(config):
     parser = argparse.ArgumentParser()
-#    parser.add_argument('-t', '--targets', nargs='+', 
-#                        help='groupped keywords to search for',
-#                        default=config.targets)
     parser.add_argument('-freq', '--frequency_path', action='store', dest='frequency_path', 
                         default=config.FREQUENCY)
     parser.add_argument('-ctm', '--current_ts_path', action='store', dest='current_ts_path', 
@@ -222,23 +121,72 @@ if __name__ == '__main__':
                         default=True)
     parser.add_argument('-weighted', '--weighted', action='store', dest='weighted', 
                         default=False)
-    
-    
-#    parser.add_argument('-ev', '--eval_path', action='store', dest='eval_path', 
-#                        default=config.EVAL_WG)
-    
-#    parser.add_argument('-eed', '--eval_end_date', action='store', dest='eval_end_date',
-#                        default=config.eval_end_date)
-
-#    parser.add_argument('-cd', '--crisis_defs', action='store', dest='crisis_defs', 
-#                        default='kr')
-    
 
     args = parser.parse_args()
-    
+    return args
 
+    
+class TS_generator(object):
+    def __init__(self,args):
+        self.args = args
+        self.weights = None
+        self.search_words_sets = self._get_search_words_sets()
+        
+        
+        print('TS_generator created')
+    
+    def _get_search_words_sets(self):
+        file_path = os.path.join(config.SEARCH_TERMS,config.GROUPED_SEARCH_FILE)  ## searh words name
+        search_groups = read_grouped_search_words(file_path) 
+        if self.args.sims:
+            self.vecs = KeyedVectors.load(self.args.wv_path)
+            
+        if self.args.weighted:   
+            raise Exception('for now, this module only works for unweighted calculation')
+            print('Weighted flag = True ; Results are aggregated by weighted sum....')
+        else:
+            search_words_sets = dict()
+            for k,v in search_groups.items():
+                search_words_sets[k]=list(get_sim_words_set(self.args,search_groups[k],self.vecs)) ## turn set to list
+
+        return search_words_sets
+        
+    def export_country_ts(self,country,export=True):
+        series_wg = list()
+        for k,words in self.search_words_sets.items(): 
+            word_groups = words
+            df = aggregate_freq(word_groups, country,period=self.args.period,stemmed=False,
+                                frequency_path=self.args.frequency_path,
+                                weights=None)
+
+            df.name = k
+            series_wg.append(df)
+
+        df_all = pd.concat(series_wg,axis=1)
+        #df_all.fillna(0,inplace=True)
+        
+        ####################################################
+        ####################################################
+        ## need to change latter, it is hard coded 
+        ####################################################
+        ####################################################
+        
+        if export:
+            out_csv = os.path.join('/data/News_data_raw/Production/data/time_series_current_month/', 
+                                   'agg_{}_{}_z{}_time_series.csv'.format(country,
+                                                                            self.args.period,
+                                                                            self.args.z_thresh))
+            df_all.to_csv(out_csv)
+        
+        return country,df_all
+
+    
 #%%
-    ts_generator = TS_generator(args)
+        
+if __name__ == '__main__':
+        
+    ts_args = ts_args(config)
+    ts_generator = TS_generator(ts_args)
 #    for country in config.countries:
 #        print(country)
 #        c,d = ts_generator.export_country_ts(country)
