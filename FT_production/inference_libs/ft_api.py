@@ -179,7 +179,7 @@ def ft_api_args():
     parser = argparse.ArgumentParser()
     current_batch = dt.datetime.strftime(dt.datetime.today(),"%Y-%m")
     parser.add_argument('-dd', '--data_dir', action='store', dest='data_dir',                
-                        default=os.path.join(config.HISTORICAL_INPUT,"{}".format(current_batch)))
+                        default=os.path.join(config.JSON_RAW,"{}".format(current_batch)))
     parser.add_argument('-ds', '--date_since', action='store', dest='date_since', default=get_current_month_begaining())
     parser.add_argument('-hs', '--last_update', action='store', dest='last_update', default=False)
     parser.add_argument('-cred', '--cred', action='store', dest='cred_path', default='./credentials_ft.txt')

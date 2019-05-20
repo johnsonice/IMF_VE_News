@@ -6,16 +6,6 @@ Created on Fri Apr 19 10:11:34 2019
 @author: chuang
 """
 
-"""
-frequency_eval.py
-
-Description: Used to evaluate supplied terms and term groups wrt recall, precision, and f2
-based on whether or not the quarterly term freq is spiking significantly during the lead
-up to crisis.
-
-usage: python3 frequency_eval.py <TERM1> <TERM2> ...
-NOTE: to see an explanation of optional arguments, use python3 frequency_eval.py --help
-"""
 import sys
 import os
 try:
@@ -185,7 +175,7 @@ class TS_generator(object):
         
 if __name__ == '__main__':
         
-    ts_args = ts_args(config)
+    ts_args = get_ts_args(config)
     ts_generator = TS_generator(ts_args)
 #    for country in config.countries:
 #        print(country)

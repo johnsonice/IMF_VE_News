@@ -116,7 +116,7 @@ def backup_and_clean_up():
         
 #%%
 if __name__ == "__main__":
-    print('/n......runing....../n')
+    print('\n......runing......\n')
     
     download_current_files()
     process_raw_data()

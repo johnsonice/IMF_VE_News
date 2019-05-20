@@ -76,6 +76,12 @@ def transform_article(article,locations=None,lang_check=False):
     identifier = "ft-"+an.split('/')[-1] ## get only the id 
     assert isinstance(title, str), "title variable should be string"
     
+    ## older documents may not have webURL, put it as NA if that is the case
+    try:
+        weburl = article['webUrl']
+    except:
+        weburl = 'NA'
+        
     ## this part can eror out, it will be catched in log file 
     text = article['bodyXML'] ## some documents don't have body xml 
     text = preprocess(text)
@@ -97,7 +103,8 @@ def transform_article(article,locations=None,lang_check=False):
         'source_name':source,
         'title': title,
         'region_codes':'NA',
-        'snippet': snippet
+        'snippet': snippet,
+        'weburl':weburl
         }
     return adict  
 

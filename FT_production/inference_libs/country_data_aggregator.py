@@ -19,6 +19,7 @@ import argparse
 import infer_config as config 
 import re 
 import pandas as pd
+from tooltip_generator import Tool_tips_generator 
 
 #%%
 
@@ -87,8 +88,16 @@ def export_tableau_data(ts_path,output_path):
     
     new_df = pd.wide_to_long(df=merge_df,stubnames=['index','pred'],i=['time','country_name'],j='indexes',sep='-',suffix='\\w+')
     new_df.reset_index(inplace=True)
-    new_df['indexes'] = new_df['indexes'].apply(lambda s:var_name_map[s])
+    
+    ## merge tooltips  
+    TG = Tool_tips_generator(config)
+    df_tt = TG.get_tool_tips_df(topn=3) ## tool tip df
+    df_tt['country_name'] = df_tt['country_name'].apply(lambda x:x.title())
+    df_tt['time'] = df_tt['time'].apply(lambda x:str(x))
+    new_df = pd.merge(new_df,df_tt,how='left',on=['time','country_name','indexes'])
 
+    ## clean up and export     
+    new_df['indexes'] = new_df['indexes'].apply(lambda s:var_name_map[s])
     new_df.to_csv(os.path.join(output_path,'contry_data_long.csv'))
 
 
@@ -103,4 +112,7 @@ if __name__ == '__main__':
                         default=os.path.join(config.PROCESSING_FOLDER,'data'))
     
     args = parser.parse_args()
-    export_tableau_data(args.ts_path,args.out_dir)
+    new_df = export_tableau_data(args.ts_path,args.out_dir)
+
+
+
