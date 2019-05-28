@@ -49,7 +49,8 @@ def get_params(filename, history,since=None):
         else:
             timestamp = get_current_month_begaining()
             logger.info('Since date not passed in, defaults to begaining of current month: {}'.format(since))
-            #timestamp = '2019-04-01T02:00:00.000Z'
+            #timestamp = '2019-01-01'
+        timestamp = "{}T02:00:00.000Z".format(timestamp)
         url_query = "{}since={}&apiKey={}".format(main_url,timestamp, api_key)
     query_params = {
         'proxies':{'http': "socks5://intsquid:8000",'https': "socks5://intsquid:8000"},

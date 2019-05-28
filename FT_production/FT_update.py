@@ -37,26 +37,40 @@ def download_current_files():
     ## step 0 dowloading current month of data 
     api_args = ft_api_args()
     api_args.cred_path = os.path.join('/data/News_data_raw/Production','credentials_ft.txt')
+    
+    
+    ###############################################################################
+    ## if you want to change some input on the fly, you can do it here 
+    ## note we can only go back for 3 month 
+#    api_args.date_since = '2019-03-01'
+#    api_args.data_dir = os.path.join(config.JSON_RAW,"{}".format('2019-03-05'))
+    ###############################################################################
+    
     print(api_args)
     download_docs(api_args)
     
 def process_raw_data():
     ## step 1 process raw data 
     ## copy current month data to processing folder 
+    
     current_month = get_current_month()
-    #current_month = '2019-04'
-    current_month_data_folder = os.path.join(config.HISTORICAL_INPUT,current_month)
+    ###############################################################################
+    ##### if you changed download folder name, you need to change here too 
+#    current_month = '2019-03-05'
+    ##############################################################################
+    
+    current_month_data_folder = os.path.join(config.JSON_RAW,current_month)
     assert os.path.exists(
             current_month_data_folder
                           ),"Current month data folder do not exist; please make sure you downloaded current data"
-    backup_folder(current_month_data_folder,os.path.join(config.JSON_RAW,current_month),overwrite=True)
+    backup_folder(current_month_data_folder,os.path.join(config.HISTORICAL_INPUT,current_month),overwrite=True)
     
     ## step 2 process raw data 
     dp = Data_processor()
-    dp.pre_process_files(config.JSON_RAW,config.JSON_LEMMA,config.JSON_RAW,end_with='.json',n_worker=15)
+    dp.pre_process_files(config.JSON_RAW,config.JSON_LEMMA,config.HISTORICAL_INPUT,end_with='.json',n_worker=15)
     
 
-def generate_meta_file():
+def generate_meta_file(keep_current=True):
     ## step 3 generate metadata file 
     current_month = get_current_month()
     ## initiate meta generator 
@@ -64,13 +78,20 @@ def generate_meta_file():
         ## create meta
     df_meta = mg.generate_meta(config.JSON_LEMMA,config.DOC_META)
         ## add a temp filter on the fly 
-    #current_month = dt.datetime.strftime(dt.datetime.today(),"%Y-%m")
-    ###################################
-    #current_month = '2019-04' # you can change here if you don't just want current month
-    print('Filter docs to keep only current month: {}'.format(current_month))
-    ###################################
-        ## save meta file to location
-    df_meta = df_meta[df_meta['month']==current_month] ## or put in a specific month e.g: '2019-04'
+        
+    
+    #############################################################################################
+    ##current_month = dt.datetime.strftime(dt.datetime.today(),"%Y-%m")
+    ##current_month = '2019-04' # you can change here if you don't just want current month
+#    keep_current = False  ## set to false if you don't wnat to do any filtering
+#    df_meta = df_meta[df_meta['month']>= '2019-03'] ## or put in a specific month e.g: '2019-04'
+    #################################################################################################
+    
+    if keep_current:
+        print('Filter docs to keep only current month: {}'.format(current_month))
+        df_meta = df_meta[df_meta['month']==current_month] ## or put in a specific month e.g: '2019-04'
+    
+    ## save meta file to location
     df_meta.to_pickle(config.DOC_META_FILE)
         ## export summary statistics
     mg.create_summary(df_meta,meta_root=config.DOC_META)
@@ -98,7 +119,7 @@ def merge_with_historical():
 
 def create_data_for_tableau():
     ## step 7 generate tableau input file 
-    export_tableau_data(config.CURRENT_TS_PS,os.path.join(config.PROCESSING_FOLDER,'data'))
+    export_tableau_data(config.CURRENT_TS_PS,os.path.join(config.PROCESSING_FOLDER,'data','final_results'))
     
 def backup_and_clean_up():
     ## step 8 
@@ -117,7 +138,7 @@ def backup_and_clean_up():
 #%%
 if __name__ == "__main__":
     print('\n......runing......\n')
-    
+
     download_current_files()
     process_raw_data()
     generate_meta_file()
@@ -127,6 +148,7 @@ if __name__ == "__main__":
     create_data_for_tableau()
     backup_and_clean_up()
     
+    print('Update success')
 
 
 

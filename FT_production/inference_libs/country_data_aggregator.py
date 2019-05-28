@@ -20,6 +20,7 @@ import infer_config as config
 import re 
 import pandas as pd
 from tooltip_generator import Tool_tips_generator 
+from infer_utils import get_current_date
 
 #%%
 
@@ -40,7 +41,7 @@ def get_country_df(df_path):
 #df = get_country_df(test)
 
 def aggregate_all_countries(data_path):
-    file_pathes = [os.path.join(config.CURRENT_TS_PS, f) for f in os.listdir(data_path) if f.endswith('.csv')]
+    file_pathes = [os.path.join(data_path, f) for f in os.listdir(data_path) if f.endswith('.csv')]
     for idx,fs in enumerate(file_pathes):
         if idx == 0 :
             m_df = get_country_df(fs)
@@ -92,13 +93,18 @@ def export_tableau_data(ts_path,output_path):
     ## merge tooltips  
     TG = Tool_tips_generator(config)
     df_tt = TG.get_tool_tips_df(topn=3) ## tool tip df
+    
+    ## overwrite historical df_tt
+    df_tt.to_pickle(os.path.join(config.HISTORICAL_INPUT,'tool_tips_df.pkl'))
+    
+    ## prepare df_tt for merge
     df_tt['country_name'] = df_tt['country_name'].apply(lambda x:x.title())
     df_tt['time'] = df_tt['time'].apply(lambda x:str(x))
     new_df = pd.merge(new_df,df_tt,how='left',on=['time','country_name','indexes'])
 
     ## clean up and export     
     new_df['indexes'] = new_df['indexes'].apply(lambda s:var_name_map[s])
-    new_df.to_csv(os.path.join(output_path,'contry_data_long.csv'))
+    new_df.to_csv(os.path.join(output_path,'contry_data_long_{}.csv'.format(get_current_date())))
 
 
 #%%
@@ -112,6 +118,7 @@ if __name__ == '__main__':
                         default=os.path.join(config.PROCESSING_FOLDER,'data'))
     
     args = parser.parse_args()
+    #args.ts_path=config.HISTORICAL_TS_PS
     new_df = export_tableau_data(args.ts_path,args.out_dir)
 
 

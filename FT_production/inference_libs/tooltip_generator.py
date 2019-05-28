@@ -76,6 +76,29 @@ class Tool_tips_generator(object):
         
         return df 
     
+    def load_historical_df(self,hist_df_path):
+        if os.path.isfile(hist_df_path):
+            old_df = pd.read_pickle(hist_df_path)
+        else:
+            return None
+        return old_df
+    
+    @staticmethod
+    def append_update_df(new_df,old_df):
+        
+        for p in new_df['time'].unique():
+            if p in old_df['time'].unique():
+                old_df = old_df[old_df['time']!=p]
+                #print(old_df['time'].unique())
+                old_df=old_df.append(new_df[new_df['time']==p],ignore_index=True)
+            else:
+                #print(old_df['time'].unique())
+                old_df=old_df.append(new_df[new_df['time']==p],ignore_index=True)
+                
+        old_df.sort_values(by=['time','country_name','indexes'],inplace=True)
+        #print(old_df['time'].unique())
+        return old_df
+        
     def get_tool_tips_df(self,topn=3):
         res_list = []
         for country in self.config.countries:
@@ -89,6 +112,9 @@ class Tool_tips_generator(object):
                         res_list.append([period,country,k,tt])
         
         df_tt = pd.DataFrame(res_list,columns=['time','country_name','indexes','tool_tips'])
+        old_df = self.load_historical_df(os.path.join(config.HISTORICAL_INPUT,'tool_tips_df.pkl'))
+        if old_df is not None:
+            df_tt = self.append_update_df(df_tt,old_df)
         
         return df_tt
     
@@ -96,5 +122,8 @@ class Tool_tips_generator(object):
 if __name__ == '__main__':      
     TG = Tool_tips_generator(config)
     df = TG.get_tool_tips_df(topn=3)
-    df.to_pickle(os.path.join(config.HISTORICAL_TS_PS,'tool_tips_df.pkl'))
+    ## over write historical data
+    df.to_pickle(os.path.join(config.HISTORICAL_INPUT,'tool_tips_df.pkl'))
+
+#%%
 
