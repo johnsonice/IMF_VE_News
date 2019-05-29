@@ -28,6 +28,7 @@ from mp_utils import Mp
 import infer_config as config
 #import infer_utils
 from collections import Counter
+import re
 
 #%%
 
@@ -38,6 +39,7 @@ class Tool_tips_generator(object):
         self.Fg = Freq_generator(config.DOC_META_FILE)
         self.periods = list(self.Fg.uniq_periods)
         self.search_words_sets = TS_generator(get_ts_args(config)).search_words_sets
+        self.reg = re.compile(r'\bhttp.*\b')
     
         print('Tool_tips_generator created')
     
@@ -98,7 +100,27 @@ class Tool_tips_generator(object):
         old_df.sort_values(by=['time','country_name','indexes'],inplace=True)
         #print(old_df['time'].unique())
         return old_df
-        
+    
+    def _split_tooltip(self,tt):
+        """split tooltips to titles and links"""
+        links = self.reg.findall(tt)
+        tt_s = self.reg.sub("",tt)
+        tt_s = tt_s.replace("\n\n","\n").replace("/\n","")
+        tt_s = [tt_s]
+        tt_s.extend(links)
+        return tt_s
+    
+    def split_tooltips(self,df,topn):
+        """ update the extended columns everytime"""
+        df = df[['time','country_name','indexes','tool_tips']]
+        tts = df['tool_tips'].values.tolist()
+        res = [self._split_tooltip(t) for t in tts]
+        column_names = ['refined_tooltip']
+        column_names.extend(['link{}'.format(i) for i in range(topn)])
+        res_df = pd.DataFrame(res,columns=column_names)
+        new = df.join(res_df)
+        return new
+    
     def get_tool_tips_df(self,topn=3):
         res_list = []
         for country in self.config.countries:
@@ -116,6 +138,7 @@ class Tool_tips_generator(object):
         if old_df is not None:
             df_tt = self.append_update_df(df_tt,old_df)
         
+        df_tt = self.split_tooltips(df_tt,topn)
         return df_tt
     
 #%%
@@ -123,7 +146,17 @@ if __name__ == '__main__':
     TG = Tool_tips_generator(config)
     df = TG.get_tool_tips_df(topn=3)
     ## over write historical data
+
     df.to_pickle(os.path.join(config.HISTORICAL_INPUT,'tool_tips_df.pkl'))
 
 #%%
+
+#old = pd.read_pickle(os.path.join(config.HISTORICAL_INPUT,'tool_tips_df.pkl'))
+
+
+    
+
+
+
+
 
