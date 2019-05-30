@@ -9,7 +9,8 @@ Created on Mon Nov 26 11:00:33 2018
 ## data exploration, descripitive analysis 
 
 import sys,os
-sys.path.insert(0,'./libs')
+sys.path.insert(0,'..')
+sys.path.insert(0,'../libs')
 import config
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -19,6 +20,7 @@ from nltk.tokenize import word_tokenize
 from stream import MetaStreamer_fast as MetaStreamer
 #import time 
 from mp_utils import Mp
+import re
 #plt.rcParams['figure.figsize']=(10,5)
 
 #%%
@@ -34,20 +36,32 @@ def create_summary(agg_q,meta_root):
     plt.savefig(os.path.join(meta_root,'quarter_summary.png'),bbox_inches='tight')
 
 #%%
-def get_country_name(tokens,country_dict):
+#def get_country_name(tokens,country_dict):
+#    for c,v in country_dict.items():
+#        rc = c if tokens and any([tok.lower() in tokens for tok in v]) else None
+#        if rc is not None:
+#            yield rc 
+
+def construct_rex(keywords):
+    r_keywords = [r'\b' + re.escape(k)+ r'(s|es|\'s)?\b' for k in keywords]
+    rex = re.compile('|'.join(r_keywords),flags=re.I) ## ignore casing
+    return rex
+
+def get_country_name(text,country_dict,rex=None):
     for c,v in country_dict.items():
-        rc = c if tokens and any([tok.lower() in tokens for tok in v]) else None
-        if rc is not None:
-            yield rc 
+        rex = construct_rex(v)
+        rc = rex.findall(text)
+        if len(rc)>0:
+            yield c
 
 def get_countries(article,country_dict=country_dict):
     #snip = word_tokenize(article['snippet'].lower()) if article['snippet'] else None
     #title = word_tokenize(article['title'].lower()) if article['title'] else None
-    
-    #snip = word_tokenize(article['snippet'].lower()) if article['snippet'] else None
-    #title = word_tokenize(article['title'].lower()) if article['title'] else None
+    snip = article['snippet'].lower() if article['snippet'] else None
+    title = article['title'].lower() if article['title'] else None
     if snip and title:
-        title.extend(snip)
+        #title.extend(snip)
+        title = "{} {}".format(title,snip)
         cl = list(get_country_name(title,country_dict))
     elif title:
         cl = list(get_country_name(title,country_dict))
@@ -64,17 +78,52 @@ if __name__ == '__main__':
     meta_pkl = config.DOC_META_FILE
     json_data_path = config.JSON_LEMMA
     
+    ## define add hoc countries to check 
+    country_dict = {
+        'argentina': ['argentina'],
+        'bolivia': ['bolivia'],
+        'brazil': ['brazil'],
+        'chile': ['chile'],
+        'colombia': ['colombia'],
+        'denmark': ['denmark'],
+        'finland': ['finland'],
+        'indonesia': ['indonesia'],
+        'israel': ['israel'],
+        'malaysia': ['malaysia'],
+        'mexico': ['mexico'],
+        'norway': ['norway'],
+        'peru': ['peru'],
+        'philippines': ['philippines'],
+        'spain': ['spain'],
+        'sweden': ['sweden'],
+        'thailand': ['thailand'],
+        'turkey': ['turkey'],
+        'uruguay': ['uruguay'],
+        'venezuela': ['venezuela'],
+        'angola':['angola'],
+        'ghana':['ghana'],
+        'kenya':['kenya'],
+        'mauritius':['mauritius'],
+        'mozambique':['mozambique'],
+        'nigeria':['nigeria'],
+        'senegal':['senegal'],
+        'tanzania':['tanzania'],
+        'uganda':['uganda'],
+        'zambia':['zambia'],
+        'zimbabwe':['zimbabwe']
+    }
+
+    
     df = pd.read_pickle(meta_pkl)
-    df = df.tail(5000)
+    
+    #df = df.tail(5000)
     #%%
     
-    #df= df.head(5000)
     df['data_path'] = json_data_path+'/'+df.index + '.json'
     print('see one example : \n',df['data_path'].iloc[0])
     streamer = MetaStreamer(df['data_path'].tolist())
     news = streamer.multi_process_files(workers=30,chunk_size=5000)
     #%%
-    #country_meta = [(a['an'],get_countries(a,country_dict)) for a in news]
     mp = Mp(news,get_countries)
     country_meta = mp.multi_process_files(workers= 30,chunk_size=5000)
     #%%
