@@ -9,7 +9,8 @@ usage: python3 frequency_eval.py <TERM1> <TERM2> ...
 NOTE: to see an explanation of optional arguments, use python3 frequency_eval.py --help
 """
 import sys
-sys.path.insert(0,'./libs')
+sys.path.insert(0,'..')
+sys.path.insert(0,'../libs')
 #import argparse
 from gensim.models.keyedvectors import KeyedVectors
 from crisis_points import crisis_points,ll_crisis_points

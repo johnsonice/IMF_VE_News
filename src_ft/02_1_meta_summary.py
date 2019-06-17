@@ -19,6 +19,7 @@ from nltk.tokenize import word_tokenize
 from stream import MetaStreamer_fast as MetaStreamer
 #import time 
 from mp_utils import Mp
+import re
 #plt.rcParams['figure.figsize']=(10,5)
 
 #%%
@@ -34,18 +35,54 @@ def create_summary(agg_q,meta_root):
     plt.savefig(os.path.join(meta_root,'quarter_summary.png'),bbox_inches='tight')
 
 #%%
-def get_country_name(tokens,country_dict):
+#def get_country_name(tokens,country_dict):
+#    for c,v in country_dict.items():
+#        rc = c if tokens and any([tok.lower() in tokens for tok in v]) else None
+#        if rc is not None:
+#            yield rc 
+
+#def get_countries(article,country_dict=country_dict):
+#    snip = word_tokenize(article['snippet'].lower()) if article['snippet'] else None
+#    title = word_tokenize(article['title'].lower()) if article['title'] else None
+#
+#    if snip and title:
+#        title.extend(snip)
+#        cl = list(get_country_name(title,country_dict))
+#    elif title:
+#        cl = list(get_country_name(title,country_dict))
+#    elif snip:
+#        cl = list(get_country_name(snip,country_dict))
+#    else:
+#        cl = list()
+#        
+#    return article['an'],cl    
+
+def construct_rex(keywords,case=False):
+    r_keywords = [r'\b' + re.escape(k)+ r'(s|es|\'s)?\b' for k in keywords]
+    if case:
+        rex = re.compile('|'.join(r_keywords)) #--- use case sentitive for matching for cases lik US
+    else:  
+        rex = re.compile('|'.join(r_keywords),flags=re.I) ## ignore casing 
+    return rex
+
+def get_country_name(text,country_dict,rex=None):
     for c,v in country_dict.items():
-        rc = c if tokens and any([tok.lower() in tokens for tok in v]) else None
-        if rc is not None:
-            yield rc 
+        if c in ['united-states']:
+            rex = construct_rex(v,case=True)
+        else:
+            rex = construct_rex(v)
+        rc = rex.findall(text)
+        if len(rc)>0:
+            yield c
 
 def get_countries(article,country_dict=country_dict):
-    snip = word_tokenize(article['snippet'].lower()) if article['snippet'] else None
-    title = word_tokenize(article['title'].lower()) if article['title'] else None
-
+    #snip = word_tokenize(article['snippet'].lower()) if article['snippet'] else None
+    #title = word_tokenize(article['title'].lower()) if article['title'] else None
+    snip = article['snippet'].lower() if article['snippet'] else None
+    title = article['title'].lower() if article['title'] else None
     if snip and title:
-        title.extend(snip)
+        #title.extend(snip)
+        title = "{} {}".format(title,snip)
         cl = list(get_country_name(title,country_dict))
     elif title:
         cl = list(get_country_name(title,country_dict))
@@ -55,6 +92,7 @@ def get_countries(article,country_dict=country_dict):
         cl = list()
         
     return article['an'],cl    
+
 
 #%%
 if __name__ == '__main__':
@@ -66,6 +104,7 @@ if __name__ == '__main__':
     #%%
     
     #df= df.head(5000)
+    #%%
     df['data_path'] = json_data_path+'/'+df.index + '.json'
     print('see one example : \n',df['data_path'].iloc[0])
     streamer = MetaStreamer(df['data_path'].tolist())
@@ -73,7 +112,7 @@ if __name__ == '__main__':
     #%%
     #country_meta = [(a['an'],get_countries(a,country_dict)) for a in news]
     mp = Mp(news,get_countries)
-    country_meta = mp.multi_process_files(workers= 30,chunk_size=5000)
+    country_meta = mp.multi_process_files(workers=30,chunk_size=5000)
     #%%
     index = [i[0] for i in country_meta]
     country_list = [i[1] for i in country_meta]
@@ -91,3 +130,4 @@ if __name__ == '__main__':
     #agg_m = df[['date','month']].groupby('month').agg('count')
     create_summary(agg_q,meta_root)
 
+#%%

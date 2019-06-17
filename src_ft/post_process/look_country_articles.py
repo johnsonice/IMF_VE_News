@@ -55,8 +55,8 @@ def trans_article_to_df(links):
 #%%
 
 if __name__ == '__main__':
-    country = 'mexico'
-    month = '2019-04'
+    country = 'united-kingdom'
+    month = '2018-04'
     out_folder = './temp_data/country_articles'
 
     df = read_meta()

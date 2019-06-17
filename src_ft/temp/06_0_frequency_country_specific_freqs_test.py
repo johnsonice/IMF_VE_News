@@ -11,7 +11,8 @@ NOTE: can be done for as many countries at a time as you want.
 
 import os
 import sys
-sys.path.insert(0,'./libs')
+sys.path.insert(0,'..')
+sys.path.insert(0,'../libs')
 import pandas as pd
 from collections import defaultdict
 from stream import DocStreamer_fast
@@ -20,25 +21,12 @@ from crisis_points import country_dict
 import argparse
 import config 
 
-#def list_period_docs(time_df, corp_path, period, countries = config.countries):
-#    # Gather lists of docs belonging to each period
-#    print("gathering doc lists...")
-#           
-#    total_docs = len(time_df)
-#    
-#    for i, (id, data) in enumerate(time_df.iterrows()):
-#        print('\r\t{} of {} processed'.format(i, total_docs), end=' ')
-#        period_dict[data[period]].append(corp_path + "/" + id + ".json")
-#    return period_dict
-
 def country_period_filter(time_df,country,period):
     
     time_df['filter_country'] = time_df['country'].apply(lambda c: country in c)
     df = time_df['data_path'][(time_df['filter_country'] == True)&(time_df[args.period] == period)]
     
     return df.tolist()
-    
-
 
 def get_country_freqs(countries, period_choice, time_df, uniq_periods,outdir,phraser):
 
@@ -73,16 +61,16 @@ def get_country_freqs(countries, period_choice, time_df, uniq_periods,outdir,phr
             freqs[period] = p_freqs
 
         # Fill NAs as 0
-        freqs_df = pd.DataFrame(freqs).fillna(0)
+        freqs_df = pd.DataFrame(freqs)#.fillna(0)
         # make sure columns are in ascending order
         freqs_df = freqs_df[freqs_df.columns.sort_values()] 
 
         # write pkl
-        out_pkl = os.path.join(outdir, '{}_{}_word_freqs.pkl'.format(country, period_choice))
+        out_pkl = os.path.join(outdir, 'test_{}_{}_word_freqs.pkl'.format(country, period_choice))
         freqs_df.to_pickle(out_pkl)
 
         # write csv
-        out_csv = os.path.join(outdir, '{}_{}_word_freqs.csv'.format(country, period_choice))
+        out_csv = os.path.join(outdir, 'test_{}_{}_word_freqs.csv'.format(country, period_choice))
         freqs_df.to_csv(out_csv)
 
 class args_class(object):
@@ -126,4 +114,7 @@ if __name__ == '__main__':
 #%%
     # obtain freqs
     print(args.period)
+    args.countries = ['uruguay']
+    uniq_periods = set(pd.Series(pd.period_range('07/01/1985',freq='M',periods=3)))
+    #%%
     get_country_freqs(args.countries, args.period, time_df, uniq_periods, args.out_dir,args.phraser)
