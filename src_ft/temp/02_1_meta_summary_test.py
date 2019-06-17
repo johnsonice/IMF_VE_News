@@ -15,12 +15,46 @@ import config
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn; seaborn.set()
-from crisis_points import country_dict
+#from crisis_points import country_dict
 from nltk.tokenize import word_tokenize
 from stream import MetaStreamer_fast as MetaStreamer
 #import time 
 from mp_utils import Mp
 import re
+country_dict = {
+    'argentina': ['argentina'],
+    'bolivia': ['bolivia'],
+    'brazil': ['brazil'],
+    'chile': ['chile'],
+    'colombia': ['colombia'],
+    'denmark': ['denmark'],
+    'finland': ['finland'],
+    'indonesia': ['indonesia'],
+    'israel': ['israel'],
+    'malaysia': ['malaysia'],
+    'mexico': ['mexico'],
+    'norway': ['norway'],
+    'peru': ['peru'],
+    'philippines': ['philippines'],
+    'spain': ['spain'],
+    'sweden': ['sweden'],
+    'thailand': ['thailand'],
+    'turkey': ['turkey'],
+    'uruguay': ['uruguay'],
+    'venezuela': ['venezuela'],
+    'angola':['angola'],
+    'ghana':['ghana'],
+    'kenya':['kenya'],
+    'mauritius':['mauritius'],
+    'mozambique':['mozambique'],
+    'nigeria':['nigeria'],
+    'senegal':['senegal'],
+    'tanzania':['tanzania'],
+    'uganda':['uganda'],
+    'zambia':['zambia'],
+    'zimbabwe':['zimbabwe']
+}
+
 #plt.rcParams['figure.figsize']=(10,5)
 
 #%%
@@ -78,42 +112,7 @@ if __name__ == '__main__':
     meta_pkl = config.DOC_META_FILE
     json_data_path = config.JSON_LEMMA
     
-    ## define add hoc countries to check 
-    country_dict = {
-        'argentina': ['argentina'],
-        'bolivia': ['bolivia'],
-        'brazil': ['brazil'],
-        'chile': ['chile'],
-        'colombia': ['colombia'],
-        'denmark': ['denmark'],
-        'finland': ['finland'],
-        'indonesia': ['indonesia'],
-        'israel': ['israel'],
-        'malaysia': ['malaysia'],
-        'mexico': ['mexico'],
-        'norway': ['norway'],
-        'peru': ['peru'],
-        'philippines': ['philippines'],
-        'spain': ['spain'],
-        'sweden': ['sweden'],
-        'thailand': ['thailand'],
-        'turkey': ['turkey'],
-        'uruguay': ['uruguay'],
-        'venezuela': ['venezuela'],
-        'angola':['angola'],
-        'ghana':['ghana'],
-        'kenya':['kenya'],
-        'mauritius':['mauritius'],
-        'mozambique':['mozambique'],
-        'nigeria':['nigeria'],
-        'senegal':['senegal'],
-        'tanzania':['tanzania'],
-        'uganda':['uganda'],
-        'zambia':['zambia'],
-        'zimbabwe':['zimbabwe']
-    }
-
-    
+    ## define add hoc countries to check     
     df = pd.read_pickle(meta_pkl)
     
     #df = df.tail(5000)
