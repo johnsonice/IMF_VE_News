@@ -9,8 +9,28 @@ from crisis_points import crisis_points
 from gensim.models.keyedvectors import KeyedVectors
 from sklearn.cluster import KMeans
 from collections import defaultdict
+import numpy as np
 #from plot_utils import plot_frequency
 #%%
+
+#def aggregate_freq(word_list,country, period='quarter', stemmed=False,frequency_path='../data/frequency', weights=None):
+#    assert isinstance(word_list, list), 'Must pass a list to aggregate_freq'
+#    s_flag = '_stemmed' if stemmed else ''
+#    if weights is None:
+#        weights = [1]*len(word_list)
+#    assert isinstance(weights, list), 'Must pass a list to aggregate_freq'
+#    assert len(weights)==len(word_list), 'Weights list must have the same length as word list'
+#    
+#    ww = zip(word_list,weights)
+#
+#    #data_path = '/home/ubuntu/Documents/v_e/data/frequency/{}_cleaned_{}_word_freqs{}.pkl'.format(country, period, s_flag)
+#    data_path = os.path.join(frequency_path,'{}_{}_word_freqs{}.pkl'.format(country, period, s_flag))
+#    data = pd.read_pickle(data_path)
+#    freqs = [data.loc[word]*weight for word,weight in ww if word in data.index]
+#    grp_freq = sum(freqs)
+#
+#    ##if none of the words are in corpus, frp_freq qill return 0 need to check befor proceed
+#    return grp_freq
 
 def aggregate_freq(word_list,country, period='quarter', stemmed=False,frequency_path='../data/frequency', weights=None):
     assert isinstance(word_list, list), 'Must pass a list to aggregate_freq'
@@ -21,16 +41,39 @@ def aggregate_freq(word_list,country, period='quarter', stemmed=False,frequency_
     assert len(weights)==len(word_list), 'Weights list must have the same length as word list'
     
     ww = zip(word_list,weights)
-
-    #data_path = '/home/ubuntu/Documents/v_e/data/frequency/{}_cleaned_{}_word_freqs{}.pkl'.format(country, period, s_flag)
-    data_path = os.path.join(frequency_path,'{}_{}_word_freqs{}.pkl'.format(country, period, s_flag))
+    
+    #################
+    #################
+    data_path = os.path.join(frequency_path,'test_{}_{}_word_freqs{}.pkl'.format(country, period, s_flag))
+    #data_path = os.path.join(frequency_path,'{}_{}_word_freqs{}.pkl'.format(country, period, s_flag))
+    ##################
+    ##################
     data = pd.read_pickle(data_path)
+    ## fill nas only when document is missing
+    cs = list(data.columns)
+    for c in cs:
+        if data[c].sum() == 0:
+            pass
+        else:
+            data[c].fillna(0,inplace=True)
+    
     freqs = [data.loc[word]*weight for word,weight in ww if word in data.index]
     grp_freq = sum(freqs)
-
+    
+    
     ##if none of the words are in corpus, frp_freq qill return 0 need to check befor proceed
+    if isinstance(grp_freq,pd.Series):
+        return grp_freq
+    else:
+        try:
+            grp_freq = data.iloc[0]
+        except:
+            print(country)
+            print('no data for the entire country')
+            grp_freq = pd.Series(np.zeros(len(data.columns)),index=data.columns)
+        grp_freq.values[:]=np.nan
+    
     return grp_freq
-
 
 def rolling_z_score(freqs, window=24):
     def z_func(x):

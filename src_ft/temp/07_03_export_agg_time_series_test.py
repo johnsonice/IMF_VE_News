@@ -164,7 +164,11 @@ if __name__ == '__main__':
             series_wg.append(df)
 
         df_all = pd.concat(series_wg,axis=1)
-        crisis_df = get_crisis_wondiws(args,crisis_points,country)
+        try:
+            crisis_df = get_crisis_wondiws(args,crisis_points,country)
+        except:
+            print('no crisis data; assign to 0s')
+            crisis_df= None
         try:
             bop_crisis_df = get_bop_crisis(args,crisis_points,country)
         except:
@@ -172,14 +176,17 @@ if __name__ == '__main__':
             bop_crisis_df= None
         
         ## merge crisis events 
-        df_all=df_all.join(crisis_df)
+        if crisis_df is None:
+            df_all['crisis_window'] = 0 
+        else:
+            df_all=df_all.join(crisis_df)
         
         if bop_crisis_df is None:
             df_all['bop_crisis'] = 0 
         else:
             df_all=df_all.join(bop_crisis_df)
             
-        df_all.fillna(0,inplace=True)
+        #df_all.fillna(0,inplace=True)
         
         if export:
             out_csv = os.path.join(config.EVAL_TS, 'test_agg_{}_{}_z{}_time_series.csv'.format(country,period,z_thresh))
@@ -188,7 +195,7 @@ if __name__ == '__main__':
         return country,df_all
         # end of function 
         
-#    country = "brazil"
+#    country = "australia"
 #    c,d = export_country_ts(country)
 
     mp = Mp(config.countries,export_country_ts)

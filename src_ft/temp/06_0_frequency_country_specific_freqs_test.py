@@ -113,8 +113,8 @@ if __name__ == '__main__':
     #period_dict = list_period_docs(time_df, args.corpus, args.period)
 #%%
     # obtain freqs
-    print(args.period)
-    args.countries = ['uruguay']
-    uniq_periods = set(pd.Series(pd.period_range('07/01/1985',freq='M',periods=3)))
+    #print(args.period)
+    #args.countries = ['uruguay']
+    #uniq_periods = set(pd.Series(pd.period_range('05/01/1985',freq='M',periods=36)))
     #%%
     get_country_freqs(args.countries, args.period, time_df, uniq_periods, args.out_dir,args.phraser)
