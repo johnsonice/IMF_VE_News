@@ -22,7 +22,7 @@ WEIGHTED = False                 ## do we want to weighted average on similar wo
 SIM = True
 VERBOSE = True
 ## crisis defination 
-crisis_defs = 'll' # or 'll' or 'kr'
+crisis_defs = 'kr' # or 'll' or 'kr'
 ##GROUPED_SEARCH_FILE = 'final_topic_words_final.csv'
 GROUPED_SEARCH_FILE = 'grouped_search_words_final.csv'
 #GROUPED_SEARCH_FILE = 'expert_terms_final.csv'
@@ -55,7 +55,7 @@ TOPIC_MODELS = os.path.join(MODELS,'topics')
 
 SEARCH_TERMS = os.path.join(PROCESSING_FOLDER,'search_terms')
 BOW_TFIDF_DOCS = os.path.join(PROCESSING_FOLDER,'bow_tfidf_docs')
-FREQUENCY = os.path.join(PROCESSING_FOLDER,'frequency')
+FREQUENCY = os.path.join(PROCESSING_FOLDER,'frequency','csv')
 
 EVAL = os.path.join(PROCESSING_FOLDER,'eval')
 if WEIGHTED:

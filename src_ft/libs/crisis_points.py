@@ -159,7 +159,7 @@ country_dict = {
     'uganda': ['Uganda','Ugandan','Kampala'],
     'ukraine': ['Ukraine','Ukrainian','Kiev'],
     'united-kingdom': ['United Kingdom','British','London','UK'],
-    'united-states': ['United States','American','America','Washington','united states','american','america','washington'],
+    'united-states': ['US','United States','American','America','Washington','united states','washington'],
     'vietnam': ['Vietnam','Vietnamese ','Hanoi','Viet Nam'],
     'zambia': ['Zambia','Lusaka'],
     'zimbabwe': ['Zimbabwe','Zimbabwean','Harrare'],

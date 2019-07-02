@@ -44,11 +44,19 @@ def aggregate_freq(word_list,country, period='quarter', stemmed=False,frequency_
     
     #################
     #################
-    data_path = os.path.join(frequency_path,'test_{}_{}_word_freqs{}.pkl'.format(country, period, s_flag))
+    #data_path_pkl = os.path.join(frequency_path,'{}_{}_word_freqs{}.pkl'.format(country, period, s_flag))
+    data_path_csv = os.path.join(frequency_path,'{}_{}_word_freqs{}.csv'.format(country, period, s_flag))
     #data_path = os.path.join(frequency_path,'{}_{}_word_freqs{}.pkl'.format(country, period, s_flag))
     ##################
     ##################
-    data = pd.read_pickle(data_path)
+#    try:
+#        data = pd.read_pickle(data_path_pkl)
+#        print('read from pkl')
+#    except:
+        
+    data = pd.read_csv(data_path_csv,index_col=0)
+    #print('read from csv')
+        
     ## fill nas only when document is missing
     cs = list(data.columns)
     for c in cs:
@@ -59,7 +67,6 @@ def aggregate_freq(word_list,country, period='quarter', stemmed=False,frequency_
     
     freqs = [data.loc[word]*weight for word,weight in ww if word in data.index]
     grp_freq = sum(freqs)
-    
     
     ##if none of the words are in corpus, frp_freq qill return 0 need to check befor proceed
     if isinstance(grp_freq,pd.Series):
