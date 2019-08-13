@@ -4,6 +4,7 @@ cleaned*/
 data/
 models/
 *temp_data/
+src_ft/temp/figs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

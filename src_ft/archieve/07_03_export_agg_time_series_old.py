@@ -145,73 +145,53 @@ if __name__ == '__main__':
         weights = None
     
     def export_country_ts(country,search_words_sets=search_words_sets,period=args.period,z_thresh=args.z_thresh,export=True):
+        series_wg = list()
+        for k,words in search_words_sets.items(): 
+            word_groups = words
+            df = aggregate_freq(word_groups, country,period=period,stemmed=False,
+                                frequency_path=args.frequency_path,
+                                weights=None)
+            df.name = k
+            
+            preds = list(signif_change(df, 
+                                   args.window, 
+                                   period=args.period,
+                                   direction='incr',
+                                   z_thresh=z_thresh).index) 
+            pred_df = pd.DataFrame(np.ones(len(preds)),index=preds,columns=[k+'_pred_crisis'])
+            df = pred_df.join(df,how='right')
+            series_wg.append(df)
+
+        df_all = pd.concat(series_wg,axis=1)
+        crisis_df = get_crisis_wondiws(args,crisis_points,country)
         try:
-            print('Working on country: {}'.format(country))
-            series_wg = list()
-            for k,words in search_words_sets.items(): 
-                #print('working on {}'.format(k))
-                word_groups = words
-                df = aggregate_freq(word_groups, country,period=period,stemmed=False,
-                                    frequency_path=args.frequency_path,
-                                    weights=None)
-                df.name = k
-                
-                preds = list(signif_change(df, 
-                                       args.window, 
-                                       period=args.period,
-                                       direction='incr',
-                                       z_thresh=z_thresh).index) 
-                pred_df = pd.DataFrame(np.ones(len(preds)),index=preds,columns=[k+'_pred_crisis'])
-                df = pred_df.join(df,how='right')
-                series_wg.append(df)
-    
-            df_all = pd.concat(series_wg,axis=1)
-            try:
-                crisis_df = get_crisis_wondiws(args,crisis_points,country)
-            except:
-                print('no crisis data; assign to 0s')
-                crisis_df= None
-            try:
-                bop_crisis_df = get_bop_crisis(args,crisis_points,country)
-            except:
-                print('no bop crisis data; assign to 0s')
-                bop_crisis_df= None
-            
-            ## merge crisis events 
-            if crisis_df is None:
-                df_all['crisis_window'] = 0 
-            else:
-                df_all=df_all.join(crisis_df)
-            
-            if bop_crisis_df is None:
-                df_all['bop_crisis'] = 0 
-            else:
-                df_all=df_all.join(bop_crisis_df)
-                
-            #df_all.fillna(0,inplace=True)
-            
-            if export:
-                out_csv = os.path.join(config.EVAL_TS, 'agg_{}_{}_z{}_time_series.csv'.format(country,period,z_thresh))
-                df_all.to_csv(out_csv)
-            
-            #return country,df_all
-            del df_all
-            del country
-            return None,None
-            # end of function 
-        except Exception as e:
-            print(country)
-            print(e)
-            
-            return None,None
+            bop_crisis_df = get_bop_crisis(args,crisis_points,country)
+        except:
+            print('no bop crisis data; assign to 0s')
+            bop_crisis_df= None
         
-    country = "south-korea"
-    c,d = export_country_ts(country)
-##    temp_remove_countries = ['vietnam','zambia','zimbabwe']
-##    config.countries = [c for c in config.countries if c not in temp_remove_countries]
-#    config.countries = ['japan','jordan','vietnam','zambia','zimbabwe']
-#    mp = Mp(config.countries,export_country_ts)
-#    res = mp.multi_process_files(chunk_size=1,workers=1)
+        ## merge crisis events 
+        df_all=df_all.join(crisis_df)
+        
+        if bop_crisis_df is None:
+            df_all['bop_crisis'] = 0 
+        else:
+            df_all=df_all.join(bop_crisis_df)
+            
+        df_all.fillna(0,inplace=True)
+        
+        if export:
+            out_csv = os.path.join(config.EVAL_TS, 'test_agg_{}_{}_z{}_time_series.csv'.format(country,period,z_thresh))
+            df_all.to_csv(out_csv)
+        
+        return country,df_all
+        # end of function 
+        
+#    country = "brazil"
+#    c,d = export_country_ts(country)
+
+    mp = Mp(config.countries,export_country_ts)
+    res = mp.multi_process_files(chunk_size=1,workers=15)
     
 
 

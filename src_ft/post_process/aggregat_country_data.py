@@ -142,7 +142,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     #args.ts_path=config.HISTORICAL_TS_PS
     #%%
-    df_long,new_df = export_tableau_data(args.ts_path,args.out_dir)
+    new_df,df_long = export_tableau_data(args.ts_path,args.out_dir)
 
 
 

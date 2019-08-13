@@ -206,13 +206,13 @@ if __name__ == '__main__':
             
             return None,None
         
-#    country = "argentina"
-#    c,d = export_country_ts(country)
-#    temp_remove_countries = ['vietnam','zambia','zimbabwe']
-#    config.countries = [c for c in config.countries if c not in temp_remove_countries]
-    config.countries = ['australia','france','germany','ireland','italy','japan','jordan','vietnam','zambia','zimbabwe']
-    mp = Mp(config.countries,export_country_ts)
-    res = mp.multi_process_files(chunk_size=1,workers=1)
+    country = "japan"
+    c,d = export_country_ts(country)
+##    temp_remove_countries = ['vietnam','zambia','zimbabwe']
+##    config.countries = [c for c in config.countries if c not in temp_remove_countries]
+#    config.countries = ['japan','jordan','vietnam','zambia','zimbabwe']
+#    mp = Mp(config.countries,export_country_ts)
+#    res = mp.multi_process_files(chunk_size=1,workers=1)
     
 
 

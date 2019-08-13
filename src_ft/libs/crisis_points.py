@@ -114,6 +114,7 @@ country_dict = {
     'finland': ['finland'],
     'indonesia': ['indonesia'],
     'israel': ['israel'],
+    'south-korea':['south korea','korean','south-korea','south-korean','seoul'],
     'malaysia': ['malaysia'],
     'mexico': ['mexico'],
     'norway': ['norway'],

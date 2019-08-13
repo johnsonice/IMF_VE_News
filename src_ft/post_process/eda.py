@@ -29,18 +29,17 @@ def get_country_df(country_name,df):
     agg_df_c = df_c[['date','month']].groupby('month').agg('count')
     agg_df_c.columns =[country_name]
     return agg_df_c,df_c
-x,y = get_country_df('united-kingdom',df)
+#x,y = get_country_df('united-states',df)
+    x,y = get_country_df('south-korea',df)
 #%%
-country_df_list = [get_country_df(c,df) for c in config.countries]
+country_df_list = [get_country_df(c,df)[0] for c in config.countries]
+#%%
 country_agg_df = pd.concat(country_df_list,axis=1)
-
-#%%
 country_agg_df.mean()
 
 #%%
-export_file = os.path.join(config.DOC_META,'meta_summary_0617.xlsx')
+export_file = os.path.join(config.DOC_META,'meta_summary_0813.xlsx')
 with pd.ExcelWriter(export_file) as writer:
     agg_m.to_excel(writer,sheet_name='overall')
     country_agg_df.to_excel(writer,sheet_name='country_level')
 
-#%%

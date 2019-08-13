@@ -172,8 +172,8 @@ if __name__ == '__main__':
     #%%
     ########################
     ## need to comment out this part when testing is done
-#    args.countries = args.countries[args.countries.index('vietnam'):] #japan
-#    logger.debug(args.countries )
+    args.countries = [args.countries[args.countries.index('japan')]] #japan
+    logger.debug(args.countries )
     ########################
     #%%
     get_country_freqs(args.countries, args.period, time_df, uniq_periods, args.out_dir,args.phraser,filter_dict=wv_keys)
