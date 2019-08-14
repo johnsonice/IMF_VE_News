@@ -57,7 +57,7 @@ def process_raw_data():
     ###############################################################################
     ##### if you changed download folder name, you need to change here too 
 #    current_month = '2019-03-05'
-#    current_month = '2019_0408'
+    current_month = '2019_0408'
     ##############################################################################
     
     current_month_data_folder = os.path.join(config.JSON_RAW,current_month)
@@ -84,8 +84,8 @@ def generate_meta_file(keep_current=True):
     #############################################################################################
     ##current_month = dt.datetime.strftime(dt.datetime.today(),"%Y-%m")
     ##current_month = '2019-04' # you can change here if you don't just want current month
-#    keep_current = False  ## set to false if you don't wnat to do any filtering
-#    df_meta = df_meta[df_meta['month']>= '2019-04'] ## or put in a specific month e.g: '2019-04'
+    keep_current = False  ## set to false if you don't wnat to do any filtering
+    df_meta = df_meta[df_meta['month']>= '2019-04'] ## or put in a specific month e.g: '2019-04'
     #################################################################################################
     
     if keep_current:
@@ -140,7 +140,7 @@ def backup_and_clean_up():
 if __name__ == "__main__":
     print('\n......runing......\n')
 
-    download_current_files()
+    #download_current_files()
     process_raw_data()
     generate_meta_file()
     generate_country_bow()

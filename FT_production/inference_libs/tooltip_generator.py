@@ -118,6 +118,7 @@ class Tool_tips_generator(object):
         column_names = ['refined_tooltip']
         column_names.extend(['link{}'.format(i) for i in range(topn)])
         res_df = pd.DataFrame(res,columns=column_names)
+        df.reset_index(drop=True,inplace=True) ## reset index befor merging
         new = df.join(res_df)
         return new
     

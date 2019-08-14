@@ -8,7 +8,7 @@ We are working on linux environment, it has not been tested in a windows environ
 Installed packeages needed for this project, assuming anaconda is installed in your environment
 
 ```sh
-$ conda install -c conda-forge spayc langdetect
+$ conda install -c conda-forge spacy langdetect
 $ conda install gensim nltk numpy pandas jupyter notebook spyder glob2 scikit-learn seaborn lxml beautifulsoup
     ## install spacy dependecy 
 $ python -m spacy download en_core_web_lg
