@@ -20,6 +20,7 @@ import infer_config as config
 import re 
 import pandas as pd
 from tooltip_generator import Tool_tips_generator 
+from global_index_calculation import get_merge_global_index
 from infer_utils import get_current_date
 
 #%%
@@ -104,9 +105,27 @@ def export_tableau_data(ts_path,output_path):
 
     ## clean up and export     
     new_df['indexes'] = new_df['indexes'].apply(lambda s:var_name_map[s])
-    new_df.to_csv(os.path.join(output_path,'contry_data_long_{}.csv'.format(get_current_date())))
+    ## calculate and merge global index
+    new_df = get_merge_global_index(new_df,weights_path=config.INDEX_WEIGHTS)
+    ## export to file 
+    new_df.to_csv(os.path.join(output_path,'country_data_long_{}.csv'.format(get_current_date())))
+    new_df.to_excel(os.path.join(output_path,'country_data_long_{}.xlsx'.format(get_current_date())))
+    
+    return new_df
 
-
+def long_to_wide(df):
+    """
+    reshape long data to wide data for people to download
+    """
+    keep_vars = ['time','country_name','indexes','index','pred']
+    df = df[keep_vars]
+    temp_df = pd.pivot_table(df,values = ['index','pred'],index=['time','country_name'],columns='indexes')
+    temp_df = temp_df.reset_index()
+    var_s = ['_'.join(col).strip('_').replace(" ","_") for col in temp_df.columns]
+    
+    temp_df.columns = var_s
+    
+    return temp_df
 #%%
 
 if __name__ == '__main__':

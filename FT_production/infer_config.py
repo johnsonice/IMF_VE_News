@@ -59,9 +59,11 @@ SEARCH_TERMS = os.path.join(PROCESSING_FOLDER,'search_terms')
 MODELS = os.path.join(PROCESSING_FOLDER,'models')
 NGRAMS = os.path.join(MODELS,'ngrams')
 VS_MODELS = os.path.join(MODELS,'vsms')
-
+#OUTPUT_FOLDER = os.path.join(PROCESSING_FOLDER,'data','final_results')
+OUTPUT_FOLDER = '/mnt/chuang/dashboard_data'
 
 ## global file path ##
+INDEX_WEIGHTS = os.path.join(PROCESSING_FOLDER,'global_index_weights.xlsx')
 DOC_META_FILE = os.path.join(DOC_META,'doc_details_crisis.pkl')
 PHRASER = os.path.join(NGRAMS,'2grams_default_10_20_NOSTOP')
 W2V = os.path.join(VS_MODELS,'word_vecs_5_50_200')

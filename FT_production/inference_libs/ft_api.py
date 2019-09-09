@@ -67,6 +67,20 @@ def generate_file(filename,data,data_dir):
     with open(os.path.join(data_dir,filename), 'w+') as outfile:
         outfile.write(json.dumps(data))#,indent=4, sort_keys=True))
 
+def repeat_request(link,proxies,n=10):
+    for i in range(n):
+        try:
+            r = requests.get(link, proxies=proxies)
+            return r
+        except:
+            print('failed attempt {}'.format(i))
+            time.sleep(5)
+    
+    print(link,proxies)
+    raise Exception('Connection failed')
+    
+    #return r
+
 def get_article_content(link,api_key,proxies,data_dir):
     """
     Get content of specified article. In case the content is unavailable [ERROR 403], log the error and article link.
@@ -75,7 +89,10 @@ def get_article_content(link,api_key,proxies,data_dir):
     """
     link = link+"?apiKey={}".format(api_key)
     logger.info("Article link: {}".format(link))
-    r = requests.get(link, proxies=proxies)
+
+    #r = requests.get(link, proxies=proxies)
+    r = repeat_request(link, proxies=proxies,n=5)
+        
     if r.status_code == 403:
         logger.warning('Error with status code {}. Article is not available at the moment.'.format(r.status_code))
         return None
@@ -83,13 +100,17 @@ def get_article_content(link,api_key,proxies,data_dir):
         logger.warning('[?] Error: [HTTP {}]: Content: {}'.format(r.status_code, r.content))
         return None
     else:
-        data = r.json()
-        name_start = data['id'].split('thing/')[1]
-        name_end = data['firstPublishedDate'].split('T')[0]
-        file_name = name_start+"_"+name_end+".json"
-        logger.info("Generated: {} ".format(file_name))
-        generate_file(file_name,data,data_dir)
-        return file_name
+        try:
+            data = r.json()
+            name_start = data['id'].split('thing/')[1]
+            name_end = data['firstPublishedDate'].split('T')[0]
+            file_name = name_start+"_"+name_end+".json"
+            logger.info("Generated: {} ".format(file_name))
+            generate_file(file_name,data,data_dir)
+            return file_name
+        except Exception as e:
+            logger.info("error parsing article: {} ".format(e))
+            return None
 
 def iterate_through_pages(query_params,data_dir):
     """
@@ -194,6 +215,11 @@ if __name__ == "__main__":
     #data_dir = args.homedir
 
     args = ft_api_args()
+    
+    ## hard code cred_path
+    args.cred_path = '/data/News_data_raw/Production/credentials_ft.txt'
+    ######
+    
     print(args)
     download_docs(args)
 

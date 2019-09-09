@@ -22,9 +22,10 @@ from meta_generator import Meta_processor
 from country_freq_generator import Freq_generator 
 from time_series_generator import TS_generator, get_ts_args
 from result_merger import data_updator,get_dm_args
-from country_data_aggregator import export_tableau_data
-from data_cleaner import clean_folder,backup_folder
+from country_data_aggregator import export_tableau_data,long_to_wide
+from data_cleaner import clean_folder,backup_folder,backup_file
 from ft_api import download_docs,ft_api_args
+
 
 from stream import MetaStreamer_fast as MetaStreamer
 from crisis_points import crisis_points,country_dict
@@ -120,7 +121,16 @@ def merge_with_historical():
 
 def create_data_for_tableau():
     ## step 7 generate tableau input file 
-    export_tableau_data(config.CURRENT_TS_PS,os.path.join(config.PROCESSING_FOLDER,'data','final_results'))
+    res_df = export_tableau_data(config.CURRENT_TS_PS,os.path.join(config.OUTPUT_FOLDER,'data_backup'))
+    
+    
+    return res_df
+
+def export_data_wide(df):
+    wide_df = long_to_wide(df)
+    out_path = os.path.join(config.OUTPUT_FOLDER,'data_backup','country_data_wide_{}.csv'.format(get_current_date()))
+    wide_df.to_csv(out_path,index=False)
+    return wide_df
     
 def backup_and_clean_up():
     ## step 8 
@@ -133,6 +143,17 @@ def backup_and_clean_up():
 
         # clean up current folder 
     folder_clean = [config.CURRENT_TS_PS,config.JSON_LEMMA,config.JSON_RAW,config.DOC_META,config.FREQUENCY]
+        
+    ## step 9 
+    ## move file to production tableau path
+    long_data_path = os.path.join(config.OUTPUT_FOLDER,'data_backup','country_data_long_{}.csv'.format(get_current_date()))
+    wide_data_path = os.path.join(config.OUTPUT_FOLDER,'data_backup','country_data_wide_{}.csv'.format(get_current_date()))
+    tableau_production_data_path = os.path.join(config.OUTPUT_FOLDER,'dashboard','country_data_long.csv')
+    data_share_path = os.path.join(config.OUTPUT_FOLDER,'data_share','country_data_wide.csv')
+    
+    backup_file(long_data_path,tableau_production_data_path,overwrite=True)
+    backup_file(wide_data_path,data_share_path,overwrite=True)
+    
     for f in folder_clean:
         clean_folder(f)
         
@@ -146,7 +167,8 @@ if __name__ == "__main__":
     generate_country_bow()
     generate_country_time_series()
     merge_with_historical()
-    create_data_for_tableau()
+    long_df = create_data_for_tableau()
+    wide_df = export_data_wide(long_df)
     backup_and_clean_up()
     
     print('Update success')

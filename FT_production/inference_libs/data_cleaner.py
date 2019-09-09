@@ -39,3 +39,9 @@ def backup_folder(old,new,overwrite=False):
             print('over write existing folder')
     shutil.copytree(old,new)
 
+def backup_file(old,new,overwrite=False):
+    if overwrite:
+        if os.path.exists(new):
+            os.remove(new)
+            print('over write existing file')
+    shutil.copyfile(old,new)
