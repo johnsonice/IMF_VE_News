@@ -61,6 +61,7 @@ NGRAMS = os.path.join(MODELS,'ngrams')
 VS_MODELS = os.path.join(MODELS,'vsms')
 #OUTPUT_FOLDER = os.path.join(PROCESSING_FOLDER,'data','final_results')
 OUTPUT_FOLDER = '/mnt/chuang/dashboard_data'
+LOCAL_BACKUP = os.path.join(PROCESSING_FOLDER,'data','final_results')
 
 ## global file path ##
 INDEX_WEIGHTS = os.path.join(PROCESSING_FOLDER,'global_index_weights.xlsx')

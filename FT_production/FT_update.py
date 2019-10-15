@@ -123,13 +123,18 @@ def create_data_for_tableau():
     ## step 7 generate tableau input file 
     res_df = export_tableau_data(config.CURRENT_TS_PS,os.path.join(config.OUTPUT_FOLDER,'data_backup'))
     
-    
     return res_df
 
-def export_data_wide(df):
+def export_data_wide(df,local_back_up =True):
     wide_df = long_to_wide(df)
     out_path = os.path.join(config.OUTPUT_FOLDER,'data_backup','country_data_wide_{}.csv'.format(get_current_date()))
-    wide_df.to_csv(out_path,index=False)
+    try:
+        if local_back_up:
+            wide_df.to_csv(os.path.join(config.LOCAL_BACKUP,'country_data_wide_{}.csv'.format(get_current_date())))
+        wide_df.to_csv(out_path,index=False)
+    except:
+        print('Warning !!! output folder access denied')
+        return wide_df
     return wide_df
     
 def backup_and_clean_up():
@@ -167,6 +172,7 @@ if __name__ == "__main__":
     generate_country_bow()
     generate_country_time_series()
     merge_with_historical()
+
     long_df = create_data_for_tableau()
     wide_df = export_data_wide(long_df)
     backup_and_clean_up()

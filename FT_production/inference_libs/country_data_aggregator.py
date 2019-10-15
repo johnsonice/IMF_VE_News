@@ -65,7 +65,7 @@ def rename_column_rule(c_name):
     
 #test = config.CURRENT_TS_PS
 #df = aggregate_all_countries(test)
-def export_tableau_data(ts_path,output_path):
+def export_tableau_data(ts_path,output_path,local_back_up = True):
     
     var_name_map={
         'agg_all_other_sentiments':'All sentiment (w/o pos and neg)',
@@ -107,10 +107,19 @@ def export_tableau_data(ts_path,output_path):
     new_df['indexes'] = new_df['indexes'].apply(lambda s:var_name_map[s])
     ## calculate and merge global index
     new_df = get_merge_global_index(new_df,weights_path=config.INDEX_WEIGHTS)
-    ## export to file 
-    new_df.to_csv(os.path.join(output_path,'country_data_long_{}.csv'.format(get_current_date())))
-    new_df.to_excel(os.path.join(output_path,'country_data_long_{}.xlsx'.format(get_current_date())))
     
+    ## export to file 
+    try:
+        if local_back_up:
+            new_df.to_csv(os.path.join(config.LOCAL_BACKUP,'country_data_long_{}.csv'.format(get_current_date())))
+            new_df.to_excel(os.path.join(config.LOCAL_BACKUP,'country_data_long_{}.xlsx'.format(get_current_date())))
+            
+        new_df.to_csv(os.path.join(output_path,'country_data_long_{}.csv'.format(get_current_date())))
+        new_df.to_excel(os.path.join(output_path,'country_data_long_{}.xlsx'.format(get_current_date())))
+
+    except:
+        print('Wargning!! do not access to export localtion')
+        return new_df
     return new_df
 
 def long_to_wide(df):
