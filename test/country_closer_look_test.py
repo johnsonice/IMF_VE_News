@@ -86,7 +86,7 @@ if __name__ == "__main__":
         # Generate the file names
         files_with_name_variety = []
         for folder_name in folders_to_read:
-            if str(year) in folder_name:
+            if str(current_year) in folder_name:
                 files_with_name_variety = files_with_name_variety + glob.glob(folder_name+'/'+file_name_variety)
 
         files_to_read = files_to_read + files_with_name_variety
