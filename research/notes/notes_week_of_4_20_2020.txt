@@ -1,0 +1,17 @@
+Week of 4/20 Notes:
+Wrote script to read files x months before an event
+: Based on 18 months leading up to May 2018, Argentina
+ - > Amount of articles contain at least 1 of a country referrence not that useful
+	- picks up a lot of compilation/overview/EM in general
+ 	- can eliminate a lot of these if you check how many other countries are referrenced
+	- compilation/recommendation articles seems to use a lot of the same flags ">  >  >" appears in them - link/formatting?
+ - > Possible additional flags used
+	- President's name, currency name, capital city name
+ - > Amount of articles containing 1-2 references does not seem responsive to crisis, sum of refferences accross articles yes
+
+Next steps:
+ - > Rerun with lemmatization, stemming
+ - > Try tfidf and count vectorizer
+ - > Finer time intervals (week, day v. month)
+ - > Look at number of articles in time period with >x mentions
+	- > Smallest x that yields pattern?
