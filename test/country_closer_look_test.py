@@ -76,15 +76,18 @@ if __name__ == "__main__":
     while  not ended:
 
         # From naming convention
-        file_name_variety = "*"+str(current_year)+"-"+str(current_month)
-	
+        if current_month < 10:
+	    file_name_variety = "*"+str(current_year)+"-0"+str(current_month)+"*.json"
+        else:
+            file_name_variety = "*"+str(current_year)+"-"+str(current_month)+"*.json"
+        	
 	event_log.write("While, y/m: "+str(current_year)+"/"+str(current_month)+"\n")
-	
+	event_log.write("Variety:: "+file_name_variety+"\n\n")
         # Generate the file names
         files_with_name_variety = []
         for folder_name in folders_to_read:
             if str(year) in folder_name:
-                files_with_name_variety = files_with_name_variety + glob.glob(folder_name+'/'+file_name_variety+'*.json')
+                files_with_name_variety = files_with_name_variety + glob.glob(folder_name+'/'+file_name_variety)
 
         files_to_read = files_to_read + files_with_name_variety
         years_temp = years_temp + [current_year]*len(files_with_name_variety)
