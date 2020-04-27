@@ -168,7 +168,7 @@ if __name__ == "__main__":
         article_contents = re.sub(r"<[^>]*"," ",article_contents)
         
     
-        file_stat = file_date + file_name +','+ str(counts_temp[ind]) + ',' +article_contents
+        file_stat = file_date + ',' + file_name +','+ str(counts_temp[ind]) + ',' +article_contents
         
         random_sample_file.write(file_stat+"\n")
 
