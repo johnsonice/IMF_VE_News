@@ -25,8 +25,8 @@ if __name__ == "__main__":
     month_of_event = int(split_date[1])
     day_of_event = int(split_date[2])
 
-    event_log.write("Date split:"+str(split_date)+"\n")
-    
+    event_log.write("Date split y/m/d: "+str(year_of_event)+"/"+str(month_of_event)+"/"+str(day_of_event)+"\n")
+
 
     # Mutable window for discovery
     months_prior = 18
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     # Months to read data from
     if partial_months_as_whole:
         months_prior += 1
-    start_year = year_of_event - int(math.ceil((months_prior - month_of_event)/12))
+    start_year = year_of_event - int(math.ceil((float(months_prior) - month_of_event)/12))
     start_month = 12 - (months_prior-month_of_event)%12 + 1
     start_day = day_of_event
     
