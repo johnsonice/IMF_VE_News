@@ -12,5 +12,5 @@ python 06_frequency_country_specific_freqs.py
 
 
 ## run evaluation on specific word groups 
-python 07_02_frequency_eval_aggregate.py -gsf final_topic_words_small_new_class.csv -tn 10
-python 07_02_frequency_eval_aggregate.py -gsf experts_refined_new_class.csv -tn 15
+python 07_02_frequency_eval_aggregate.py -gsf final_topic_words_small_new_class_arg.csv -tn 10
+python 07_02_frequency_eval_aggregate.py -gsf experts_refined_new_class_arg.csv -tn 15
