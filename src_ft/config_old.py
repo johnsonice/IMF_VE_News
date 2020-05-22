@@ -67,7 +67,7 @@ EVAL_TS = os.path.join(EVAL,'time_series')
 
 ## global file path ##
 DOC_META_FILE = os.path.join(DOC_META,'doc_details_crisis.pkl')
-AUG_DOC_META_FILE = os.path.join(DOC_META,'doc_details_crisis_aug.pkl')
+AUG_DOC_META_FILE = os.path.join('/home/apsurek/process_arg/doc_details_crisis_aug.pkl')
 PHRASER = os.path.join(NGRAMS,'2grams_default_10_20_NOSTOP')
 W2V = os.path.join(VS_MODELS,'word_vecs_5_50_200')
 EXPERT_TERMS = os.path.join(PROCESSING_FOLDER,'search_terms','expert_terms.csv')
