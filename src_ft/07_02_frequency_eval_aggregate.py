@@ -147,7 +147,7 @@ if __name__ == '__main__':
         return res_stats
     
     mp = Mp(iter_items,multi_run_eval)
-    overall_res = mp.multi_process_files(workers=5, chunk_size=1)  ## do not set workers to be too high, your memory will explode
+    overall_res = mp.multi_process_files(workers=2, chunk_size=1)  ## do not set workers to be too high, your memory will explode
     
         ## export over all resoults to csv
     df = pd.DataFrame(overall_res,columns=['word','sim_words','recall','prec','f2'])
