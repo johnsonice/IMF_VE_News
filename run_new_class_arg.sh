@@ -1,5 +1,6 @@
 cd src_ft
-python 01_corpus_preprocessing.py
+python 01_01_corpus_preprocessing.py
+python 01_02_corpus_preprocessing.py
 python 02_0_corpus_doc_details.py
 python 02_1_meta_summary.py
 python 03_corpus_phrases.py 
