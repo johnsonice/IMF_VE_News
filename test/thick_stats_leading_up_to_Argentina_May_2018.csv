@@ -1,4 +1,4 @@
-year,month,absolute_name,search_country_count_first_50,search_country_count_first_100,search_country_count_total,other_country_count_first_50,other_country_count_first_100,other_country_count_total
+year,month,absolute_name,search_country_count_first_50,search_country_count_first_100,search_country_count_total,other_country_count_first_50,other_country_count_first_100,other_country_count_total,article_text
 2016,11,/data/News_data_raw/Financial_Times/all_current/FT-archive-2016/1a92d762-ac1b-11e6-ba7d-76378e4fef24_2016-11-16.json,0,0,0,0,0,0
 2017,5,/data/News_data_raw/Financial_Times/all_current/FT-archive-2017 (1)/98e2b280-31af-11e7-9555-23ef563ecf9a_2017-05-08.json,0,0,0,0,0,0
 2017,3,/data/News_data_raw/Financial_Times/all_current/FT-archive-2017 (1)/1c3e6a46-0589-11e7-ace0-1ce02ef0def9_2017-03-10.json,0,0,0,0,0,0

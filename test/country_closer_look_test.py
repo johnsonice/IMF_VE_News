@@ -1,5 +1,5 @@
 import os
-#from pandas import DataFrame
+from pandas import DataFrame
 import datetime
 import math
 import glob
@@ -77,12 +77,12 @@ if __name__ == "__main__":
 
         # From naming convention
         if current_month < 10:
-	    file_name_variety = "*"+str(current_year)+"-0"+str(current_month)+"*.json"
+            file_name_variety = "*"+str(current_year)+"-0"+str(current_month)+"*.json"
         else:
             file_name_variety = "*"+str(current_year)+"-"+str(current_month)+"*.json"
-        	
-	event_log.write("While, y/m: "+str(current_year)+"/"+str(current_month)+"\n")
-	event_log.write("Variety:: "+file_name_variety+"\n\n")
+         	
+        event_log.write("While, y/m: "+str(current_year)+"/"+str(current_month)+"\n")
+        event_log.write("Variety:: "+file_name_variety+"\n\n")
         # Generate the file names
         files_with_name_variety = []
         for folder_name in folders_to_read:
@@ -107,7 +107,7 @@ if __name__ == "__main__":
                 ended = True
     
     # Write results to dataframe
-    #   files_close_look = DataFrame({'year':years_temp, 'month':months_temp, 'file':files_to_read})
+    files_close_look = DataFrame({'year':years_temp, 'month':months_temp, 'file':files_to_read})
 
     top_10_indicies = []
     second_lowest_of_top_counts = 0
@@ -123,14 +123,14 @@ if __name__ == "__main__":
     with open(files_read_csv, 'w+') as out_file:
         for i in range(len(files_to_read)):
             file_name = files_to_read[i]
-	    file_date = str(years_temp[i])+','+str(months_temp[i]) 
+            file_date = str(years_temp[i])+','+str(months_temp[i]) 
             file_desc = file_date+','+file_name
             
-	    # Read the article
+            # Read the article
             with open(file_name, 'r') as article:
                 article_contents = article.read()
             
-	    # Throw out html, xml, etc
+            # Throw out html, xml, etc
             article_contents = re.sub(r"<[^>]*"," ",article_contents)   
             search_term_count = article_contents.count(search_term)
             counts_temp.append(search_term_count)            
