@@ -111,7 +111,39 @@ def get_countries(article,country_dict=country_dict):
     else:
         cl = list()
         
-    return article['an'],cl    
+    return article['an'],cl
+
+def get_country_name_count(text, country_dict=country_dict, min_count=0, rex=None):
+    for c, v in country_dict.items():
+        if c in ['united-states']:
+            rex = construct_rex(v, case=True)
+        else:
+            rex = construct_rex(v)
+        rc = rex.findall(text)
+        l_rc = len(rc)
+        if l_rc > 0 and l_rc >= min_count:
+            yield [c, l_rc]
+
+def get_countries_by_count(article, country_dicts, min_this, max_other=None):
+    # snip = word_tokenize(article['snippet'].lower()) if article['snippet'] else None
+    # title = word_tokenize(article['title'].lower()) if article['title'] else None
+    snip = article['snippet'].lower() if article['snippet'] else None
+    title = article['title'].lower() if article['title'] else None
+    if snip and title:
+        # title.extend(snip)
+        title = "{} {}".format(title, snip)
+        cl = list(get_country_name_count(title, country_dict, min_this))
+    elif title:
+        cl = list(get_country_name_count(title, country_dict, min_this))
+    elif snip:
+        cl = list(get_country_name_count(snip, country_dict, min_this))
+    else:
+        cl = list()
+
+    # get just first col
+    cl = list(list(zip(*cl))[0])
+
+    return article['an'], cl
 
 
 #%%
@@ -131,7 +163,7 @@ if __name__ == '__main__':
     news = streamer.multi_process_files(workers=2,chunk_size=5000)
     #%%
     #country_meta = [(a['an'],get_countries(a,country_dict)) for a in news]
-    mp = Mp(news,get_countries)
+    mp = Mp(news,get_countries_by_count(min_this=3))
     country_meta = mp.multi_process_files(workers=2,chunk_size=5000)
     #%%
     index = [i[0] for i in country_meta]
