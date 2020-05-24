@@ -163,7 +163,7 @@ if __name__ == '__main__':
     news = streamer.multi_process_files(workers=2,chunk_size=5000)
     #%%
     #country_meta = [(a['an'],get_countries(a,country_dict)) for a in news]
-    mp = Mp(news,get_countries_by_count(min_this=3))
+    mp = Mp(news,get_countries_by_count(min_this=12))
     country_meta = mp.multi_process_files(workers=2,chunk_size=5000)
     #%%
     index = [i[0] for i in country_meta]

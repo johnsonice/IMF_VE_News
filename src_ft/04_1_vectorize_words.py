@@ -23,7 +23,7 @@ if __name__ == "__main__":
     size = 200
     window = 5
     min_count = 50
-    workers = 2
+    workers = 12
     
     random.seed(10)
 
