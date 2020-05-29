@@ -116,6 +116,16 @@ class Streamer(ABC):
         print(time.strftime('%H:%M:%S', time.gmtime(end - start)))
 
         return results
+
+    def multiprocess_files_2(self,workers=os.cpu_count()-1,chunk_size=1000,efficient=False):
+        print('Start multiprocessing {} files in {} cores'.format(len(self.input_files), workers))
+        start = time.time()
+        batch_size = workers * chunk_size * 5
+        batches = list(self.chunks(self.input_files, batch_size))
+        p = Pool(workers)
+
+        results = None
+        return results
     
     
     def get_input_files(self):
