@@ -117,15 +117,35 @@ class Streamer(ABC):
 
         return results
 
-    def multiprocess_files_2(self,workers=os.cpu_count()-1,chunk_size=1000,efficient=False):
+    def multi_process_files_2(self,workers=os.cpu_count()-1,chunk_size=1000,efficient=False,write_file=None):
+        '''if write_file is None:
+            return self.multi_process_files(workers, chunk_size, efficient)
         print('Start multiprocessing {} files in {} cores'.format(len(self.input_files), workers))
         start = time.time()
         batch_size = workers * chunk_size * 5
         batches = list(self.chunks(self.input_files, batch_size))
         p = Pool(workers)
 
-        results = None
-        return results
+        dump_file = open(write_file)
+        for i in range(len(batches)):
+            print('Processing {} - {} files ...'.format(i * batch_size, (i + 1) * batch_size))
+            rs = p.map(self.process_json, batches[i], chunk_size)
+            pickle.dump(rs)
+            res.extend(rs)
+            del rs
+        p.close()
+        p.join()
+        end = time.time()
+
+        ## filter None items
+        res = [r for r in res if r is not None]
+        results = []
+        for r in res:
+            results.extend(r)
+        del res
+        print(time.strftime('%H:%M:%S', time.gmtime(end - start)))'''
+
+        pass
     
     
     def get_input_files(self):
