@@ -171,7 +171,7 @@ if __name__ == '__main__':
             if chunky_index%50000 == 0:
                 print("Passed ", chunky_index, " files")
             chunk_end = min(chunky_index+1000, data_length)
-            streamer = MetaStreamer(data_list[chunky_index, chunk_end])
+            streamer = MetaStreamer(data_list[chunky_index:chunk_end])
             news = streamer.multi_process_files(workers=2, chunk_size=1000)
             mp = Mp(news, get_countries_by_count(min_this=3))
             country_meta = mp.multi_process_files(workers=2, chunk_size=1000)
