@@ -173,7 +173,7 @@ if __name__ == '__main__':
             chunk_end = min(chunky_index+1000, data_length)
             streamer = MetaStreamer(data_list[chunky_index:chunk_end])
             news = streamer.multi_process_files(workers=2, chunk_size=1000)
-            mp = Mp(news, get_countries_by_count(min_this=3))
+            mp = Mp(news, get_countries)
             country_meta = mp.multi_process_files(workers=2, chunk_size=1000)
             index = index + [i[0] for i in country_meta]
             country_list = country_list + [i[1] for i in country_meta]
