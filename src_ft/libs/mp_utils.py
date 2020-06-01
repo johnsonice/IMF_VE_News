@@ -15,9 +15,10 @@ class Mp():
     abstract base class for Generator that yields info from each doc in a dir
     :param input: File or Dir
     """
-    def __init__(self, input, mp_func):
+    def __init__(self, input, mp_func, verbose=False):
         self.input = input
         self.mp_func = mp_func
+        self.verbose = verbose
 
     def chunks(self,l, n):
         """Yield successive n-sized chunks from l."""
@@ -25,7 +26,8 @@ class Mp():
             yield l[i:i + n]
             
     def multi_process_files(self,workers=os.cpu_count()-1,chunk_size=1000):
-        print('Start multiprocessing {} files in {} cores'.format(len(self.input),workers))
+        if self.verbose:
+            print('Start multiprocessing {} files in {} cores'.format(len(self.input),workers))
         start = time.time()
         batch_size = workers*chunk_size*5
         batches = list(self.chunks(self.input, batch_size))
@@ -33,13 +35,15 @@ class Mp():
         
         res = list()
         for i in range(len(batches)):
-            print('Processing {} - {} files ...'.format(i*batch_size,(i+1)*batch_size))
+            if self.verbose:
+                print('Processing {} - {} files ...'.format(i*batch_size,(i+1)*batch_size))
             rs = p.map(self.mp_func, batches[i],chunk_size)
             res.extend(rs)
         p.close()
         p.join()
-        end = time.time()            
-        print(time.strftime('%H:%M:%S', time.gmtime(end - start)))
+        end = time.time()
+        if self.verbose:
+            print(time.strftime('%H:%M:%S', time.gmtime(end - start)))
 
         return res
     
