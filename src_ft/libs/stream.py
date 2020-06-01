@@ -91,7 +91,8 @@ class Streamer(ABC):
             yield l[i:i + n]
             
     def multi_process_files(self,workers=os.cpu_count()-1,chunk_size=1000,efficient=False):
-        print('Start multiprocessing {} files in {} cores'.format(len(self.input_files),workers))
+        if self.verbose:
+            print('Start multiprocessing {} files in {} cores'.format(len(self.input_files),workers))
         start = time.time()
         batch_size = workers*chunk_size*5
         batches = list(self.chunks(self.input_files, batch_size))
@@ -99,7 +100,8 @@ class Streamer(ABC):
         
         res = list()
         for i in range(len(batches)):
-            print('Processing {} - {} files ...'.format(i*batch_size,(i+1)*batch_size))
+            if self.verbose:
+                print('Processing {} - {} files ...'.format(i*batch_size,(i+1)*batch_size))
             rs = p.map(self.process_json, batches[i],chunk_size)
             res.extend(rs)
             del rs
@@ -113,7 +115,9 @@ class Streamer(ABC):
         for r in res:
             results.extend(r)
         del res
-        print(time.strftime('%H:%M:%S', time.gmtime(end - start)))
+
+        if self.verbose:
+            print(time.strftime('%H:%M:%S', time.gmtime(end - start)))
 
         return results
 
