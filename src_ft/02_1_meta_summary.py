@@ -122,7 +122,7 @@ def get_country_name_count(text, country_dict=country_dict, min_count=0, rex=Non
         rc = rex.findall(text)
         l_rc = len(rc)
         if l_rc > 0 and l_rc >= min_count:
-            yield [c, l_rc]
+            yield c, l_rc
 
 
 def get_countries_by_count(article, country_dicts=country_dict, min_this=3, max_other=None):
@@ -142,7 +142,8 @@ def get_countries_by_count(article, country_dicts=country_dict, min_this=3, max_
         cl = list()
 
     # get just first col
-    cl = list(list(zip(*cl))[0])
+    if cl:
+        cl = list(list(zip(*cl))[0])
 
     return article['an'], cl
 
