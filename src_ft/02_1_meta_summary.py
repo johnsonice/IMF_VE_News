@@ -124,7 +124,8 @@ def get_country_name_count(text, country_dict=country_dict, min_count=0, rex=Non
         if l_rc > 0 and l_rc >= min_count:
             yield [c, l_rc]
 
-def get_countries_by_count(article, country_dicts=country_dict, min_this=0, max_other=None):
+
+def get_countries_by_count(article, country_dicts=country_dict, min_this=3, max_other=None):
     # snip = word_tokenize(article['snippet'].lower()) if article['snippet'] else None
     # title = word_tokenize(article['title'].lower()) if article['title'] else None
     snip = article['snippet'].lower() if article['snippet'] else None
@@ -173,7 +174,7 @@ if __name__ == '__main__':
             chunk_end = min(chunky_index+1000, data_length)
             streamer = MetaStreamer(data_list[chunky_index:chunk_end])
             news = streamer.multi_process_files(workers=2, chunk_size=1000)
-            mp = Mp(news, get_countries)
+            mp = Mp(news, get_countries_by_count)
             country_meta = mp.multi_process_files(workers=2, chunk_size=1000)
             index = index + [i[0] for i in country_meta]
             country_list = country_list + [i[1] for i in country_meta]
@@ -184,7 +185,7 @@ if __name__ == '__main__':
         news = streamer.multi_process_files(workers=1, chunk_size=100)
         # %%
         # country_meta = [(a['an'],get_countries(a,country_dict)) for a in news]
-        mp = Mp(news, get_countries_by_count(min_this=3))
+        mp = Mp(news, get_countries_by_count)
         country_meta = mp.multi_process_files(workers=1, chunk_size=100)
         # %%
         index =[i[0] for i in country_meta]
@@ -194,7 +195,7 @@ if __name__ == '__main__':
     ds = pd.Series(country_list,name='country',index=index)
     df = df.join(ds) ## merge country meta
     df['country_n'] = df['country'].map(lambda x: len(x))
-    df.to_pickle(os.path.join(meta_root, 'doc_details_{}_aug.pkl'.format('crisis')))
+    df.to_pickle(os.path.join(meta_root, 'doc_details_{}_aug_min3.pkl'.format('crisis')))
     print('augumented document meta data saved at {}'.format(meta_root))
     
     #%%
