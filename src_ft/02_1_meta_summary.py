@@ -124,7 +124,7 @@ def get_country_name_count(text, country_dict=country_dict, min_count=0, rex=Non
         if l_rc > 0 and l_rc >= min_count:
             yield [c, l_rc]
 
-def get_countries_by_count(article, country_dicts, min_this, max_other=None):
+def get_countries_by_count(article, country_dicts=country_dict, min_this=0, max_other=None):
     # snip = word_tokenize(article['snippet'].lower()) if article['snippet'] else None
     # title = word_tokenize(article['title'].lower()) if article['title'] else None
     snip = article['snippet'].lower() if article['snippet'] else None
