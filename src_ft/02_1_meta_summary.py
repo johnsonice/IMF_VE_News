@@ -261,10 +261,10 @@ if __name__ == '__main__':
     for setup in class_type_setups:
         class_type = setup[0]
         # Configure run variables
-        min_this = setup[class_type][1]
-        min_other = setup[class_type][2]
-        other_type = setup[class_type][3]
-        top_n = setup[class_type][4]
+        min_this = setup[1]
+        min_other = setup[2]
+        other_type = setup[3]
+        top_n = setup[4]
 
         if pre_chunked:
             data_list = df['data_path'].tolist()
