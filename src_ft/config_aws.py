@@ -27,9 +27,9 @@ crisis_defs = 'kr' # or 'll' or 'kr'
 GROUPED_SEARCH_FILE = 'grouped_search_words_final.csv'
 #GROUPED_SEARCH_FILE = 'expert_terms_final.csv'
 
-smooth_window_size = 24 # put as months , even if for quarterly data, put it as months
+smooth_window_size = 18 # put as months , even if for quarterly data, put it as months
                         # it will automatically convert to quarterly
-months_prior = 24       # same here, put as months
+months_prior = 18       # same here, put as months
 #months_prior = 12 
 z_thresh = 2.1            # how many standard deviations away we think that is a spike 
 topn = 15
@@ -42,24 +42,25 @@ eval_end_date = {'q':'2001Q4',
 ########################
 RAW_DATA_PATH = '/data/News_data_raw/Financial_Times_processed'
 
-PROCESSING_FOLDER = '/data/News_data_raw/FT_WD'
-DOC_META = os.path.join(PROCESSING_FOLDER,'doc_meta')
-JSON_LEMMA = os.path.join(PROCESSING_FOLDER,'json_lemma')
-JSON_LEMMA_SMALL = os.path.join(PROCESSING_FOLDER,'json_lemma_small')
+OLD_PROCESSING_FOLDER = '/data/News_data_raw/FT_WD'
+NEW_PROCESSING_FOLDER = '/home/apsurek/process_arg'
+DOC_META = os.path.join(OLD_PROCESSING_FOLDER,'doc_meta')
+JSON_LEMMA = os.path.join(OLD_PROCESSING_FOLDER,'json_lemma')
+JSON_LEMMA_SMALL = os.path.join(OLD_PROCESSING_FOLDER,'json_lemma_small')
 
-MODELS = os.path.join(PROCESSING_FOLDER,'models')
+MODELS = os.path.join(NEW_PROCESSING_FOLDER,'models')
 NGRAMS = os.path.join(MODELS,'ngrams')
 VS_MODELS = os.path.join(MODELS,'vsms')
 TOPIC_MODELS = os.path.join(MODELS,'topics')
 
 
-SEARCH_TERMS = os.path.join(PROCESSING_FOLDER,'search_terms')
-BOW_TFIDF_DOCS = os.path.join(PROCESSING_FOLDER,'bow_tfidf_docs')
-FREQUENCY = os.path.join(PROCESSING_FOLDER,'frequency','csv')
+SEARCH_TERMS = os.path.join(NEW_PROCESSING_FOLDER,'search_terms')
+BOW_TFIDF_DOCS = os.path.join(NEW_PROCESSING_FOLDER,'bow_tfidf_docs')
+FREQUENCY = os.path.join(NEW_PROCESSING_FOLDER,'frequency','csv')
 
-EVAL = os.path.join(PROCESSING_FOLDER,'eval')
+EVAL = os.path.join(NEW_PROCESSING_FOLDER,'eval')
 if WEIGHTED:
-    EVAL = os.path.join(PROCESSING_FOLDER,'eval_weighted')
+    EVAL = os.path.join(NEW_PROCESSING_FOLDER,'eval_weighted')
 
 EVAL_WG = os.path.join(EVAL,'word_groups')
 EVAL_TS = os.path.join(EVAL,'time_series')
@@ -70,7 +71,7 @@ DOC_META_FILE = os.path.join(DOC_META,'doc_details_crisis.pkl')
 AUG_DOC_META_FILE = os.path.join(DOC_META,'doc_details_crisis_aug.pkl')
 PHRASER = os.path.join(NGRAMS,'2grams_default_10_20_NOSTOP')
 W2V = os.path.join(VS_MODELS,'word_vecs_5_50_200')
-EXPERT_TERMS = os.path.join(PROCESSING_FOLDER,'search_terms','expert_terms.csv')
+EXPERT_TERMS = os.path.join(NEW_PROCESSING_FOLDER,'search_terms','expert_terms.csv')
 
 
 ## file specific inputs ##

@@ -27,9 +27,9 @@ crisis_defs = 'kr' # or 'll' or 'kr'
 GROUPED_SEARCH_FILE = 'grouped_search_words_final.csv'
 #GROUPED_SEARCH_FILE = 'expert_terms_final.csv'
 
-smooth_window_size = 24 # put as months , even if for quarterly data, put it as months
+smooth_window_size = 18 # put as months , even if for quarterly data, put it as months
                         # it will automatically convert to quarterly
-months_prior = 24       # same here, put as months
+months_prior = 18       # same here, put as months
 #months_prior = 12 
 z_thresh = 2.1            # how many standard deviations away we think that is a spike 
 topn = 15
@@ -40,10 +40,11 @@ eval_end_date = {'q':'2001Q4',
 ########################
 ## Global folder path ##
 ########################
-RAW_DATA_PATH = '/data/News_data_raw/Financial_Times_processed'
+RAW_DATA_PATH = '/data/News_data_raw/tiny_test/Financial_Times_processed'
 
-PROCESSING_FOLDER = '/data/News_data_raw/FT_WD'
+PROCESSING_FOLDER = '/data/News_data_raw/tiny_test/FT_WD'
 DOC_META = os.path.join(PROCESSING_FOLDER,'doc_meta')
+AUG_DOC_META = os.path.join(PROCESSING_FOLDER,'doc_meta')
 JSON_LEMMA = os.path.join(PROCESSING_FOLDER,'json_lemma')
 JSON_LEMMA_SMALL = os.path.join(PROCESSING_FOLDER,'json_lemma_small')
 
@@ -67,7 +68,7 @@ EVAL_TS = os.path.join(EVAL,'time_series')
 
 ## global file path ##
 DOC_META_FILE = os.path.join(DOC_META,'doc_details_crisis.pkl')
-AUG_DOC_META_FILE = os.path.join(DOC_META,'doc_details_crisis_aug.pkl')
+AUG_DOC_META_FILE = os.path.join(AUG_DOC_META,'doc_details_crisis_aug.pkl')
 PHRASER = os.path.join(NGRAMS,'2grams_default_10_20_NOSTOP')
 W2V = os.path.join(VS_MODELS,'word_vecs_5_50_200')
 EXPERT_TERMS = os.path.join(PROCESSING_FOLDER,'search_terms','expert_terms.csv')
@@ -123,8 +124,8 @@ def maybe_create(f):
         print('New folder created: {}'.format(f))
     
 if __name__ == "__main__":
-    folders = [RAW_DATA_PATH,PROCESSING_FOLDER,SEARCH_TERMS,DOC_META,
-               DOC_META,JSON_LEMMA,JSON_LEMMA_SMALL,MODELS,NGRAMS,TOPIC_MODELS,
+    folders = [RAW_DATA_PATH,PROCESSING_FOLDER,SEARCH_TERMS,
+               DOC_META, AUG_DOC_META, JSON_LEMMA,JSON_LEMMA_SMALL,MODELS,NGRAMS,TOPIC_MODELS,
                VS_MODELS,BOW_TFIDF_DOCS,
                FREQUENCY,EVAL,EVAL_WG,EVAL_TS]
     weights = [DOC_META_FILE,PHRASER,W2V]

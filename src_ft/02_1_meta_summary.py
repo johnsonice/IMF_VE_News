@@ -22,6 +22,12 @@ from mp_utils import Mp
 import re
 #plt.rcParams['figure.figsize']=(10,5)
 
+# Experimental country classification variables
+min_this = 1
+max_other = None
+other_type = "sum"
+top_n = None
+
 #%%
 ## save quarterly figure
 def create_summary(agg_q,meta_root):
@@ -113,7 +119,11 @@ def get_countries(article,country_dict=country_dict):
         
     return article['an'],cl
 
-def get_country_name_count(text, country_dict=country_dict, min_count=0, rex=None):
+
+def get_country_name_count(text, country_dict=country_dict, min_count=1, max_other=None, other_type="sum", top_n=None,
+                           rex=None):
+    name_list = []
+    num_list = []
     for c, v in country_dict.items():
         if c in ['united-states']:
             rex = construct_rex(v, case=True)
@@ -121,11 +131,80 @@ def get_country_name_count(text, country_dict=country_dict, min_count=0, rex=Non
             rex = construct_rex(v)
         rc = rex.findall(text)
         l_rc = len(rc)
-        if l_rc > 0 and l_rc >= min_count:
-            yield c, l_rc
+        if (l_rc > 0 and max_other is not None):
+            name_list.append(c)
+            num_list.append(l_rc)
+
+    if max_other is None:
+        pruned_name_list = name_list
+        pruned_num_list = num_list
+    else:
+        pruned_name_list = []
+        pruned_num_list = []
+        if other_type == "sum":
+            country_mentions = sum(num_list)
+            for i in range(len(name_list)):
+                if country_mentions - num_list[i] <= max_other:
+                    pruned_name_list.append(name_list[i])
+                    pruned_num_list.append(num_list[i])
+        elif other_type == "at_least":
+            garbage_index = []
+            for i in range(len(name_list)):
+                exl_list = num_list[:i]
+                if i < len(num_list)-1:
+                    exl_list = exl_list + num_list[i+1:]
+                for o_num in exl_list:
+                    if o_num > max_other:
+                        garbage_index.append(i)
+                        continue
+            for add_ind in range(len(name_list)):
+                if add_ind not in garbage_index:
+                    pruned_name_list.append(name_list[add_ind])
+                    pruned_num_list.append(num_list[add_ind])
+
+    double_pruned_names = []
+    double_pruned_nums = []
+    for i in range(len(pruned_name_list)):
+        if pruned_num_list[i] >= min_count:
+            double_pruned_names.append(pruned_name_list[i])
+            double_pruned_nums.append(pruned_num_list[i])
+
+    triple_pruned = []
+    if top_n is not None:
+        zipped = list(zip(double_pruned_names, double_pruned_nums))
+        zipped.sort(key=lambda x: x[1])
+
+        i = 0
+        while i < len(double_pruned_names):
+            if len(triple_pruned) >= top_n:
+                break
+            else:
+                top_append = []
+                going_num = double_pruned_nums[i]
+                for j in range(len(double_pruned_nums[i:])):
+                    if double_pruned_nums[j] != going_num:
+                        break
+                    else:
+                        top_append.append(double_pruned_names[j])
+            triple_pruned.append(top_append)
+            i = i + len(top_append)
+
+    return triple_pruned
 
 
-def get_countries_by_count(article, country_dicts=country_dict, min_this=3, max_other=None):
+def get_countries_by_count(article, country_dicts=country_dict, min_this=min_this, max_other=max_other,
+                           other_type=other_type):
+    '''
+    Identifies list of countries based on number of instances of this country except for if other countries
+        show up >y times.
+
+    :param article: the article to classify
+    :param country_dicts: countries to look through
+    :param min_this: minimum observations of a country (default 1)
+    :param max_other: maximum other country mentions allowed if None, ignore (default None)
+    :param other_type: Only if max_other is not None,
+    :return:
+    '''
     # snip = word_tokenize(article['snippet'].lower()) if article['snippet'] else None
     # title = word_tokenize(article['title'].lower()) if article['title'] else None
     snip = article['snippet'].lower() if article['snippet'] else None
@@ -133,17 +212,13 @@ def get_countries_by_count(article, country_dicts=country_dict, min_this=3, max_
     if snip and title:
         # title.extend(snip)
         title = "{} {}".format(title, snip)
-        cl = list(get_country_name_count(title, country_dict, min_this))
+        cl = get_country_name_count(title, country_dict, min_this, max_other, other_type)
     elif title:
-        cl = list(get_country_name_count(title, country_dict, min_this))
+        cl = get_country_name_count(title, country_dict, min_this)
     elif snip:
-        cl = list(get_country_name_count(snip, country_dict, min_this))
+        cl = get_country_name_count(snip, country_dict, min_this)
     else:
         cl = list()
-
-    # get just first col
-    if cl:
-        cl = list(list(zip(*cl))[0])
 
     return article['an'], cl
 
@@ -151,6 +226,7 @@ def get_countries_by_count(article, country_dicts=country_dict, min_this=3, max_
 #%%
 if __name__ == '__main__':
     meta_root = config.DOC_META
+    meta_aug = config.AUG_DOC_META
     meta_pkl = config.DOC_META_FILE
     json_data_path = config.JSON_LEMMA
     
@@ -159,45 +235,73 @@ if __name__ == '__main__':
     
     #df= df.head(5000)
     #%%
+
+    country_dict = {
+        'argentina': ['argentina'],
+        'bolivia': ['bolivia'],
+        'brazil': ['brazil'],
+        'chile': ['chile'],
+        'colombia': ['colombia']
+    }
+
+    class_type_setups = [
+        ['Min1', 1, None, None, None],
+        ['Min3', 3, None, None, None],
+        ['Min5', 5, None, None, None],
+        ['Min3_Max0', 3, 0, "sum", None],
+        ['Min1_Max2_sum', 1, 2, "sum", None],
+        ['Min1_Top1', 1, None, None, 1],
+        ['Min3_Top1', 3, None, None, 1],
+        ['Min1_Top3', 1, None, None, 3]
+    ]
+
     df['data_path'] = json_data_path+'/'+df.index + '.json'
     print('see one example : \n',df['data_path'].iloc[0])
     pre_chunked = True
-    if pre_chunked:
-        data_list = df['data_path'].tolist()
-        pre_chunk_size = 1000
-        chunky_index = 0
-        data_length = len(data_list)
-        index = []
-        country_list = []
-        while chunky_index < data_length:
-            if chunky_index%50000 == 0:
-                print("Passed ", chunky_index, " files")
-            chunk_end = min(chunky_index+1000, data_length)
-            streamer = MetaStreamer(data_list[chunky_index:chunk_end])
-            news = streamer.multi_process_files(workers=2, chunk_size=1000)
+    for setup in class_type_setups:
+        class_type = setup[0]
+        # Configure run variables
+        min_this = setup[class_type][1]
+        min_other = setup[class_type][2]
+        other_type = setup[class_type][3]
+        top_n = setup[class_type][4]
+
+        if pre_chunked:
+            data_list = df['data_path'].tolist()
+            pre_chunk_size = 25000
+            chunky_index = 0
+            data_length = len(data_list)
+            index = []
+            country_list = []
+            while chunky_index < data_length:
+                if chunky_index%50000 == 0:
+                    print("Passed ", chunky_index, " files")
+                chunk_end = min(chunky_index+1000, data_length)
+                streamer = MetaStreamer(data_list[chunky_index:chunk_end])
+                news = streamer.multi_process_files(workers=16, chunk_size=1000)
+                mp = Mp(news, get_countries_by_count)
+                country_meta = mp.multi_process_files(workers=16, chunk_size=1000)
+                index = index + [i[0] for i in country_meta]
+                country_list = country_list + [i[1] for i in country_meta]
+                del country_meta  ## clear memory
+                chunky_index = chunk_end
+        else:
+            streamer = MetaStreamer(df['data_path'].tolist())
+            news = streamer.multi_process_files(workers=1, chunk_size=100)
+            # %%
+            # country_meta = [(a['an'],get_countries(a,country_dict)) for a in news]
             mp = Mp(news, get_countries_by_count)
-            country_meta = mp.multi_process_files(workers=2, chunk_size=1000)
-            index = index + [i[0] for i in country_meta]
-            country_list = country_list + [i[1] for i in country_meta]
+            country_meta = mp.multi_process_files(workers=1, chunk_size=100)
+            # %%
+            index =[i[0] for i in country_meta]
+            country_list =[i[1] for i in country_meta]
             del country_meta  ## clear memory
-            chunky_index = chunk_end
-    else:
-        streamer = MetaStreamer(df['data_path'].tolist())
-        news = streamer.multi_process_files(workers=1, chunk_size=100)
-        # %%
-        # country_meta = [(a['an'],get_countries(a,country_dict)) for a in news]
-        mp = Mp(news, get_countries_by_count)
-        country_meta = mp.multi_process_files(workers=1, chunk_size=100)
-        # %%
-        index =[i[0] for i in country_meta]
-        country_list =[i[1] for i in country_meta]
-        del country_meta  ## clear memory
-    
-    ds = pd.Series(country_list,name='country',index=index)
-    df = df.join(ds) ## merge country meta
-    df['country_n'] = df['country'].map(lambda x: len(x))
-    df.to_pickle(os.path.join(meta_root, 'doc_details_{}_aug_min3.pkl'.format('crisis')))
-    print('augumented document meta data saved at {}'.format(meta_root))
+
+        ds = pd.Series(country_list,name='country',index=index)
+        df = df.join(ds) ## merge country meta
+        df['country_n'] = df['country'].map(lambda x: len(x))
+        df.to_pickle(os.path.join(meta_aug, 'doc_details_{}_aug_{}.pkl'.format('crisis',class_type)))
+        print('augumented document meta data saved at {}'.format(meta_aug))
     
     #%%
     # create aggregates for ploting

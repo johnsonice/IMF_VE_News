@@ -43,8 +43,9 @@ eval_end_date = {'q':'2001Q4',
 RAW_DATA_PATH = '/data/News_data_raw/Financial_Times_processed'
 
 OLD_PROCESSING_FOLDER = '/data/News_data_raw/FT_WD'
-NEW_PROCESSING_FOLDER = '/home/apsurek/process_arg'
+NEW_PROCESSING_FOLDER = '/data/News_data_raw/FT_WD_research'
 DOC_META = os.path.join(OLD_PROCESSING_FOLDER,'doc_meta')
+AUG_DOC_META = os.path.join(NEW_PROCESSING_FOLDER,'doc_meta')
 JSON_LEMMA = os.path.join(OLD_PROCESSING_FOLDER,'json_lemma')
 JSON_LEMMA_SMALL = os.path.join(OLD_PROCESSING_FOLDER,'json_lemma_small')
 
@@ -68,7 +69,7 @@ EVAL_TS = os.path.join(EVAL,'time_series')
 
 ## global file path ##
 DOC_META_FILE = os.path.join(DOC_META,'doc_details_crisis.pkl')
-AUG_DOC_META_FILE = os.path.join(DOC_META,'doc_details_crisis_aug.pkl')
+AUG_DOC_META_FILE = os.path.join(AUG_DOC_META,'doc_details_crisis_aug.pkl')
 PHRASER = os.path.join(NGRAMS,'2grams_default_10_20_NOSTOP')
 W2V = os.path.join(VS_MODELS,'word_vecs_5_50_200')
 EXPERT_TERMS = os.path.join(NEW_PROCESSING_FOLDER,'search_terms','expert_terms.csv')
@@ -124,8 +125,8 @@ def maybe_create(f):
         print('New folder created: {}'.format(f))
     
 if __name__ == "__main__":
-    folders = [RAW_DATA_PATH,PROCESSING_FOLDER,SEARCH_TERMS,DOC_META,
-               DOC_META,JSON_LEMMA,JSON_LEMMA_SMALL,MODELS,NGRAMS,TOPIC_MODELS,
+    folders = [RAW_DATA_PATH,OLD_PROCESSING_FOLDER,NEW_PROCESSING_FOLDER,SEARCH_TERMS,
+               DOC_META, AUG_DOC_META, JSON_LEMMA,JSON_LEMMA_SMALL,MODELS,NGRAMS,TOPIC_MODELS,
                VS_MODELS,BOW_TFIDF_DOCS,
                FREQUENCY,EVAL,EVAL_WG,EVAL_TS]
     weights = [DOC_META_FILE,PHRASER,W2V]
