@@ -298,7 +298,8 @@ if __name__ == '__main__':
             del country_meta  ## clear memory
 
         ds = pd.Series(country_list,name='country',index=index)
-        new_df = new_df.join(ds) ## merge country meta
+        new_df = df.join(ds) ## merge country meta
+        del ds  # Free space
         new_df['country_n'] = df['country'].map(lambda x: len(x))
         new_df.to_pickle(os.path.join(meta_aug, 'doc_details_{}_aug_{}.pkl'.format('crisis',class_type)))
         print('augumented document meta data saved at {}'.format(meta_aug))
@@ -309,6 +310,7 @@ if __name__ == '__main__':
         #agg_m = df[['date','month']].groupby('month').agg('count')
         create_summary(agg_q,meta_root,class_type)
 
-        del new_df
+        del new_df  # Free space
+
 
 #%%
