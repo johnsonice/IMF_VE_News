@@ -300,7 +300,7 @@ if __name__ == '__main__':
         ds = pd.Series(country_list,name='country',index=index)
         new_df = df.join(ds) ## merge country meta
         del ds  # Free space
-        new_df['country_n'] = df['country'].map(lambda x: len(x))
+        new_df['country_n'] = new_df['country'].map(lambda x: len(x))
         new_df.to_pickle(os.path.join(meta_aug, 'doc_details_{}_aug_{}.pkl'.format('crisis',class_type)))
         print('augumented document meta data saved at {}'.format(meta_aug))
     
