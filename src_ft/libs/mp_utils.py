@@ -26,7 +26,6 @@ class Mp():
             yield l[i:i + n]
             
     def multi_process_files(self,workers=os.cpu_count()-1,chunk_size=1000):
-        self.verbose = True # TEMP
         if self.verbose:
             print('Start multiprocessing {} files in {} cores'.format(len(self.input),workers))
         start = time.time()
@@ -53,9 +52,10 @@ class Mp_iter():
     abstract base class for Generator that yields info from each doc in a dir
     :param input: File or Dir
     """
-    def __init__(self, input, mp_func):
+    def __init__(self, input, mp_func, verbose=False):
         self.input = input
         self.mp_func = mp_func
+        self.verbose = verbose
 
 #    def chunks(self,l, n):
 #        """Yield successive n-sized chunks from l."""
@@ -63,14 +63,16 @@ class Mp_iter():
 #            yield l[i:i + n]
             
     def multi_process_files(self,workers=os.cpu_count()-1,chunk_size=1000):
-        #print('Start multiprocessing {} files in {} cores'.format(len(self.input),workers))
+        if self.verbose:
+            print('Start multiprocessing {} files in {} cores'.format(len(self.input),workers))
         start = time.time()
         chunk_size
         p = Pool(workers)
         res = p.imap(self.mp_func, self.input,chunk_size)
         p.close()
         p.join()
-        end = time.time()            
-        print(time.strftime('%H:%M:%S', time.gmtime(end - start)))
+        end = time.time()
+        if self.verobse:
+            print(time.strftime('%H:%M:%S', time.gmtime(end - start)))
 
         return res

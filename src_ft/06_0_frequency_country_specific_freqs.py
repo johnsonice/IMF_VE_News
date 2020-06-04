@@ -60,7 +60,7 @@ def get_country_freqs(countries, period_choice, time_df, uniq_periods,outdir,phr
 #                                    title_filter=[country],
 #                                    phraser=phraser,lemmatize=False).multi_process_files(workers=int(os.cpu_count()/2),chunk_size = 500)
             streamer = DocStreamer_fast(doc_list, language='en',phraser=phraser,
-                                        stopwords=[], lemmatize=False).multi_process_files(workers=4,chunk_size = 50)
+                                        stopwords=[], lemmatize=False).multi_process_files(workers=15,chunk_size = 50)
             # count
             for doc in streamer:
                 for token in doc:
@@ -96,7 +96,7 @@ def get_country_freqs(countries, period_choice, time_df, uniq_periods,outdir,phr
         try:
             out_csv = os.path.join(outdir, '{}_{}_word_freqs_{}.csv'.format(country, period_choice, class_type))
             freqs_df.to_csv(out_csv)
-            print('country saved to csv')
+            print('Country: {} saved to csv'.format(country))
             del freqs_df
         except:
             logger.warning("Problem saving country: {}. Skipped for now.".format(country))
