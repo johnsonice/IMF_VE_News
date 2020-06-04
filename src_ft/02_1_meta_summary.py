@@ -276,22 +276,22 @@ if __name__ == '__main__':
             while chunky_index < data_length:
                 if chunky_index%100000 == 0:
                     print("Passed ", chunky_index, " files")
-                chunk_end = min(chunky_index+1000, data_length)
+                chunk_end = min(chunky_index+pre_chunk_size, data_length)
                 streamer = MetaStreamer(data_list[chunky_index:chunk_end])
-                news = streamer.multi_process_files(workers=32, chunk_size=5000)
+                news = streamer.multi_process_files(workers=32, chunk_size=10000)
                 mp = Mp(news, get_countries_by_count)
-                country_meta = mp.multi_process_files(workers=32, chunk_size=5000)
+                country_meta = mp.multi_process_files(workers=32, chunk_size=10000)
                 index = index + [i[0] for i in country_meta]
                 country_list = country_list + [i[1] for i in country_meta]
                 del country_meta  ## clear memory
                 chunky_index = chunk_end
         else:
             streamer = MetaStreamer(df['data_path'].tolist())
-            news = streamer.multi_process_files(workers=32, chunk_size=5000)
+            news = streamer.multi_process_files(workers=32, chunk_size=10000)
             # %%
             # country_meta = [(a['an'],get_countries(a,country_dict)) for a in news]
             mp = Mp(news, get_countries_by_count)
-            country_meta = mp.multi_process_files(workers=32, chunk_size=5000)
+            country_meta = mp.multi_process_files(workers=32, chunk_size=10000)
             # %%
             index =[i[0] for i in country_meta]
             country_list =[i[1] for i in country_meta]
