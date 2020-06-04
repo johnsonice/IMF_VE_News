@@ -93,14 +93,14 @@ def get_country_freqs(countries, period_choice, time_df, uniq_periods,outdir,phr
         #return freqs_df
         
         # write csv
-        try:
-            out_csv = os.path.join(outdir, '{}_{}_word_freqs_{}.csv'.format(country, period_choice, class_type))
-            freqs_df.to_csv(out_csv)
-            print('Country: {} saved to csv'.format(country))
-            del freqs_df
-        except:
-            logger.warning("Problem saving country: {}. Skipped for now.".format(country))
-            del freqs_df
+        #try:
+        out_csv = os.path.join(outdir, '{}_{}_word_freqs_{}.csv'.format(country, period_choice, class_type))
+        freqs_df.to_csv(out_csv)
+        print('Country: {} saved to csv'.format(country))
+        del freqs_df
+        #except:
+        #    logger.warning("Problem saving country: {}. Skipped for now.".format(country))
+        #    del freqs_df
             
 #        # write pkl
 ##        try:
