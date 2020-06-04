@@ -30,7 +30,7 @@ top_n = None
 
 #%%
 ## save quarterly figure
-def create_summary(agg_q,meta_root):
+def create_summary(agg_q,meta_root, pass_name):
     x_ticker = agg_q.index[0::4]
     ax = agg_q.plot(figsize=(16,6),title='News Articles Frequency',legend=False)
     plt.ylabel('Number of news articles')       ## you can also use plt functions 
@@ -38,7 +38,7 @@ def create_summary(agg_q,meta_root):
     ax.set_xticks(x_ticker)                     ## set ticker
     ax.set_xticklabels(x_ticker,rotation=90)    ## set ticker labels
     ax.get_xaxis().set_visible(True)            ## some futrther control over axis
-    plt.savefig(os.path.join(meta_root,'quarter_summary.png'),bbox_inches='tight')
+    plt.savefig(os.path.join(meta_root,'quarter_summary_{}.png'.format(pass_name)),bbox_inches='tight')
 
 #%%
 #def get_country_name(tokens,country_dict):
@@ -245,7 +245,7 @@ if __name__ == '__main__':
     }
 
     class_type_setups = [
-        ['Min1', 1, None, None, None],
+        # ['Min1', 1, None, None, None], TEMP
         ['Min3', 3, None, None, None],
         ['Min5', 5, None, None, None],
         ['Min3_Max0', 3, 0, "sum", None],
@@ -298,15 +298,17 @@ if __name__ == '__main__':
             del country_meta  ## clear memory
 
         ds = pd.Series(country_list,name='country',index=index)
-        df = df.join(ds) ## merge country meta
-        df['country_n'] = df['country'].map(lambda x: len(x))
-        df.to_pickle(os.path.join(meta_aug, 'doc_details_{}_aug_{}.pkl'.format('crisis',class_type)))
+        new_df = new_df.join(ds) ## merge country meta
+        new_df['country_n'] = df['country'].map(lambda x: len(x))
+        new_df.to_pickle(os.path.join(meta_aug, 'doc_details_{}_aug_{}.pkl'.format('crisis',class_type)))
         print('augumented document meta data saved at {}'.format(meta_aug))
     
-    #%%
-    # create aggregates for ploting
-    agg_q = df[['date','quarter']].groupby('quarter').agg('count')
-    #agg_m = df[['date','month']].groupby('month').agg('count')
-    create_summary(agg_q,meta_root)
+        #%%
+        # create aggregates for ploting
+        agg_q = new_df[['date','quarter']].groupby('quarter').agg('count')
+        #agg_m = df[['date','month']].groupby('month').agg('count')
+        create_summary(agg_q,meta_root,class_type)
+
+        del new_df
 
 #%%
