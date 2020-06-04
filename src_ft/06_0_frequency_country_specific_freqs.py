@@ -42,7 +42,7 @@ def country_period_filter(time_df,country,period):
     
     return df.tolist()
 
-def get_country_freqs(countries, period_choice, time_df, uniq_periods,outdir,phraser,filter_dict=None):
+def get_country_freqs(countries, period_choice, time_df, uniq_periods,outdir,phraser,class_type,filter_dict=None):
 
     # Get frequency data for each country supplied
     print("\nCounting Word Freqs...")
@@ -94,12 +94,12 @@ def get_country_freqs(countries, period_choice, time_df, uniq_periods,outdir,phr
         
         # write csv
         try:
-            out_csv = os.path.join(outdir, '{}_{}_word_freqs.csv'.format(country, period_choice))
+            out_csv = os.path.join(outdir, '{}_{}_word_freqs_{}.csv'.format(country, period_choice, class_type))
             freqs_df.to_csv(out_csv)
             print('country saved to csv')
             del freqs_df
         except:
-            logger.warn("Problem saveing country: {}. Skipped for now.".format(country))
+            logger.warning("Problem saving country: {}. Skipped for now.".format(country))
             del freqs_df
             
 #        # write pkl
@@ -126,53 +126,70 @@ class args_class(object):
 #%%
 if __name__ == '__main__':
 #    try:
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--countries', nargs='+', help='countries to get freq for',
-                        default=config.countries)
-    parser.add_argument('-corp', '--corpus', action='store', dest='corpus', 
-                        default=config.JSON_LEMMA)
-    parser.add_argument('-deets', '--doc_details', action='store', dest='doc_deets', 
-                        default=config.AUG_DOC_META_FILE)
-    parser.add_argument('-p', '--period', action='store', dest='period', 
-                        default=config.COUNTRY_FREQ_PERIOD)
-    parser.add_argument('-s', '--save_dir', action='store', dest='out_dir', 
-                        default=config.FREQUENCY)
-    parser.add_argument('-ph', '--phraser', action='store', dest='phraser', 
-                        default=config.PHRASER)
-    parser.add_argument('-wv', '--wv_path', action='store', dest='wv_path', default=config.W2V)
-    parser.add_argument('-f', '--wv_filter', action='store', dest='wv_filter', default='TRUE')
-    args = parser.parse_args()
-#    except:
-#        args = args_class(corpus=config.JSON_LEMMA,doc_deets=config.AUG_DOC_META_FILE,
-#                          out_dir=config.FREQUENCY,period=config.COUNTRY_FREQ_PERIOD,
-#                          phraser=config.PHRASER,countries=config.countries)
+    class_type_setups = [
+            ['Min1', 1, None, None, None],
+            ['Min3', 3, None, None, None],
+            ['Min5', 5, None, None, None],
+            ['Min3_Max0', 3, 0, "sum", None],
+            ['Min1_Max2_sum', 1, 2, "sum", None],
+            ['Min1_Top1', 1, None, None, 1],
+            ['Min3_Top1', 3, None, None, 1],
+            ['Min1_Top3', 1, None, None, 3]
+        ]
+
+    for setup in class_type_setups:
+        class_type = class_type_setups[0]
+        parser = argparse.ArgumentParser()
+        parser.add_argument('-c', '--countries', nargs='+', help='countries to get freq for',
+                            default=config.countries)
+        parser.add_argument('-corp', '--corpus', action='store', dest='corpus',
+                            default=config.JSON_LEMMA)
+
+        doc_meta_file = os.path.join(config.AUG_DOC_META, 'doc_details_crisis_aug_{}.pkl'.format(class_type))
+
+        parser.add_argument('-deets', '--doc_details', action='store', dest='doc_deets',
+                            default=doc_meta_file)
+        parser.add_argument('-p', '--period', action='store', dest='period',
+                            default=config.COUNTRY_FREQ_PERIOD)
+        parser.add_argument('-s', '--save_dir', action='store', dest='out_dir',
+                            default=config.FREQUENCY)
+        parser.add_argument('-ph', '--phraser', action='store', dest='phraser',
+                            default=config.PHRASER)
+        parser.add_argument('-wv', '--wv_path', action='store', dest='wv_path', default=config.W2V)
+        parser.add_argument('-f', '--wv_filter', action='store', dest='wv_filter', default='TRUE')
+        args = parser.parse_args()
+    #    except:
+    #        args = args_class(corpus=config.JSON_LEMMA,doc_deets=config.AUG_DOC_META_FILE,
+    #                          out_dir=config.FREQUENCY,period=config.COUNTRY_FREQ_PERIOD,
+    #                          phraser=config.PHRASER,countries=config.countries)
+            #%%
+        ## load dictionary
+        if args.wv_filter == 'TRUE':
+            vecs = KeyedVectors.load(args.wv_path)
+            wv_keys = vecs.wv.vocab.keys()
+            logger.info('use wv_filder, max length: {}'.format(len(wv_keys)))
+            del vecs ## clear memory
+        else:
+            wv_keys = None
+
         #%%
-    ## load dictionary 
-    if args.wv_filter == 'TRUE':
-        vecs = KeyedVectors.load(args.wv_path)
-        wv_keys = vecs.wv.vocab.keys()
-        logger.info('use wv_filder, max length: {}'.format(len(wv_keys)))
-        del vecs ## clear memory 
-    else:
-        wv_keys = None
-    
+        # Data setup
+        time_df = pd.read_pickle(args.doc_deets)
+        uniq_periods = set(time_df[args.period])
+        time_df = time_df[time_df['country_n']>0]      ## filter only docs with countries
+        #period_dict = list_period_docs(time_df, args.corpus, args.period)
     #%%
-    # Data setup
-    time_df = pd.read_pickle(args.doc_deets)
-    uniq_periods = set(time_df[args.period])
-    time_df = time_df[time_df['country_n']>0]      ## filter only docs with countries 
-    #period_dict = list_period_docs(time_df, args.corpus, args.period)
-#%%
-    # obtain freqs
-    #print(args.period)
-    #args.countries = ['uruguay']
-    #uniq_periods = set(pd.Series(pd.period_range('05/01/1985',freq='M',periods=36)))
-    
-    #%%
-    ########################
-    ## need to comment out this part when testing is done
-#    args.countries = [args.countries[args.countries.index('south-korea')]] #japan
-#    logger.debug(args.countries )
-    ########################
-    #%%
-    get_country_freqs(args.countries, args.period, time_df, uniq_periods, args.out_dir,args.phraser,filter_dict=wv_keys)
+        # obtain freqs
+        #print(args.period)
+        #args.countries = ['uruguay']
+        #uniq_periods = set(pd.Series(pd.period_range('05/01/1985',freq='M',periods=36)))
+
+        #%%
+        ########################
+        ## need to comment out this part when testing is done
+    #    args.countries = [args.countries[args.countries.index('south-korea')]] #japan
+    #    logger.debug(args.countries )
+        ########################
+        #%%
+        get_country_freqs(args.countries, args.period, time_df, uniq_periods, args.out_dir, args.phraser,class_type,
+                          filter_dict=wv_keys)

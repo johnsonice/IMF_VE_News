@@ -49,7 +49,7 @@ AUG_DOC_META = os.path.join(NEW_PROCESSING_FOLDER,'doc_meta')
 JSON_LEMMA = os.path.join(OLD_PROCESSING_FOLDER,'json_lemma')
 JSON_LEMMA_SMALL = os.path.join(OLD_PROCESSING_FOLDER,'json_lemma_small')
 
-MODELS = os.path.join(NEW_PROCESSING_FOLDER,'models')
+MODELS = os.path.join(OLD_PROCESSING_FOLDER,'models')
 NGRAMS = os.path.join(MODELS,'ngrams')
 VS_MODELS = os.path.join(MODELS,'vsms')
 TOPIC_MODELS = os.path.join(MODELS,'topics')
