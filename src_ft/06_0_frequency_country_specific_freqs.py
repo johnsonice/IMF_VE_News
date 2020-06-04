@@ -138,7 +138,7 @@ if __name__ == '__main__':
         ]
 
     for setup in class_type_setups:
-        class_type = class_type_setups[0]
+        class_type = setup[0]
         parser = argparse.ArgumentParser()
         parser.add_argument('-c', '--countries', nargs='+', help='countries to get freq for',
                             default=config.countries)
