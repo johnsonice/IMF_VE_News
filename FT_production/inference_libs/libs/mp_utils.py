@@ -60,7 +60,6 @@ class Mp_iter():
     def multi_process_files(self,workers=os.cpu_count()-1,chunk_size=1000):
         #print('Start multiprocessing {} files in {} cores'.format(len(self.input),workers))
         start = time.time()
-        chunk_size
         p = Pool(workers)
         res = p.imap(self.mp_func, self.input,chunk_size)
         p.close()

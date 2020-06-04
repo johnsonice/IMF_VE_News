@@ -91,6 +91,7 @@ class Streamer(ABC):
             yield l[i:i + n]
             
     def multi_process_files(self,workers=os.cpu_count()-1,chunk_size=1000,efficient=False):
+        self.verbose = True # TEMP
         if self.verbose:
             print('Start multiprocessing {} files in {} cores'.format(len(self.input_files),workers))
         start = time.time()
