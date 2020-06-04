@@ -21,12 +21,12 @@ from gensim.models.keyedvectors import KeyedVectors
 import argparse
 import config 
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.WARNING)
 # create a file handler
 handler = logging.FileHandler('converting.log')
-handler.setLevel(logging.DEBUG)
+handler.setLevel(logging.WARNING)
 # create logging format 
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
