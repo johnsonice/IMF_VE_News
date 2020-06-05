@@ -111,7 +111,7 @@ def get_country_name_count(text, country_dict=country_dict, min_count=0, rex=Non
         rc = rex.findall(text)
         l_rc = len(rc)
         if l_rc > 0 and l_rc >= min_count:
-            yield [c, l_rc]
+            yield c
 
 
 def get_country_name_count_2(text, country_dict=country_dict, min_count=1, max_other=None, other_type="sum", top_n=None,
