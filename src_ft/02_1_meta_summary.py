@@ -131,7 +131,7 @@ def get_country_name_count(text, country_dict=country_dict, min_count=1, max_oth
             rex = construct_rex(v)
         rc = rex.findall(text)
         l_rc = len(rc)
-        if (l_rc > 0 and max_other is not None):
+        if l_rc > 0:
             name_list.append(c)
             num_list.append(l_rc)
 
