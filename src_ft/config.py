@@ -55,7 +55,7 @@ VS_MODELS = os.path.join(MODELS,'vsms')
 TOPIC_MODELS = os.path.join(MODELS,'topics')
 
 
-SEARCH_TERMS = os.path.join(NEW_PROCESSING_FOLDER,'search_terms')
+SEARCH_TERMS = os.path.join(OLD_PROCESSING_FOLDER,'search_terms')
 BOW_TFIDF_DOCS = os.path.join(NEW_PROCESSING_FOLDER,'bow_tfidf_docs')
 FREQUENCY = os.path.join(NEW_PROCESSING_FOLDER,'frequency','csv')
 
@@ -72,7 +72,7 @@ DOC_META_FILE = os.path.join(DOC_META,'doc_details_crisis.pkl')
 AUG_DOC_META_FILE = os.path.join(AUG_DOC_META,'doc_details_crisis_aug.pkl')
 PHRASER = os.path.join(NGRAMS,'2grams_default_10_20_NOSTOP')
 W2V = os.path.join(VS_MODELS,'word_vecs_5_50_200')
-EXPERT_TERMS = os.path.join(NEW_PROCESSING_FOLDER,'search_terms','expert_terms.csv')
+EXPERT_TERMS = os.path.join(OLD_PROCESSING_FOLDER,'search_terms','expert_terms.csv')
 
 
 ## file specific inputs ##
