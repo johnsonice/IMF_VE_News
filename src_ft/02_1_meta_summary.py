@@ -188,6 +188,8 @@ def get_country_name_count(text, country_dict=country_dict, min_count=1, max_oth
                         top_append.append(double_pruned_names[j])
             triple_pruned.append(top_append)
             i = i + len(top_append)
+    else:
+        triple_pruned = double_pruned_names
 
     return triple_pruned
 
@@ -238,15 +240,19 @@ if __name__ == '__main__':
 
     country_dict = {
         'argentina': ['argentina'],
+    }
+    '''
         'bolivia': ['bolivia'],
         'brazil': ['brazil'],
         'chile': ['chile'],
         'colombia': ['colombia']
     }
+    '''
 
     class_type_setups = [
-        # ['Min1', 1, None, None, None], TEMP
-        ['Min3', 3, None, None, None],
+        ['Min1', 1, None, None, None]
+    ]
+    '''   ['Min3', 3, None, None, None],
         ['Min5', 5, None, None, None],
         ['Min3_Max0', 3, 0, "sum", None],
         ['Min1_Max2_sum', 1, 2, "sum", None],
@@ -254,6 +260,7 @@ if __name__ == '__main__':
         ['Min3_Top1', 3, None, None, 1],
         ['Min1_Top3', 1, None, None, 3]
     ]
+    '''
 
     df['data_path'] = json_data_path+'/'+df.index + '.json'
     print('see one example : \n',df['data_path'].iloc[0])
