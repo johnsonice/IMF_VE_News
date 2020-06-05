@@ -219,11 +219,11 @@ def get_countries_by_count(article, country_dicts=country_dict, min_this=min_thi
     if snip and title:
         # title.extend(snip)
         title = "{} {}".format(title, snip)
-        cl = get_country_name_count(title)
+        cl = list(get_country_name_count(title))
     elif title:
-        cl = get_country_name_count(title)
+        cl = list(get_country_name_count(title))
     elif snip:
-        cl = get_country_name_count(snip)
+        cl = list(get_country_name_count(snip))
     else:
         cl = list()
 
