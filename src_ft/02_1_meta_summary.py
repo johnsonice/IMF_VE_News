@@ -135,6 +135,7 @@ def get_country_name_count(text, country_dict=country_dict, min_count=1, max_oth
             name_list.append(c)
             num_list.append(l_rc)
 
+    '''
     if max_other is None:
         pruned_name_list = name_list
         pruned_num_list = num_list
@@ -190,8 +191,11 @@ def get_country_name_count(text, country_dict=country_dict, min_count=1, max_oth
             i = i + len(top_append)
     else:
         triple_pruned = double_pruned_names
+    
 
     return triple_pruned
+    '''
+    return name_list
 
 
 def get_countries_by_count(article, country_dicts=country_dict, min_this=min_this, max_other=max_other,
