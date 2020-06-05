@@ -135,7 +135,6 @@ def get_country_name_count(text, country_dict=country_dict, min_count=1, max_oth
             name_list.append(c)
             num_list.append(l_rc)
 
-    '''
     if max_other is None:
         pruned_name_list = name_list
         pruned_num_list = num_list
@@ -194,8 +193,6 @@ def get_country_name_count(text, country_dict=country_dict, min_count=1, max_oth
     
 
     return triple_pruned
-    '''
-    return name_list
 
 
 def get_countries_by_count(article, country_dicts=country_dict, min_this=min_this, max_other=max_other,
@@ -218,11 +215,11 @@ def get_countries_by_count(article, country_dicts=country_dict, min_this=min_thi
     if snip and title:
         # title.extend(snip)
         title = "{} {}".format(title, snip)
-        cl = get_country_name_count(title, country_dict, min_this, max_other, other_type)
+        cl = get_country_name_count(title)
     elif title:
-        cl = get_country_name_count(title, country_dict, min_this)
+        cl = get_country_name_count(title)
     elif snip:
-        cl = get_country_name_count(snip, country_dict, min_this)
+        cl = get_country_name_count(snip)
     else:
         cl = list()
 
@@ -268,7 +265,7 @@ if __name__ == '__main__':
 
     df['data_path'] = json_data_path+'/'+df.index + '.json'
     print('see one example : \n',df['data_path'].iloc[0])
-    pre_chunked = True
+    pre_chunked = False
     for setup in class_type_setups:
         class_type = setup[0]
         # Configure run variables
