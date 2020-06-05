@@ -67,9 +67,10 @@ def construct_rex(keywords,case=False):
     r_keywords = [r'\b' + re.escape(k)+ r'(s|es|\'s)?\b' for k in keywords]
     if case:
         rex = re.compile('|'.join(r_keywords)) #--- use case sentitive for matching for cases lik US
-    else:  
-        rex = re.compile('|'.join(r_keywords),flags=re.I) ## ignore casing 
+    else:
+        rex = re.compile('|'.join(r_keywords),flags=re.I) ## ignore casing
     return rex
+
 
 def get_country_name(text,country_dict,rex=None):
     for c,v in country_dict.items():
@@ -81,25 +82,6 @@ def get_country_name(text,country_dict,rex=None):
         if len(rc)>0:
             yield c
 
-def get_country_name_first(text,country_dict,rex=None):
-    for c,v in country_dict.items():
-        if c in ['united-states']:
-            rex = construct_rex(v,case=True)
-        else:
-            rex = construct_rex(v)
-        rc = rex.findall(text)
-        if len(rc)>0:
-            return c
-
-def get_country_name_solo(text,country_dict,rex=None):
-    for c,v in country_dict.items():
-        if c in ['united-states']:
-            rex = construct_rex(v,case=True)
-        else:
-            rex = construct_rex(v)
-        rc = rex.findall(text)
-        if len(rc)>0:
-            yield c
 
 def get_countries(article,country_dict=country_dict):
     #snip = word_tokenize(article['snippet'].lower()) if article['snippet'] else None
@@ -120,7 +102,19 @@ def get_countries(article,country_dict=country_dict):
     return article['an'],cl
 
 
-def get_country_name_count(text, country_dict=country_dict, min_count=1, max_other=None, other_type="sum", top_n=None,
+def get_country_name_count(text, country_dict=country_dict, min_count=0, rex=None):
+    for c, v in country_dict.items():
+        if c in ['united-states']:
+            rex = construct_rex(v, case=True)
+        else:
+            rex = construct_rex(v)
+        rc = rex.findall(text)
+        l_rc = len(rc)
+        if l_rc > 0 and l_rc >= min_count:
+            yield [c, l_rc]
+
+
+def get_country_name_count_2(text, country_dict=country_dict, min_count=1, max_other=None, other_type="sum", top_n=None,
                            rex=None):
     name_list = []
     num_list = []
@@ -138,30 +132,40 @@ def get_country_name_count(text, country_dict=country_dict, min_count=1, max_oth
     if max_other is None:
         pruned_name_list = name_list
         pruned_num_list = num_list
+
+    # Eliminate a country if other countries dominate
     else:
         pruned_name_list = []
         pruned_num_list = []
+
+        # Based on sum of other country instances
         if other_type == "sum":
             country_mentions = sum(num_list)
             for i in range(len(name_list)):
                 if country_mentions - num_list[i] <= max_other:
                     pruned_name_list.append(name_list[i])
                     pruned_num_list.append(num_list[i])
+
+        # Based on a threshold amount for any other country
         elif other_type == "at_least":
             garbage_index = []
             for i in range(len(name_list)):
-                exl_list = num_list[:i]
+                exl_list = num_list[:i]  # Save number of instances of other countries
                 if i < len(num_list)-1:
                     exl_list = exl_list + num_list[i+1:]
+
                 for o_num in exl_list:
                     if o_num > max_other:
-                        garbage_index.append(i)
+                        garbage_index.append(i)  # Track which countries to remove
                         continue
+
+            # Save the pruned list
             for add_ind in range(len(name_list)):
                 if add_ind not in garbage_index:
                     pruned_name_list.append(name_list[add_ind])
                     pruned_num_list.append(num_list[add_ind])
 
+    # Eliminate countries that show up less than the threshold amount (default once)
     double_pruned_names = []
     double_pruned_nums = []
     for i in range(len(pruned_name_list)):
@@ -169,6 +173,7 @@ def get_country_name_count(text, country_dict=country_dict, min_count=1, max_oth
             double_pruned_names.append(pruned_name_list[i])
             double_pruned_nums.append(pruned_num_list[i])
 
+    # If want to keep only the top n most encountered countries
     triple_pruned = []
     if top_n is not None:
         zipped = list(zip(double_pruned_names, double_pruned_nums))
@@ -181,16 +186,15 @@ def get_country_name_count(text, country_dict=country_dict, min_count=1, max_oth
             else:
                 top_append = []
                 going_num = double_pruned_nums[i]
-                for j in range(len(double_pruned_nums[i:])):
+                for j in range(len(double_pruned_nums[i:])):  # Allow more countries if tied for place
                     if double_pruned_nums[j] != going_num:
                         break
                     else:
                         top_append.append(double_pruned_names[j])
-            triple_pruned.append(top_append)
+            triple_pruned.extend(top_append)
             i = i + len(top_append)
     else:
         triple_pruned = double_pruned_names
-    
 
     return triple_pruned
 
@@ -241,31 +245,26 @@ if __name__ == '__main__':
 
     country_dict = {
         'argentina': ['argentina'],
-    }
-    '''
         'bolivia': ['bolivia'],
         'brazil': ['brazil'],
         'chile': ['chile'],
         'colombia': ['colombia']
     }
-    '''
+
 
     class_type_setups = [
-        ['Min1', 1, None, None, None]
+        ['Min1', 1, None, None, None],  # Country mentioned >= 1 times
+        ['Min3', 3, None, None, None],  # Country mentioned >=3 times
+        ['Min3_Max0', 3, 0, "sum", None],  # Country mentioned >=3 times, 0 other countries mentioned
+        ['Min1_Max2_sum', 1, 2, "sum", None],  # Country mentioned >=1 time, <=2 mentions of other countries
+        ['Min1_Top1', 1, None, None, 1],  # Country mentioned >=1 times, choose only the top 1 country
+        ['Min3_Top1', 3, None, None, 1],  # Country mentioned >=3 times, choose only top 1 country
+        ['Min1_Top3', 1, None, None, 3]  # Country mentioned >=1 times, choose only the top 3 countries
     ]
-    '''   ['Min3', 3, None, None, None],
-        ['Min5', 5, None, None, None],
-        ['Min3_Max0', 3, 0, "sum", None],
-        ['Min1_Max2_sum', 1, 2, "sum", None],
-        ['Min1_Top1', 1, None, None, 1],
-        ['Min3_Top1', 3, None, None, 1],
-        ['Min1_Top3', 1, None, None, 3]
-    ]
-    '''
 
     df['data_path'] = json_data_path+'/'+df.index + '.json'
     print('see one example : \n',df['data_path'].iloc[0])
-    pre_chunked = False
+    pre_chunked = True  # The memory will explode otherwise
     for setup in class_type_setups:
         class_type = setup[0]
         # Configure run variables
@@ -274,6 +273,7 @@ if __name__ == '__main__':
         other_type = setup[3]
         top_n = setup[4]
 
+        # Go through the files in chunks
         if pre_chunked:
             data_list = df['data_path'].tolist()
             pre_chunk_size = 50000
@@ -286,20 +286,22 @@ if __name__ == '__main__':
                     print("Passed ", chunky_index, " files")
                 chunk_end = min(chunky_index+pre_chunk_size, data_length)
                 streamer = MetaStreamer(data_list[chunky_index:chunk_end])
-                news = streamer.multi_process_files(workers=32, chunk_size=10000)
+                news = streamer.multi_process_files(workers=10, chunk_size=5000)
                 mp = Mp(news, get_countries_by_count)
-                country_meta = mp.multi_process_files(workers=32, chunk_size=10000)
+                country_meta = mp.multi_process_files(workers=10, chunk_size=5000)
                 index = index + [i[0] for i in country_meta]
                 country_list = country_list + [i[1] for i in country_meta]
                 del country_meta  ## clear memory
                 chunky_index = chunk_end
+
+        # Eat all files at once
         else:
             streamer = MetaStreamer(df['data_path'].tolist())
-            news = streamer.multi_process_files(workers=32, chunk_size=10000)
+            news = streamer.multi_process_files(workers=15, chunk_size=5000)
             # %%
             # country_meta = [(a['an'],get_countries(a,country_dict)) for a in news]
             mp = Mp(news, get_countries_by_count)
-            country_meta = mp.multi_process_files(workers=32, chunk_size=10000)
+            country_meta = mp.multi_process_files(workers=15, chunk_size=5000)
             # %%
             index =[i[0] for i in country_meta]
             country_list =[i[1] for i in country_meta]
@@ -315,10 +317,12 @@ if __name__ == '__main__':
         #%%
         # create aggregates for ploting
         agg_q = new_df[['date','quarter']].groupby('quarter').agg('count')
+        del new_df  # Free space
+
         #agg_m = df[['date','month']].groupby('month').agg('count')
         create_summary(agg_q,meta_root,class_type)
 
-        del new_df  # Free space
+
 
 
 #%%
