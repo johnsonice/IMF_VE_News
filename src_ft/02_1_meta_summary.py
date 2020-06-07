@@ -22,11 +22,18 @@ from mp_utils import Mp
 import re
 #plt.rcParams['figure.figsize']=(10,5)
 
+global min_this
+global max_other
+global other_type
+global top_n
+global country_dict
+
 # Experimental country classification variables
 min_this = 1
 max_other = None
 other_type = "sum"
 top_n = None
+country_dict = config.country_dict
 
 #%%
 ## save quarterly figure
@@ -102,7 +109,7 @@ def get_countries(article,country_dict=country_dict):
     return article['an'],cl
 
 
-def get_country_name_count(text, country_dict=country_dict, min_count=0, rex=None):
+def get_country_name_count(text, country_dict=country_dict, min_count=min_this, rex=None):
     for c, v in country_dict.items():
         if c in ['united-states']:
             rex = construct_rex(v, case=True)
@@ -114,10 +121,17 @@ def get_country_name_count(text, country_dict=country_dict, min_count=0, rex=Non
             yield c
 
 
-def get_country_name_count_2(text, country_dict=country_dict, min_count=1, max_other=None, other_type="sum", top_n=None,
-                           rex=None):
+def get_country_name_count_2(text):
+    verbose = False  #TEMP
     name_list = []
     num_list = []
+
+    if verbose:
+        print("\tMin_this :", min_this)
+        print("\tMax_other:", max_other)
+        print("\tOther_type:", other_type)
+        print("\ttop_n:", top_n)
+
     for c, v in country_dict.items():
         if c in ['united-states']:
             rex = construct_rex(v, case=True)
@@ -129,10 +143,13 @@ def get_country_name_count_2(text, country_dict=country_dict, min_count=1, max_o
             name_list.append(c)
             num_list.append(l_rc)
 
+    if verbose:
+        print("Raw names: {}".format(name_list))
+        print("Raw nums: {}".format(num_list))
+
     if max_other is None:
         pruned_name_list = name_list
         pruned_num_list = num_list
-
     # Eliminate a country if other countries dominate
     else:
         pruned_name_list = []
@@ -165,13 +182,21 @@ def get_country_name_count_2(text, country_dict=country_dict, min_count=1, max_o
                     pruned_name_list.append(name_list[add_ind])
                     pruned_num_list.append(num_list[add_ind])
 
+    if verbose:
+        print('Pruned 1 names: {}'.format(pruned_name_list))
+        print('Pruned 1 nums: {}'.format(pruned_num_list))
+
     # Eliminate countries that show up less than the threshold amount (default once)
     double_pruned_names = []
     double_pruned_nums = []
     for i in range(len(pruned_name_list)):
-        if pruned_num_list[i] >= min_count:
+        if pruned_num_list[i] >= min_this:
             double_pruned_names.append(pruned_name_list[i])
             double_pruned_nums.append(pruned_num_list[i])
+
+    if verbose:
+        print("Pruned 2 names: {}".format(double_pruned_names))
+        print("Pruned 2 nums: {}".format(double_pruned_nums))
 
     # If want to keep only the top n most encountered countries
     triple_pruned = []
@@ -192,15 +217,50 @@ def get_country_name_count_2(text, country_dict=country_dict, min_count=1, max_o
                     else:
                         top_append.append(double_pruned_names[j])
             triple_pruned.extend(top_append)
-            i = i + len(top_append)
+            if len(top_append) > 0:
+                i = i + len(top_append)
+            else:
+                i = i + 1
     else:
         triple_pruned = double_pruned_names
+
+    if verbose:
+        print("Pruned 3 names: {}".format(triple_pruned))
 
     return triple_pruned
 
 
-def get_countries_by_count(article, country_dicts=country_dict, min_this=min_this, max_other=max_other,
-                           other_type=other_type):
+def get_countries_by_count(article):
+    '''
+    Identifies list of countries based on number of instances of this country except for if other countries
+        show up >y times.
+
+    :param article: the article to classify
+    :param country_dicts: countries to look through
+    :param min_this: minimum observations of a country (default 1)
+    :param max_other: maximum other country mentions allowed if None, ignore (default None)
+    :param other_type: Only if max_other is not None,
+    :return:
+    '''
+    # snip = word_tokenize(article['snippet'].lower()) if article['snippet'] else None
+    # title = word_tokenize(article['title'].lower()) if article['title'] else None
+    snip = article['snippet'].lower() if article['snippet'] else None
+    title = article['title'].lower() if article['title'] else None
+    if snip and title:
+        # title.extend(snip)
+        title = "{} {}".format(title, snip)
+        cl = list(get_country_name_count(title))
+    elif title:
+        cl = list(get_country_name_count(title))
+    elif snip:
+        cl = list(get_country_name_count(snip))
+    else:
+        cl = list()
+
+    return article['an'], cl
+
+
+def get_countries_by_count_2(article):
     '''
     Identifies list of countries based on number of instances of this country except for if other countries
         show up >y times.
@@ -238,11 +298,7 @@ if __name__ == '__main__':
     json_data_path = config.JSON_LEMMA
     
     df = pd.read_pickle(meta_pkl)
-    #%%
     
-    #df= df.head(5000)
-    #%%
-
     country_dict = {
         'argentina': ['argentina'],
         'bolivia': ['bolivia'],
@@ -251,9 +307,8 @@ if __name__ == '__main__':
         'colombia': ['colombia']
     }
 
-
     class_type_setups = [
-        ['Min1', 1, None, None, None],  # Country mentioned >= 1 times
+        #['Min1', 1, None, None, None],  # Country mentioned >= 1 times
         ['Min3', 3, None, None, None],  # Country mentioned >=3 times
         ['Min3_Max0', 3, 0, "sum", None],  # Country mentioned >=3 times, 0 other countries mentioned
         ['Min1_Max2_sum', 1, 2, "sum", None],  # Country mentioned >=1 time, <=2 mentions of other countries
@@ -268,8 +323,9 @@ if __name__ == '__main__':
     for setup in class_type_setups:
         class_type = setup[0]
         # Configure run variables
+
         min_this = setup[1]
-        min_other = setup[2]
+        max_other = setup[2]
         other_type = setup[3]
         top_n = setup[4]
 
