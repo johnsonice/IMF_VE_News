@@ -298,7 +298,7 @@ if __name__ == '__main__':
     json_data_path = config.JSON_LEMMA
     
     df = pd.read_pickle(meta_pkl)
-    
+
     country_dict = {
         'argentina': ['argentina'],
         'bolivia': ['bolivia'],
@@ -343,7 +343,7 @@ if __name__ == '__main__':
                 chunk_end = min(chunky_index+pre_chunk_size, data_length)
                 streamer = MetaStreamer(data_list[chunky_index:chunk_end])
                 news = streamer.multi_process_files(workers=10, chunk_size=5000)
-                mp = Mp(news, get_countries_by_count)
+                mp = Mp(news, get_countries_by_count_2)
                 country_meta = mp.multi_process_files(workers=10, chunk_size=5000)
                 index = index + [i[0] for i in country_meta]
                 country_list = country_list + [i[1] for i in country_meta]
