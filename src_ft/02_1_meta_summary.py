@@ -20,6 +20,7 @@ from stream import MetaStreamer_fast as MetaStreamer
 #import time 
 from mp_utils import Mp
 import re
+import logging
 #plt.rcParams['figure.figsize']=(10,5)
 
 global min_this
@@ -34,6 +35,8 @@ max_other = None
 other_type = "sum"
 top_n = None
 country_dict = config.country_dict
+f_handler = logging.FileHandler('err_log_7_1908.log')
+f_handler.setLevel(logging.WARNING)
 
 #%%
 ## save quarterly figure
@@ -308,7 +311,7 @@ if __name__ == '__main__':
     }
 
     class_type_setups = [
-        #['Min1', 1, None, None, None],  # Country mentioned >= 1 times
+        ['Min1', 1, None, None, None],  # Country mentioned >= 1 times
         ['Min3', 3, None, None, None],  # Country mentioned >=3 times
         ['Min3_Max0', 3, 0, "sum", None],  # Country mentioned >=3 times, 0 other countries mentioned
         ['Min1_Max2_sum', 1, 2, "sum", None],  # Country mentioned >=1 time, <=2 mentions of other countries
@@ -331,6 +334,7 @@ if __name__ == '__main__':
 
         # Go through the files in chunks
         if pre_chunked:
+
             data_list = df['data_path'].tolist()
             pre_chunk_size = 50000
             chunky_index = 0
@@ -356,7 +360,7 @@ if __name__ == '__main__':
             news = streamer.multi_process_files(workers=15, chunk_size=5000)
             # %%
             # country_meta = [(a['an'],get_countries(a,country_dict)) for a in news]
-            mp = Mp(news, get_countries_by_count)
+            mp = Mp(news, get_countries_by_count_2)
             country_meta = mp.multi_process_files(workers=15, chunk_size=5000)
             # %%
             index =[i[0] for i in country_meta]
