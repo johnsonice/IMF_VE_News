@@ -282,11 +282,11 @@ def get_countries_by_count_2(article):
     if snip and title:
         # title.extend(snip)
         title = "{} {}".format(title, snip)
-        cl = list(get_country_name_count(title))
+        cl = list(get_country_name_count_2(title))
     elif title:
-        cl = list(get_country_name_count(title))
+        cl = list(get_country_name_count_2(title))
     elif snip:
-        cl = list(get_country_name_count(snip))
+        cl = list(get_country_name_count_2(snip))
     else:
         cl = list()
 
