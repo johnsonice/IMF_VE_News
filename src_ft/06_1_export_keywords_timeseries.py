@@ -134,7 +134,7 @@ if __name__ == "__main__":
                 series_wg.append(df)
 
             df_all = pd.concat(series_wg, axis=1)
-            out_csv = os.path.join(config.EVAL_TS, '{}_{}_time_series_{}.csv'.format(country, period, class_type))
+            out_csv = os.path.join(config.EVAL_TS, class_type, '{}_{}_time_series.csv'.format(country, period))
             df_all.to_csv(out_csv)
 
             return country, df_all
