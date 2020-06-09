@@ -2,6 +2,8 @@ from stream import SentStreamer_fast as SentStreamer
 from stream import FileStreamer_fast as FileStreamer
 from stream import MetaStreamer_fast as MetaStreamer
 import os
+import nltk
+nltk.data.path.append("/home/chuang/nltk_data")
 from nltk.corpus import stopwords
 from region_mapping import region
 import pandas as pd
