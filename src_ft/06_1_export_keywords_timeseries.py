@@ -129,7 +129,7 @@ if __name__ == "__main__":
             series_wg = list()
             for wg in config.targets:
                 word_groups = get_sim_words(vecs, wg, 15)
-                df = aggregate_freq(word_groups, country, period=period, stemmed=False, frequency_path=config.FREQUENCY)
+                df = aggregate_freq(word_groups, country, period=period, stemmed=False, frequency_path=frequency_path)
                 df.name = wg
                 series_wg.append(df)
 
