@@ -5,7 +5,8 @@ from collections import Iterable
 import itertools
 import ujson as json
 from string import punctuation as punct
-
+import nltk
+nltk.data.path.append("/home/chuang/nltk_data")
 from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.stem.snowball import SnowballStemmer
 from nltk.stem import WordNetLemmatizer
