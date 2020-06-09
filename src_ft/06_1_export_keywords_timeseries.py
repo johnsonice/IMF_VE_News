@@ -110,7 +110,7 @@ if __name__ == "__main__":
     frequency_path = config.FREQUENCY
 
     class_type_setups = [
-            ['Min1', 1, None, None, None],
+            #['Min1', 1, None, None, None],
             ['Min3', 3, None, None, None],
             ['Min5', 5, None, None, None],
             ['Min3_Max0', 3, 0, "sum", None],
