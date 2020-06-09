@@ -127,9 +127,9 @@ class args_class(object):
 if __name__ == '__main__':
 #    try:
     class_type_setups = [
-            #['Min1', 1, None, None, None],
-            #['Min3', 3, None, None, None],
-            #['Min5', 5, None, None, None],
+            ['Min1', 1, None, None, None],
+            ['Min3', 3, None, None, None],
+            ['Min5', 5, None, None, None],
             ['Min3_Max0', 3, 0, "sum", None],
             ['Min1_Max2_sum', 1, 2, "sum", None],
             ['Min1_Top1', 1, None, None, 1],

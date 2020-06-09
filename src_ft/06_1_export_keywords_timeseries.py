@@ -102,10 +102,47 @@ if __name__ == "__main__":
         out_csv = os.path.join(config.EVAL_TS, '{}_{}_time_series.csv'.format(country,period))
         df_all.to_csv(out_csv)
         
-        return country,df_all
-    
-    mp = Mp(config.countries,export_country_ts)
-    res = mp.multi_process_files(chunk_size=1)
+        return country, df_all
+
+
+    class_type = None
+
+    frequency_path = config.FREQUENCY
+
+    class_type_setups = [
+            ['Min1', 1, None, None, None],
+            ['Min3', 3, None, None, None],
+            ['Min5', 5, None, None, None],
+            ['Min3_Max0', 3, 0, "sum", None],
+            ['Min1_Max2_sum', 1, 2, "sum", None],
+            ['Min1_Top1', 1, None, None, 1],
+            ['Min3_Top1', 3, None, None, 1],
+            ['Min1_Top3', 1, None, None, 3]
+        ]
+
+    for setup in class_type_setups:
+
+        class_type = setup[0]
+        freq_path = os.path.join(frequency_path, class_type)  # Moved the TF_DFs manually for speed since 06_0
+
+        def export_country_ts_2(country, period=period, vecs=vecs, class_type=class_type, frequency_path=freq_path):
+            series_wg = list()
+            for wg in config.targets:
+                word_groups = get_sim_words(vecs, wg, 15)
+                df = aggregate_freq(word_groups, country, period=period, stemmed=False, frequency_path=config.FREQUENCY)
+                df.name = wg
+                series_wg.append(df)
+
+            df_all = pd.concat(series_wg, axis=1)
+            out_csv = os.path.join(config.EVAL_TS, '{}_{}_time_series_{}.csv'.format(country, period, class_type))
+            df_all.to_csv(out_csv)
+
+            return country, df_all
+
+
+        countries = ['argentina', 'bolivia', 'brazil', 'chile', 'colombia']
+        mp = Mp(countries, export_country_ts_2)
+        res = mp.multi_process_files(chunk_size=1)
 
 
     
