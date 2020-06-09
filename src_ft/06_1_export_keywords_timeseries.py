@@ -29,6 +29,12 @@ from  crisis_points import crisis_points
 from mp_utils import Mp
 import random
 import statistics as stats
+import logging
+f_handler = logging.FileHandler('/home/apsurek/logs/err_log_6_01.log')
+f_handler.setLevel(logging.WARNING)
+
+
+
 
 #%%
 def get_stats(starts,ends,preds,offset,fbeta=2):
@@ -111,11 +117,11 @@ if __name__ == "__main__":
 
     class_type_setups = [
             #['Min1', 1, None, None, None],
-            ['Min3', 3, None, None, None],
-            ['Min5', 5, None, None, None],
-            ['Min3_Max0', 3, 0, "sum", None],
-            ['Min1_Max2_sum', 1, 2, "sum", None],
-            ['Min1_Top1', 1, None, None, 1],
+            #['Min3', 3, None, None, None],
+            #['Min5', 5, None, None, None],
+            #['Min3_Max0', 3, 0, "sum", None],
+            #['Min1_Max2_sum', 1, 2, "sum", None],
+            #['Min1_Top1', 1, None, None, 1],
             ['Min3_Top1', 3, None, None, 1],
             ['Min1_Top3', 1, None, None, 3]
         ]
