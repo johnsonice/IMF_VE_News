@@ -137,7 +137,7 @@ if __name__ == '__main__':
         weights = None
 
     class_type_setups = [
-            #['Min1', 1, None, None, None],
+            ['Min1', 1, None, None, None],
             ['Min3', 3, None, None, None],
             ['Min5', 5, None, None, None],
             ['Min3_Max0', 3, 0, "sum", None],
@@ -166,6 +166,11 @@ if __name__ == '__main__':
 
             ## export over all resoults to csv
         df = pd.DataFrame(overall_res,columns=['word','sim_words','recall','prec','f2'])
-        df.to_csv(os.path.join(args.eval_path,'overall_agg_sim_{}_overall_{}_offset_{}_smoothwindow_{}_evaluation.csv'.format(args.sims,args.period,args.months_prior,args.window)))
+        save_file_full = os.path.join(args.eval_path, class_type,
+                                       'overall_agg_sim_{}_overall_{}_offset_{}_smoothwindow_{}_evaluation.csv'.format(
+                                           args.sims,args.period,args.months_prior,args.window))
+        df.to_csv(save_file_full)
+        print("Saved at:", save_file_full)
+
     #
 
