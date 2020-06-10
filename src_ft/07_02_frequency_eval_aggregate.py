@@ -147,7 +147,7 @@ if __name__ == '__main__':
             ['Min1_Top3', 1, None, None, 3]
         ]
 
-    for setup in setups:
+    for setup in class_type_setups:
         class_type = setup[0]
         freq_path = os.path.join(args.frequency_path, class_type)  # Moved the TF_DFs manually for speed since 06_0
         args.frequency_path = freq_path
