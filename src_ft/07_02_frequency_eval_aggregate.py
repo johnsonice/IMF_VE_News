@@ -136,21 +136,36 @@ if __name__ == '__main__':
                 search_words_sets[k] = [t for tl in v for t in tl] ## flattern the list of list 
         weights = None
 
-    #print(search_words_sets)
-    #%%
-    # Get prec, rec, and fscore for each country for each word group
-    iter_items = list(search_words_sets.items())
+    class_type_setups = [
+            ['Min1', 1, None, None, None],
+            ['Min3', 3, None, None, None],
+            ['Min5', 5, None, None, None],
+            ['Min3_Max0', 3, 0, "sum", None],
+            ['Min1_Max2_sum', 1, 2, "sum", None],
+            ['Min1_Top1', 1, None, None, 1],
+            ['Min3_Top1', 3, None, None, 1],
+            ['Min1_Top3', 1, None, None, 3]
+        ]
 
-    # run in multi process
-    def multi_run_eval(item,args=args,weights=None):
-        res_stats = run_evaluation(item,args,weights)
-        return res_stats
-    
-    mp = Mp(iter_items,multi_run_eval)
-    overall_res = mp.multi_process_files(workers=2, chunk_size=1)  ## do not set workers to be too high, your memory will explode
-    
-        ## export over all resoults to csv
-    df = pd.DataFrame(overall_res,columns=['word','sim_words','recall','prec','f2'])
-    df.to_csv(os.path.join(args.eval_path,'overall_agg_sim_{}_overall_{}_offset_{}_smoothwindow_{}_evaluation.csv'.format(args.sims,args.period,args.months_prior,args.window)))
-#    
+    for setup in setups:
+        class_type = setup[0]
+        freq_path = os.path.join(args.frequency_path, class_type)  # Moved the TF_DFs manually for speed since 06_0
+        args.frequency_path = freq_path
+        #print(search_words_sets)
+        #%%
+        # Get prec, rec, and fscore for each country for each word group
+        iter_items = list(search_words_sets.items())
+
+        # run in multi process
+        def multi_run_eval(item,args=args,weights=None):
+            res_stats = run_evaluation(item,args,weights)
+            return res_stats
+
+        mp = Mp(iter_items,multi_run_eval)
+        overall_res = mp.multi_process_files(workers=2, chunk_size=1)  ## do not set workers to be too high, your memory will explode
+
+            ## export over all resoults to csv
+        df = pd.DataFrame(overall_res,columns=['word','sim_words','recall','prec','f2'])
+        df.to_csv(os.path.join(args.eval_path,'overall_agg_sim_{}_overall_{}_offset_{}_smoothwindow_{}_evaluation.csv'.format(args.sims,args.period,args.months_prior,args.window)))
+    #
 
