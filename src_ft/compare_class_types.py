@@ -41,8 +41,8 @@ for i in range(len(class_type_setups)):
                            'topic_sent_prec': [base_df['prec'][2]],
                            'topic_sent_f2': [base_df['f2'][2]]
                             })
-    combined_df.append(app_df)
-    print("Appended df", combined_df)
+    combined_df = combined_df.append(app_df)
+    print("Appended df", app_df)
 
 out_file = os.path.join(config.NEW_PROCESSING_FOLDER, 'country_classification_comparison.csv')
 
