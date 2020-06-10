@@ -1,5 +1,6 @@
 source /home/chuang/anaconda3/bin/activate nlp
 cd src_ft
+pyhton config.py
 
 python 02_1_meta_summary.py
 python 06_0_frequency_country_specific_freqs.py
