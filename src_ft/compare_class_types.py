@@ -29,18 +29,20 @@ for i in range(len(class_type_setups)):
     folder_path = os.path.join(base_eval_path, class_type)
     file_path = os.path.join(folder_path, 'overall_agg_sim_True_overall_month_offset_18_smoothwindow_18_evaluation.csv')
     base_df = pd.read_csv(file_path)
+    print("read df from", file_path)
     app_df = pd.DataFrame({'classification_type': [class_type],
-                               'sentiment_recall': [base_df['recall'][0]],
-                               'sentiment_prec': [base_df['prec'][0]],
-                               'sentiment_f2': [base_df['f2'][0]],
-                               'topic_recall': [base_df['recall'][1]],
-                               'topic_prec': [base_df['prec'][1]],
-                               'topic_f2': [base_df['f2'][1]],
-                               'topic_sent_recall': [base_df['recall'][2]],
-                               'topic_sent_prec': [base_df['prec'][2]],
-                               'topic_sent_f2': [base_df['f2'][2]]
-                               })
+                           'sentiment_recall': [base_df['recall'][0]],
+                           'sentiment_prec': [base_df['prec'][0]],
+                           'sentiment_f2': [base_df['f2'][0]],
+                           'topic_recall': [base_df['recall'][1]],
+                           'topic_prec': [base_df['prec'][1]],
+                           'topic_f2': [base_df['f2'][1]],
+                           'topic_sent_recall': [base_df['recall'][2]],
+                           'topic_sent_prec': [base_df['prec'][2]],
+                           'topic_sent_f2': [base_df['f2'][2]]
+                            })
     combined_df.append(app_df)
+    print("Appended df", combined_df)
 
 out_file = os.path.join(config.NEW_PROCESSING_FOLDER, 'country_classification_comparison.csv')
 
