@@ -137,7 +137,7 @@ if __name__ == '__main__':
         weights = None
 
     class_type_setups = [
-            ['Min1', 1, None, None, None],
+            #['Min1', 1, None, None, None],
             ['Min3', 3, None, None, None],
             ['Min5', 5, None, None, None],
             ['Min3_Max0', 3, 0, "sum", None],
@@ -149,7 +149,7 @@ if __name__ == '__main__':
 
     for setup in class_type_setups:
         class_type = setup[0]
-        freq_path = os.path.join(args.frequency_path, class_type)  # Moved the TF_DFs manually for speed since 06_0
+        freq_path = os.path.join(config.FREQUENCY, class_type)  # Moved the TF_DFs manually for speed since 06_0
         args.frequency_path = freq_path
         #print(search_words_sets)
         #%%
