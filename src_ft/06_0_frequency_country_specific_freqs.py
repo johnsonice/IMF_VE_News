@@ -94,7 +94,7 @@ def get_country_freqs(countries, period_choice, time_df, uniq_periods,outdir,phr
         
         # write csv
         #try:
-        out_csv = os.path.join(outdir, '{}_{}_word_freqs_{}.csv'.format(country, period_choice, class_type))
+        out_csv = os.path.join(outdir, class_type, '{}_{}_word_freqs.csv'.format(country, period_choice))
         freqs_df.to_csv(out_csv)
         print('Country: {} saved to csv'.format(country))
         del freqs_df
@@ -125,17 +125,8 @@ class args_class(object):
         
 #%%
 if __name__ == '__main__':
-#    try:
-    class_type_setups = [
-            ['Min1', 1, None, None, None],
-            ['Min3', 3, None, None, None],
-            ['Min5', 5, None, None, None],
-            ['Min3_Max0', 3, 0, "sum", None],
-            ['Min1_Max2_sum', 1, 2, "sum", None],
-            ['Min1_Top1', 1, None, None, 1],
-            ['Min3_Top1', 3, None, None, 1],
-            ['Min1_Top3', 1, None, None, 3]
-        ]
+
+    class_type_setups = config.class_type_setups
 
     for setup in class_type_setups:
         class_type = setup[0]
@@ -179,19 +170,6 @@ if __name__ == '__main__':
         time_df = pd.read_pickle(args.doc_deets)
         uniq_periods = set(time_df[args.period])
         time_df = time_df[time_df['country_n']>0]      ## filter only docs with countries
-        #period_dict = list_period_docs(time_df, args.corpus, args.period)
-    #%%
-        # obtain freqs
-        #print(args.period)
-        #args.countries = ['uruguay']
-        #uniq_periods = set(pd.Series(pd.period_range('05/01/1985',freq='M',periods=36)))
 
-        #%%
-        ########################
-        ## need to comment out this part when testing is done
-    #    args.countries = [args.countries[args.countries.index('south-korea')]] #japan
-    #    logger.debug(args.countries )
-        ########################
-        #%%
         get_country_freqs(args.countries, args.period, time_df, uniq_periods, args.out_dir, args.phraser,class_type,
                           filter_dict=wv_keys)

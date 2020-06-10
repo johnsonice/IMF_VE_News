@@ -8,11 +8,12 @@ Created on Fri Nov 30 14:42:19 2018
 import os 
 import sys
 import pandas as pd
-pd.set_option('display.max_columns',10)
+pd.set_option('display.max_columns', 10)
 #import warnings 
 #%%
-sys.path.insert(0,'./libs')
-from crisis_points import crisis_points,country_dict,ll_crisis_points
+sys.path.insert(0, './libs')
+from crisis_points import crisis_points, country_dict, ll_crisis_points
+
 
 ## global arguments
 MODE = 'test'# 'real'
@@ -22,7 +23,7 @@ WEIGHTED = False                 ## do we want to weighted average on similar wo
 SIM = True
 VERBOSE = True
 ## crisis defination 
-crisis_defs = 'kr' # or 'll' or 'kr'
+crisis_defs = 'kr'  # or 'll' or 'kr'
 ##GROUPED_SEARCH_FILE = 'final_topic_words_final.csv'
 GROUPED_SEARCH_FILE = 'grouped_search_words_final.csv'
 #GROUPED_SEARCH_FILE = 'expert_terms_final.csv'
@@ -33,8 +34,8 @@ months_prior = 18       # same here, put as months
 #months_prior = 12 
 z_thresh = 2.1            # how many standard deviations away we think that is a spike 
 topn = 15
-eval_end_date = {'q':'2001Q4',
-                 'm':'2001-12'}  # or None
+eval_end_date = {'q': '2001Q4',
+                 'm': '2001-12'}  # or None
 
 
 ########################
@@ -44,40 +45,40 @@ RAW_DATA_PATH = '/data/News_data_raw/Financial_Times_processed'
 
 OLD_PROCESSING_FOLDER = '/data/News_data_raw/FT_WD'
 NEW_PROCESSING_FOLDER = '/data/News_data_raw/FT_WD_research'
-DOC_META = os.path.join(OLD_PROCESSING_FOLDER,'doc_meta')
-AUG_DOC_META = os.path.join(NEW_PROCESSING_FOLDER,'doc_meta')
-JSON_LEMMA = os.path.join(OLD_PROCESSING_FOLDER,'json_lemma')
-JSON_LEMMA_SMALL = os.path.join(OLD_PROCESSING_FOLDER,'json_lemma_small')
+DOC_META = os.path.join(OLD_PROCESSING_FOLDER, 'doc_meta')
+AUG_DOC_META = os.path.join(NEW_PROCESSING_FOLDER, 'doc_meta')
+JSON_LEMMA = os.path.join(OLD_PROCESSING_FOLDER, 'json_lemma')
+JSON_LEMMA_SMALL = os.path.join(OLD_PROCESSING_FOLDER, 'json_lemma_small')
 
-MODELS = os.path.join(OLD_PROCESSING_FOLDER,'models')
-NGRAMS = os.path.join(MODELS,'ngrams')
-VS_MODELS = os.path.join(MODELS,'vsms')
-TOPIC_MODELS = os.path.join(MODELS,'topics')
+MODELS = os.path.join(OLD_PROCESSING_FOLDER, 'models')
+NGRAMS = os.path.join(MODELS, 'ngrams')
+VS_MODELS = os.path.join(MODELS, 'vsms')
+TOPIC_MODELS = os.path.join(MODELS, 'topics')
 
 
-SEARCH_TERMS = os.path.join(OLD_PROCESSING_FOLDER,'search_terms')
-BOW_TFIDF_DOCS = os.path.join(NEW_PROCESSING_FOLDER,'bow_tfidf_docs')
-FREQUENCY = os.path.join(NEW_PROCESSING_FOLDER,'frequency','csv')
+SEARCH_TERMS = os.path.join(OLD_PROCESSING_FOLDER, 'search_terms')
+BOW_TFIDF_DOCS = os.path.join(NEW_PROCESSING_FOLDER, 'bow_tfidf_docs')
+FREQUENCY = os.path.join(NEW_PROCESSING_FOLDER, 'frequency', 'csv')
 
-EVAL = os.path.join(NEW_PROCESSING_FOLDER,'eval')
+EVAL = os.path.join(NEW_PROCESSING_FOLDER, 'eval')
 if WEIGHTED:
-    EVAL = os.path.join(NEW_PROCESSING_FOLDER,'eval_weighted')
+    EVAL = os.path.join(NEW_PROCESSING_FOLDER, 'eval_weighted')
 
-EVAL_WG = os.path.join(EVAL,'word_groups')
-EVAL_TS = os.path.join(EVAL,'time_series')
+EVAL_WG = os.path.join(EVAL, 'word_groups')
+EVAL_TS = os.path.join(EVAL, 'time_series')
 
 
 ## global file path ##
-DOC_META_FILE = os.path.join(DOC_META,'doc_details_crisis.pkl')
-AUG_DOC_META_FILE = os.path.join(AUG_DOC_META,'doc_details_crisis_aug.pkl')
-PHRASER = os.path.join(NGRAMS,'2grams_default_10_20_NOSTOP')
-W2V = os.path.join(VS_MODELS,'word_vecs_5_50_200')
-EXPERT_TERMS = os.path.join(OLD_PROCESSING_FOLDER,'search_terms','expert_terms.csv')
+DOC_META_FILE = os.path.join(DOC_META, 'doc_details_crisis.pkl')
+AUG_DOC_META_FILE = os.path.join(AUG_DOC_META, 'doc_details_crisis_aug.pkl')
+PHRASER = os.path.join(NGRAMS, '2grams_default_10_20_NOSTOP')
+W2V = os.path.join(VS_MODELS, 'word_vecs_5_50_200')
+EXPERT_TERMS = os.path.join(OLD_PROCESSING_FOLDER, 'search_terms', 'expert_terms.csv')
 
 
 ## file specific inputs ##
 countries=list(country_dict.keys())
-common_terms = ['he','him','she','her','that','if','me','about','over']
+common_terms = ['he', 'him', 'she', 'her', 'that', 'if', 'me', 'about', 'over']
 
 
 def load_search_words(folder,path):
@@ -96,6 +97,7 @@ def load_search_words(folder,path):
         print('file path does not exist:{}'.format(file_path))
     return words_list
 
+
 targets = load_search_words(SEARCH_TERMS,GROUPED_SEARCH_FILE)
 
 #targets= ['fear','worry','concern','afraid','trouble','uneasy','nervous','anxious',
@@ -112,7 +114,17 @@ targets = load_search_words(SEARCH_TERMS,GROUPED_SEARCH_FILE)
 
 #targets= ['able', 'enable', 'grow', 'adequately', 'benign', 'buoyant', 'buoyancy', 'calm', 'comfortable', 'confidence', 'confident', 'effective', 'enhance', 'favorable', 'favourable', 'favourably', 'healthy', 'improve', 'improvement', 'mitigate', 'mitigation', 'positive', 'positively', 'profits', 'profitable', 'rally', 'rebound', 'recover', 'recovery', 'resilience', 'resilient', 'smooth', 'solid', 'sound', 'stabilise', 'stabilize', 'stable', 'success', 'successful', 'successfully']
 
-
+class_type_setups = [
+            #['Min1', 1, None, None, None],
+            ['Min2', 2, None, None, None],
+            #['Min3', 3, None, None, None],
+            #['Min5', 5, None, None, None],
+            #['Min3_Max0', 3, 0, "sum", None],
+            #['Min1_Max2_sum', 1, 2, "sum", None],
+            #['Min1_Top1', 1, None, None, 1],
+            #['Min3_Top1', 3, None, None, 1],
+            #['Min1_Top3', 1, None, None, 3]
+        ]
 
 
 #%%
@@ -123,16 +135,22 @@ def maybe_create(f):
     else:
         os.mkdir(f)
         print('New folder created: {}'.format(f))
-    
+
+
 if __name__ == "__main__":
-    folders = [RAW_DATA_PATH,OLD_PROCESSING_FOLDER,NEW_PROCESSING_FOLDER,SEARCH_TERMS,
-               DOC_META, AUG_DOC_META, JSON_LEMMA,JSON_LEMMA_SMALL,MODELS,NGRAMS,TOPIC_MODELS,
-               VS_MODELS,BOW_TFIDF_DOCS,
-               FREQUENCY,EVAL,EVAL_WG,EVAL_TS]
-    weights = [DOC_META_FILE,PHRASER,W2V]
-    
+    folders = [RAW_DATA_PATH, OLD_PROCESSING_FOLDER, NEW_PROCESSING_FOLDER, SEARCH_TERMS,
+               DOC_META, AUG_DOC_META, JSON_LEMMA, JSON_LEMMA_SMALL, MODELS, NGRAMS, TOPIC_MODELS,
+               VS_MODELS, BOW_TFIDF_DOCS, FREQUENCY, EVAL, EVAL_WG, EVAL_TS]
+    weights = [DOC_META_FILE, PHRASER, W2V]
+
     for f in folders:
         maybe_create(f)
+
+    for setup in class_type_setups:
+        class_type = setup[0]
+        need_subfolders = [FREQUENCY, EVAL_WG, EVAL_TS]
+        for fold in need_subfolders:
+            maybe_create(os.path.join(fold, class_type))
 
     for w in weights:
         if not os.path.isfile(w):

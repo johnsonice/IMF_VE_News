@@ -310,15 +310,7 @@ if __name__ == '__main__':
         'colombia': ['colombia']
     }
 
-    class_type_setups = [
-        ['Min1', 1, None, None, None],  # Country mentioned >= 1 times
-        ['Min3', 3, None, None, None],  # Country mentioned >=3 times
-        ['Min3_Max0', 3, 0, "sum", None],  # Country mentioned >=3 times, 0 other countries mentioned
-        ['Min1_Max2_sum', 1, 2, "sum", None],  # Country mentioned >=1 time, <=2 mentions of other countries
-        ['Min1_Top1', 1, None, None, 1],  # Country mentioned >=1 times, choose only the top 1 country
-        ['Min3_Top1', 3, None, None, 1],  # Country mentioned >=3 times, choose only top 1 country
-        ['Min1_Top3', 1, None, None, 3]  # Country mentioned >=1 times, choose only the top 3 countries
-    ]
+    class_type_setups = config.class_type_setups
 
     df['data_path'] = json_data_path+'/'+df.index + '.json'
     print('see one example : \n',df['data_path'].iloc[0])

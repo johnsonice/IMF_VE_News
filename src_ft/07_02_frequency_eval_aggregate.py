@@ -136,16 +136,7 @@ if __name__ == '__main__':
                 search_words_sets[k] = [t for tl in v for t in tl] ## flattern the list of list 
         weights = None
 
-    class_type_setups = [
-            ['Min1', 1, None, None, None],
-            ['Min3', 3, None, None, None],
-            ['Min5', 5, None, None, None],
-            ['Min3_Max0', 3, 0, "sum", None],
-            ['Min1_Max2_sum', 1, 2, "sum", None],
-            ['Min1_Top1', 1, None, None, 1],
-            ['Min3_Top1', 3, None, None, 1],
-            ['Min1_Top3', 1, None, None, 3]
-        ]
+    class_type_setups = config.class_type_setups
 
     for setup in class_type_setups:
         class_type = setup[0]
