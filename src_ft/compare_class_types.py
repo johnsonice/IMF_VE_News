@@ -37,4 +37,10 @@ for i in range(len(class_type_setups)):
 
 out_file = os.path.join(config.NEW_PROCESSING_FOLDER, 'country_classification_comparison.csv')
 
+try:
+    already_written = pd.read_csv(out_file)
+    combined_df = already_written.append(combined_df)
+except IOError:
+    pass
+
 combined_df.to_csv(out_file)
