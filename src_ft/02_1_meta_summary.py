@@ -302,8 +302,6 @@ if __name__ == '__main__':
     
     df = pd.read_pickle(meta_pkl)
 
-    country_dict = config.countries
-
     class_type_setups = config.class_type_setups
 
     df['data_path'] = json_data_path+'/'+df.index + '.json'
