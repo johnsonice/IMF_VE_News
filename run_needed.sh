@@ -8,3 +8,4 @@ python 06_1_export_keywords_timeseries.py
 
 python 07_02_frequency_eval_aggregate.py -gsf final_topic_words_small.csv -tn 10
 python 07_02_frequency_eval_aggregate.py -gsf experts_refined.csv -tn 15
+python compare_class_types.py

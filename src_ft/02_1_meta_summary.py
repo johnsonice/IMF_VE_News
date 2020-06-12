@@ -302,13 +302,7 @@ if __name__ == '__main__':
     
     df = pd.read_pickle(meta_pkl)
 
-    country_dict = {
-        'argentina': ['argentina'],
-        'bolivia': ['bolivia'],
-        'brazil': ['brazil'],
-        'chile': ['chile'],
-        'colombia': ['colombia']
-    }
+    country_dict = config.countries
 
     class_type_setups = config.class_type_setups
 

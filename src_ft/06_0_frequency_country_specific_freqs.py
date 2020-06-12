@@ -131,7 +131,7 @@ if __name__ == '__main__':
     for setup in class_type_setups:
         class_type = setup[0]
         parser = argparse.ArgumentParser()
-        countries = ['argentina', 'bolivia', 'brazil', 'chile', 'colombia']
+        countries = config.countries
 
         parser.add_argument('-c', '--countries', nargs='+', help='countries to get freq for',
                             default=countries)

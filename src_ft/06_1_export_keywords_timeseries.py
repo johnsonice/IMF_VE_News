@@ -137,7 +137,7 @@ if __name__ == "__main__":
             return country, df_all
 
 
-        countries = ['argentina', 'bolivia', 'brazil', 'chile', 'colombia']
+        countries = config.countries
         mp = Mp(countries, export_country_ts_2)
         res = mp.multi_process_files(chunk_size=1)
 
