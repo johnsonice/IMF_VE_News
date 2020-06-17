@@ -116,8 +116,10 @@ targets = load_search_words(SEARCH_TERMS,GROUPED_SEARCH_FILE)
 #targets= ['able', 'enable', 'grow', 'adequately', 'benign', 'buoyant', 'buoyancy', 'calm', 'comfortable', 'confidence', 'confident', 'effective', 'enhance', 'favorable', 'favourable', 'favourably', 'healthy', 'improve', 'improvement', 'mitigate', 'mitigation', 'positive', 'positively', 'profits', 'profitable', 'rally', 'rebound', 'recover', 'recovery', 'resilience', 'resilient', 'smooth', 'solid', 'sound', 'stabilise', 'stabilize', 'stable', 'success', 'successful', 'successfully']
 
 class_type_setups = [
-            ['Min1_AllCountry', 1, None, None, None], #Tmp
-            ['Min2_AllCountry', 2, None, None, None], #Tmp
+            #['Min1_AllCountry', 1, None, None, None], #Tmp
+            #['Min2_AllCountry', 2, None, None, None], #Tmp
+            #['Min1', 1, None, None, None], #Tmp
+            #['Min2', 2, None, None, None], #Tmp
             #['Min3', 3, None, None, None],
             #['Min5', 5, None, None, None],
             #['Min3_Max0', 3, 0, "sum", None],
@@ -125,6 +127,9 @@ class_type_setups = [
             #['Min1_Top1', 1, None, None, 1],
             #['Min3_Top1', 3, None, None, 1],
             #['Min1_Top3', 1, None, None, 3]
+            ['Min1_FullDoc', 1, None, None, None],
+            ['Min2_FullDoc', 2, None, None, None],
+            ['Min3_FullDoc', 3, None, None, None],
         ]
 
 

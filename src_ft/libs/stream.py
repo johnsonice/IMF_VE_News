@@ -356,3 +356,8 @@ class MetaStreamer_fast(Streamer):
     def retrieve_output(self, data):
         data['body'] = None
         return [data]
+
+
+class MetaStreamer_slow(Streamer):
+    def retrieve_output(self, data):
+        return [data]

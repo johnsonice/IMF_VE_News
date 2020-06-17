@@ -17,6 +17,7 @@ import seaborn; seaborn.set()
 from crisis_points import country_dict
 from nltk.tokenize import word_tokenize
 from stream import MetaStreamer_fast as MetaStreamer
+from stream import MetaStreamer_slow as MetaStreamer_SLOW
 #import time 
 from mp_utils import Mp
 import re
@@ -293,6 +294,40 @@ def get_countries_by_count_2(article):
     return article['an'], cl
 
 
+def get_countries_by_count_2_slow(article):
+    '''
+    Identifies list of countries based on number of instances of this country except for if other countries
+        show up >y times. SLOW - ie, not using only snippet or title, but all
+
+    '''
+    # snip = word_tokenize(article['snippet'].lower()) if article['snippet'] else None
+    # title = word_tokenize(article['title'].lower()) if article['title'] else None
+    snip = article['snippet'].lower() if article['snippet'] else None
+    title = article['title'].lower() if article['title'] else None
+    body = article['body'].lower() if article['body'] else None
+    if body and snip and title:
+        # title.extend(snip)
+        title = "{} {} {}".format(title, snip, body)
+        cl = list(get_country_name_count_2(title))
+    elif title and snip:
+        title = "{} {}".format(title, snip)
+        cl = list(get_country_name_count_2(title))
+    elif body and snip:
+        snip = "{} {}".format(body, snip)
+        cl = list(get_country_name_count_2(snip))
+    elif body and title:
+        title = "{} {}".format(body, title)
+        cl = list(get_country_name_count_2(title))
+    elif title:
+        cl = list(get_country_name_count_2(title))
+    elif snip:
+        cl = list(get_country_name_count_2(snip))
+    else:
+        cl = list()
+
+    return article['an'], cl
+
+
 #%%
 if __name__ == '__main__':
     meta_root = config.DOC_META
@@ -329,9 +364,15 @@ if __name__ == '__main__':
                 if chunky_index%100000 == 0:
                     print("Passed ", chunky_index, " files")
                 chunk_end = min(chunky_index+pre_chunk_size, data_length)
-                streamer = MetaStreamer(data_list[chunky_index:chunk_end])
+
+                #streamer = MetaStreamer(data_list[chunky_index:chunk_end])
+                streamer = MetaStreamer_SLOW(data_list[chunky_index:chunk_end]) #TMP
+
                 news = streamer.multi_process_files(workers=10, chunk_size=5000)
-                mp = Mp(news, get_countries_by_count_2)
+
+                mp = Mp(news, get_countries_by_count_2_slow) #TMP
+                #mp = Mp(news, get_countries_by_count_2)
+
                 country_meta = mp.multi_process_files(workers=10, chunk_size=5000)
                 index = index + [i[0] for i in country_meta]
                 country_list = country_list + [i[1] for i in country_meta]

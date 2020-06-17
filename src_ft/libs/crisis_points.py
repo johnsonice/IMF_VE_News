@@ -191,7 +191,16 @@ country_dict_original = {
     'venezuela': ['venezuela'], ## these is the original list
 }
 
-country_dict = country_dict_original
+country_dict_just_five = {
+    'argentina': ['argentina'],
+    'bolivia': ['bolivia'],
+    'brazil': ['brazil'],
+    'chile': ['chile'],
+    'colombia': ['colombia']
+}
+
+
+country_dict = country_dict_just_five
 
 import os 
 cd = os.path.dirname(os.path.abspath(__file__))
