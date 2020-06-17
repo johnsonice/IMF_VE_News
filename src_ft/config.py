@@ -117,7 +117,7 @@ targets = load_search_words(SEARCH_TERMS,GROUPED_SEARCH_FILE)
 
 class_type_setups = [
             ['Min1_AllCountry', 1, None, None, None], #Tmp
-            ['Min2_AllCountry', 2, None, None, None], #Tmp
+            #['Min2_AllCountry', 2, None, None, None], #Tmp
             #['Min3', 3, None, None, None],
             #['Min5', 5, None, None, None],
             #['Min3_Max0', 3, 0, "sum", None],

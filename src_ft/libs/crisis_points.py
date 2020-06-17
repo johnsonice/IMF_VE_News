@@ -104,8 +104,8 @@ crisis_points = {
     },
 }
 
-country_dict = {
-    'argentina': ['argentina'],
+#TODO return to dict
+''''argentina': ['argentina'],
     'bolivia': ['bolivia'],
     'brazil': ['brazil'],
     'chile': ['chile'],
@@ -126,6 +126,9 @@ country_dict = {
     'turkey': ['turkey'],
     'uruguay': ['uruguay'],
     'venezuela': ['venezuela'], ## these is the original list
+    '''
+country_dict = {
+    #here
     'australia': ['Australia','Australian','Sydney'],
     'belgium': ['Belgium','Belgien','Brussels'],
     'bulgaria': ['Bulgaria','Bulgarian','Sofia'],
