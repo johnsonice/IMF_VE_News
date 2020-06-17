@@ -228,7 +228,7 @@ country_dict_temp = {
     'zimbabwe': ['Zimbabwe','Zimbabwean','Harrare'],
 }
 
-country_dict = country_dict_temp
+country_dict = country_dict_all
 
 
 
