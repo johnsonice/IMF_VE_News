@@ -104,8 +104,70 @@ crisis_points = {
     },
 }
 
-#TODO return to dict
-''''argentina': ['argentina'],
+country_dict_all = {
+    #'argentina': ['argentina'],
+    #'bolivia': ['bolivia'],
+    #'brazil': ['brazil'],
+    #'chile': ['chile'],
+    #'colombia': ['colombia'],
+    #'denmark': ['denmark'],
+    #'finland': ['finland'],
+    #'indonesia': ['indonesia'],
+    #'israel': ['israel'],
+    #'south-korea':['south korea','korean','south-korea','south-korean','seoul'],
+    #'malaysia': ['malaysia'],
+    #'mexico': ['mexico'],
+    #'norway': ['norway'],
+    #'peru': ['peru'],
+    #'philippines': ['philippines'],
+    #'spain': ['spain'],
+    #'sweden': ['sweden'],
+    #'thailand': ['thailand'],
+    #'turkey': ['turkey'],
+    #'uruguay': ['uruguay'],
+    #'venezuela': ['venezuela'], ## these is the original list
+    #'australia': ['Australia','Australian','Sydney'],
+    #'belgium': ['Belgium','Belgien','Brussels'],
+    #'bulgaria': ['Bulgaria','Bulgarian','Sofia'],
+    #'canada': ['Canada','Canadian','Toronto'],
+    #'china': ['China','Chinese','Beijing'],
+    #'ecuador': ['Ecuador','Ecuadorian','Quito'],
+    #'egypt': ['Egypt','Egyptian','Cairo'],
+    #'france': ['France','French','Paris'],
+    #'germany': ['Germany','German','Berlin'],
+    #'greece': ['Greece','Greek','Athens'],
+    'hungary': ['Hungary','Hungarian','Budapest'],
+    'iceland': ['Iceland','Icelander','Reykjavik'],
+    'india': ['India','Indian','Mumbai'],
+    'ireland': ['Ireland','Irish','Dublin'],
+    'italy': ['Italy','Italian','Rome'],
+    'jamaica': ['Jamaica','Jamaican'],
+    'japan': ['Japan','Japanese','Tokyo'],
+    'jordan': ['Jordan','Jordanian','Amman'],
+    'kenya': ['Kenya','Kenyan','Nirobi'],
+    'latvia': ['Latvia','Latvian','Riga'],
+    'lebanon': ['Lebanon','Lebanese','Beirut'],
+    'netherlands': ['Netherlands','Dutch','Amsterdam'],
+    'new-zealand': ['New Zealand','New Zealander','Auckland'],
+    'nicaragua': ['Nicaragua','Nicaraguan','Managua'],
+    'nigeria': ['Nigeria','Nigerian','Lagos'],
+    'pakistan': ['Pakistan','Pakistani','Karachi'],
+    'poland': ['Poland','Polish','Warsaw'],
+    'russia': ['Russia','Russian','Moscow'],
+    'south-africa': ['South Africa','South African','Johannesburg'],
+    'tanzania': ['Tanzania','Tanzanian','Dar es Salaam'],
+    'tunisia': ['Tunisia','Tunisian','Tunis'],
+    'uganda': ['Uganda','Ugandan','Kampala'],
+    'ukraine': ['Ukraine','Ukrainian','Kiev'],
+    'united-kingdom': ['United Kingdom','British','London','UK'],
+    'united-states': ['US','United States','American','America','Washington','united states','washington'],
+    'vietnam': ['Vietnam','Vietnamese ','Hanoi','Viet Nam'],
+    'zambia': ['Zambia','Lusaka'],
+    'zimbabwe': ['Zimbabwe','Zimbabwean','Harrare'],
+}
+
+country_dict_temp = {
+    'argentina': ['argentina'],
     'bolivia': ['bolivia'],
     'brazil': ['brazil'],
     'chile': ['chile'],
@@ -126,9 +188,6 @@ crisis_points = {
     'turkey': ['turkey'],
     'uruguay': ['uruguay'],
     'venezuela': ['venezuela'], ## these is the original list
-    '''
-country_dict = {
-    #here
     'australia': ['Australia','Australian','Sydney'],
     'belgium': ['Belgium','Belgien','Brussels'],
     'bulgaria': ['Bulgaria','Bulgarian','Sofia'],
@@ -169,6 +228,7 @@ country_dict = {
     'zimbabwe': ['Zimbabwe','Zimbabwean','Harrare'],
 }
 
+country_dict = country_dict_temp
 
 
 
