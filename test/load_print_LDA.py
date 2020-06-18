@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(0,'../libs')
+sys.path.insert(0,'../src_ft/libs')
 import argparse
 from gensim.models.keyedvectors import KeyedVectors
 #from crisis_points import crisis_points
