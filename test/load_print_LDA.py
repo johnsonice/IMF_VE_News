@@ -16,9 +16,19 @@ import config
 import os
 import pandas as pd
 from topic_model_utils import topic2df ##print_topics_gensim
+import ujson as json
 
 model_folder = "/data/News_data_raw/FT_WD/models/topics"
-this_model = 'lda_model_tfidf_100_None_4'
+this_model = "lda_model_tfidf_100_None_4"
 model_address = os.path.join(model_folder,this_model)
 loaded_model = gensim.models.ldamodel.LdaModel.load(model_address)
 print("MODEL LOADED at:", model_address)
+
+test_doc_folder = "/data/News_data_raw/Financial_Times/all_18m6_19m4/FT-archive-2018 (2)"
+this_doc = "c1887dba-2370-11e8-add1-0e8958b189ea_2018-03-09.json"
+doc_address = os.path.join(test_doc_folder, this_doc)
+with open(f, 'r', encoding="utf-8") as f:
+    json_loaded = json.loads(f.read())
+
+print("Loaded doc at:",doc_address)
+print("JSON LOOKS LIKE:\n",json_loaded)
