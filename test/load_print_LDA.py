@@ -31,4 +31,5 @@ with open(doc_address, 'r', encoding="utf-8") as f:
     json_loaded = json.loads(f.read())
 
 print("Loaded doc at:",doc_address)
-print("Loaded json file type:\n",type(json_loaded))
+print("Loaded json file type:",type(json_loaded))
+print("Loaded json keys:",json_loaded.keys())
