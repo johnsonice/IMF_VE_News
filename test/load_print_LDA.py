@@ -27,7 +27,7 @@ print("MODEL LOADED at:", model_address)
 test_doc_folder = "/data/News_data_raw/Financial_Times/all_18m6_19m4/FT-archive-2018 (2)"
 this_doc = "c1887dba-2370-11e8-add1-0e8958b189ea_2018-03-09.json"
 doc_address = os.path.join(test_doc_folder, this_doc)
-with open(f, 'r', encoding="utf-8") as f:
+with open(doc_address, 'r', encoding="utf-8") as f:
     json_loaded = json.loads(f.read())
 
 print("Loaded doc at:",doc_address)
