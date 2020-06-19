@@ -35,4 +35,22 @@ print("Loaded json file type:",type(json_loaded))
 print("Loaded json keys:",json_loaded.keys())
 
 doc_text = json_loaded['body']
-print("BODY:",doc_text)
+#print("BODY:",doc_text)
+
+tokens = doc_text.split()
+print("Doc tokenized")
+
+corpus = os.path.join(config.BOW_TFIDF_DOCS,'tfidf.mm')
+print("Corpus loaded")
+
+common_dictionary = os.path.join(config.BOW_TFIDF_DOCS,'dictionary')
+print("Dictionary loaded")
+
+bowed = common_dictionary.doc2bow(doc_text)
+print("Doc BOWED")
+
+topic_props = loaded_model.get_document_topics(bowed,minimum_probability=0)
+print("Doc predicted on")
+
+topic_props_df = pd.DataFrame(topic_props)
+topic_props_df.head()
