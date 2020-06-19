@@ -48,7 +48,7 @@ common_dictionary_path = os.path.join(config.BOW_TFIDF_DOCS,'dictionary')
 common_dictionary = gensim.corpora.Dictionary.load(common_dictionary_path)
 print("Dictionary loaded")
 
-bowed = common_dictionary.doc2bow(doc_text)
+bowed = common_dictionary.doc2bow(tokens)
 print("Doc BOWED")
 
 topic_props = loaded_model.get_document_topics(bowed,minimum_probability=0)
