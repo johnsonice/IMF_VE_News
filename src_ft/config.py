@@ -57,7 +57,7 @@ TOPIC_MODELS = os.path.join(MODELS, 'topics')
 
 
 SEARCH_TERMS = os.path.join(OLD_PROCESSING_FOLDER, 'search_terms')
-BOW_TFIDF_DOCS = os.path.join(NEW_PROCESSING_FOLDER, 'bow_tfidf_docs')
+BOW_TFIDF_DOCS = os.path.join(OLD_PROCESSING_FOLDER, 'bow_tfidf_docs')
 FREQUENCY = os.path.join(NEW_PROCESSING_FOLDER, 'frequency', 'csv')
 
 EVAL = os.path.join(NEW_PROCESSING_FOLDER, 'eval')
