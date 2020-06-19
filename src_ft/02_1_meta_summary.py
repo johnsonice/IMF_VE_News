@@ -22,6 +22,7 @@ from stream import MetaStreamer_slow as MetaStreamer_SLOW
 from mp_utils import Mp
 import re
 import logging
+import gensim
 #plt.rcParams['figure.figsize']=(10,5)
 
 global min_this
@@ -29,6 +30,7 @@ global max_other
 global other_type
 global top_n
 global country_dict
+global topic_avoid_list
 
 # Experimental country classification variables
 min_this = 1
@@ -36,8 +38,21 @@ max_other = None
 other_type = "sum"
 top_n = None
 country_dict = config.country_dict
+topic_avoid_list = None
 f_handler = logging.FileHandler('err_log_7_1908.log')
 f_handler.setLevel(logging.WARNING)
+
+# TODO make flexible
+corpus_path = os.path.join(config.BOW_TFIDF_DOCS,'tfidf.mm')
+corpus = gensim.corpora.MmCorpus(corpus_path)
+
+common_dictionary_path = os.path.join(config.BOW_TFIDF_DOCS,'dictionary')
+common_dictionary = gensim.corpora.Dictionary.load(common_dictionary_path)
+
+model_folder = "/data/News_data_raw/FT_WD/models/topics"
+this_model = "lda_model_tfidf_100_None_4"
+model_address = os.path.join(model_folder,this_model)
+loaded_model = gensim.models.ldamodel.LdaModel.load(model_address)
 
 #%%
 ## save quarterly figure
@@ -231,7 +246,20 @@ def get_country_name_count_2(text):
     if verbose:
         print("Pruned 3 names: {}".format(triple_pruned))
 
+    if topic_avoid_list is not None:
+        tokens = text.split()
+        bowed = common_dictionary.doc2bow(tokens)
+        predicted_topics = loaded_model.get_document_topics(bowed,minimum_probability=0.05)
+
+        if len(predicted_topics) > 0:
+            predicted_topics.sort(key=lambda x: x[1])
+            top_topic = predicted_topics[0][0] + 1
+            if top_topic in topic_avoid_list:
+                return []
+
+    # If not rejected based on topics
     return triple_pruned
+
 
 
 def get_countries_by_count(article):
@@ -305,19 +333,16 @@ def get_countries_by_count_2_slow(article):
     snip = article['snippet'].lower() if article['snippet'] else None
     title = article['title'].lower() if article['title'] else None
     body = article['body'].lower() if article['body'] else None
-    if body and snip and title:
+    if body and title:
         # title.extend(snip)
-        title = "{} {} {}".format(title, snip, body)
+        title = "{} {}".format(title, body)
         cl = list(get_country_name_count_2(title))
     elif title and snip:
         title = "{} {}".format(title, snip)
         cl = list(get_country_name_count_2(title))
-    elif body and snip:
-        snip = "{} {}".format(body, snip)
-        cl = list(get_country_name_count_2(snip))
-    elif body and title:
-        title = "{} {}".format(body, title)
-        cl = list(get_country_name_count_2(title))
+    elif body:
+        body = "{}".format(body)
+        cl = list(get_country_name_count_2(body))
     elif title:
         cl = list(get_country_name_count_2(title))
     elif snip:
@@ -350,6 +375,7 @@ if __name__ == '__main__':
         max_other = setup[2]
         other_type = setup[3]
         top_n = setup[4]
+        topic_avoid_list = setup[5]
 
         # Go through the files in chunks
         if pre_chunked:
