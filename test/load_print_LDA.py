@@ -40,10 +40,12 @@ doc_text = json_loaded['body']
 tokens = doc_text.split()
 print("Doc tokenized")
 
-corpus = os.path.join(config.BOW_TFIDF_DOCS,'tfidf.mm')
+corpus_path = os.path.join(config.BOW_TFIDF_DOCS,'tfidf.mm')
+corpus = gensim.corpora.MmCorpus(corpus_path)
 print("Corpus loaded")
 
-common_dictionary = os.path.join(config.BOW_TFIDF_DOCS,'dictionary')
+common_dictionary_path = os.path.join(config.BOW_TFIDF_DOCS,'dictionary')
+common_dictionary = gensim.corpora.Dictionary.load(common_dictionary_path)
 print("Dictionary loaded")
 
 bowed = common_dictionary.doc2bow(doc_text)
