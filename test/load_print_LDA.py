@@ -55,4 +55,4 @@ topic_props = loaded_model.get_document_topics(bowed,minimum_probability=0)
 print("Doc predicted on")
 
 topic_props_df = pd.DataFrame(topic_props)
-topic_props_df.head()
+print(topic_props_df)
