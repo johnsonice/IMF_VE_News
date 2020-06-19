@@ -55,4 +55,8 @@ topic_props = loaded_model.get_document_topics(bowed,minimum_probability=0)
 print("Doc predicted on")
 
 topic_props_df = pd.DataFrame(topic_props)
-print(topic_props_df)
+print("ALL TOPICS:",topic_props_df)
+
+topic_props_a5 = loaded_model.get_document_topics(bowed,minimum_probability=0.05)
+topic_props_df_a5 = pd.DataFrame(topic_props_a5)
+print("ABOVE 5% likely topics:",topic_props_a5)
