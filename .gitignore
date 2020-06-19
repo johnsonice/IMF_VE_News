@@ -118,3 +118,6 @@ config_temp.py
 run_all_local.sh
 *.bat
 config_backup.py
+
+# ServerSide Logs
+log_*
