@@ -33,3 +33,6 @@ with open(doc_address, 'r', encoding="utf-8") as f:
 print("Loaded doc at:",doc_address)
 print("Loaded json file type:",type(json_loaded))
 print("Loaded json keys:",json_loaded.keys())
+
+doc_text = json_loaded['body']
+print("BODY:",doc_text)
