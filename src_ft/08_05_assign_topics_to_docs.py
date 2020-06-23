@@ -97,7 +97,7 @@ if __name__ == '__main__':
         chunky_index = 0
         data_length = len(data_list)
         index = []
-        country_list = []
+        predicted_topics = []
         while chunky_index < data_length:
             if chunky_index%100000 == 0:
                 print("Passed ", chunky_index, " files")
@@ -113,7 +113,7 @@ if __name__ == '__main__':
 
             topic_meta = mp.multi_process_files(workers=10, chunk_size=5000)
             index = index + [i[0] for i in topic_meta]
-            predicted_topics = country_list + [i[1] for i in topic_meta]
+            predicted_topics = predicted_topics + [i[1] for i in topic_meta]
             del topic_meta  ## clear memory
             chunky_index = chunk_end
 

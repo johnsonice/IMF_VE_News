@@ -163,11 +163,3 @@ if __name__ == "__main__":
     for w in weights:
         if not os.path.isfile(w):
             print('File not exist:{}'.format(w))
-
-            
-        
-        
-        
-    
-    
-    
