@@ -112,6 +112,7 @@ if __name__ == '__main__':
     parser.add_argument('-gsf', '--search_file', action='store', dest='search_file',default=config.GROUPED_SEARCH_FILE)
     args = parser.parse_args()
 
+
     # Parse input word groups, word_gropus is a list of list:
     # something like this: [['fear'],['worry'],['concern'],['risk'],['threat'],['warn'],['maybe']]
  
@@ -142,6 +143,7 @@ if __name__ == '__main__':
         class_type = setup[0]
         freq_path = os.path.join(config.FREQUENCY, class_type)  # Moved the TF_DFs manually for speed since 06_0
         args.frequency_path = freq_path
+        args.eval_path = os.path.join(args.eval_path, class_type)
         #print(search_words_sets)
         #%%
         # Get prec, rec, and fscore for each country for each word group
@@ -157,7 +159,7 @@ if __name__ == '__main__':
 
             ## export over all resoults to csv
         df = pd.DataFrame(overall_res,columns=['word','sim_words','recall','prec','f2'])
-        save_file_full = os.path.join(args.eval_path, class_type,
+        save_file_full = os.path.join(args.eval_path,
                                        'overall_agg_sim_{}_overall_{}_offset_{}_smoothwindow_{}_evaluation.csv'.format(
                                            args.sims,args.period,args.months_prior,args.window))
         df.to_csv(save_file_full)

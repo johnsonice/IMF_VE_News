@@ -116,25 +116,25 @@ targets = load_search_words(SEARCH_TERMS,GROUPED_SEARCH_FILE)
 #targets= ['able', 'enable', 'grow', 'adequately', 'benign', 'buoyant', 'buoyancy', 'calm', 'comfortable', 'confidence', 'confident', 'effective', 'enhance', 'favorable', 'favourable', 'favourably', 'healthy', 'improve', 'improvement', 'mitigate', 'mitigation', 'positive', 'positively', 'profits', 'profitable', 'rally', 'rebound', 'recover', 'recovery', 'resilience', 'resilient', 'smooth', 'solid', 'sound', 'stabilise', 'stabilize', 'stable', 'success', 'successful', 'successfully']
 
 class_type_setups = [
-            #['Min1_AllCountry', 1, None, None, None, None], #Tmp
-            #['Min2_AllCountry', 2, None, None, None, None], #Tmp
-            #['Min1', 1, None, None, None, None], #Tmp
-            #['Min2', 2, None, None, None, None], #Tmp
-            #['Min3', 3, None, None, None, None],
-            #['Min5', 5, None, None, None, None],
-            #['Min3_Max0', 3, 0, "sum", None, None],
-            #['Min1_Max2_sum', 1, 2, "sum", None, None],
-            #['Min1_Top1', 1, None, None, 1, None],
-            #['Min3_Top1', 3, None, None, 1, None],
-            #['Min1_Top3', 1, None, None, 3, None]
-            #['Min1_FullDoc', 1, None, None, None, None],
-            #['Min2_FullDoc', 2, None, None, None, None],
-            #['Min3_FullDoc', 3, None, None, None, None],
-            ['Min1_100topic_AvoidSport_Over5', 1, None, None, None, [31, 89]],
-            ['Min1_100topic_AvoidSelect_Over5', 1, None, None, None, [31, 47, 48, 64, 89]]
+            ['Min1_AllCountry', 1, None, None, None, None], #Tmp
+
         ]
 
-
+'''#['Min2_AllCountry', 2, None, None, None, None], #Tmp
+            ['Min1', 1, None, None, None, None], #Tmp
+            ['Min2', 2, None, None, None, None], #Tmp
+            ['Min3', 3, None, None, None, None],
+            ['Min5', 5, None, None, None, None],
+            ['Min3_Max0', 3, 0, "sum", None, None],
+            ['Min1_Max2_sum', 1, 2, "sum", None, None],
+            ['Min1_Top1', 1, None, None, 1, None],
+            ['Min3_Top1', 3, None, None, 1, None],
+            ['Min1_Top3', 1, None, None, 3, None]
+            ['Min1_FullDoc', 1, None, None, None, None],
+            ['Min2_FullDoc', 2, None, None, None, None],
+            ['Min3_FullDoc', 3, None, None, None, None],
+            ['Min1_100topic_AvoidSport_Over5', 1, None, None, None, [31, 89]],
+            ['Min1_100topic_AvoidSelect_Over5', 1, None, None, None, [31, 47, 48, 64, 89]]'''
 #%%
 
 def maybe_create(f):
