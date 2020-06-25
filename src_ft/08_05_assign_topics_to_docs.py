@@ -93,7 +93,7 @@ if __name__ == '__main__':
     if pre_chunked:
 
         data_list = df['data_path'].tolist()
-        pre_chunk_size = 50000
+        pre_chunk_size = 10000
         chunky_index = 0
         data_length = len(data_list)
         index = []
@@ -106,12 +106,12 @@ if __name__ == '__main__':
             #streamer = MetaStreamer(data_list[chunky_index:chunk_end])
             streamer = MetaStreamer_SLOW(data_list[chunky_index:chunk_end]) #TMP
 
-            news = streamer.multi_process_files(workers=10, chunk_size=5000)
+            news = streamer.multi_process_files(workers=10, chunk_size=1000)
 
             mp = Mp(news, topic_this_document) #TMP
             #mp = Mp(news, get_countries_by_count_2)
 
-            topic_meta = mp.multi_process_files(workers=10, chunk_size=5000)
+            topic_meta = mp.multi_process_files(workers=10, chunk_size=1000)
             index = index + [i[0] for i in topic_meta]
             predicted_topics = predicted_topics + [i[1] for i in topic_meta]
             del topic_meta  ## clear memory
