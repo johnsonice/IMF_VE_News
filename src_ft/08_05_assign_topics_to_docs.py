@@ -29,15 +29,15 @@ f_handler = logging.FileHandler('err_log_7_1908.log')
 f_handler.setLevel(logging.WARNING)
 
 # TODO make flexible
-corpus_path = os.path.join(config.BOW_TFIDF_DOCS,'tfidf.mm')
+corpus_path = os.path.join(config.BOW_TFIDF_DOCS, 'tfidf.mm')
 corpus = gensim.corpora.MmCorpus(corpus_path)
 
-common_dictionary_path = os.path.join(config.BOW_TFIDF_DOCS,'dictionary')
+common_dictionary_path = os.path.join(config.BOW_TFIDF_DOCS, 'dictionary')
 common_dictionary = gensim.corpora.Dictionary.load(common_dictionary_path)
 
 model_folder = "/data/News_data_raw/FT_WD/models/topics"
 this_model = "lda_model_tfidf_100_None_4"
-model_address = os.path.join(model_folder,this_model)
+model_address = os.path.join(model_folder, this_model)
 loaded_model = gensim.models.ldamodel.LdaModel.load(model_address)
 
 
@@ -80,19 +80,20 @@ if __name__ == '__main__':
     meta_aug = config.AUG_DOC_META
     meta_pkl = config.DOC_META_FILE
     json_data_path = config.JSON_LEMMA
-    
+
     df = pd.read_pickle(meta_pkl)
 
     class_type_setups = config.class_type_setups
 
     df['data_path'] = json_data_path+'/'+df.index + '.json'
-    print('see one example : \n',df['data_path'].iloc[0])
+    print('see one example : \n', df['data_path'].iloc[0])
     pre_chunked = True  # The memory will explode otherwise
 
     # Go through the files in chunks
     if pre_chunked:
 
         data_list = df['data_path'].tolist()
+        del df
         pre_chunk_size = 10000
         chunky_index = 0
         data_length = len(data_list)
@@ -103,27 +104,28 @@ if __name__ == '__main__':
                 print("Passed ", chunky_index, " files")
             chunk_end = min(chunky_index+pre_chunk_size, data_length)
 
-            #streamer = MetaStreamer(data_list[chunky_index:chunk_end])
-            streamer = MetaStreamer_SLOW(data_list[chunky_index:chunk_end]) #TMP
+            # streamer = MetaStreamer(data_list[chunky_index:chunk_end])
+            streamer = MetaStreamer_SLOW(data_list[chunky_index:chunk_end])  # TMP
 
             news = streamer.multi_process_files(workers=5, chunk_size=1000)
             del streamer # free memory
 
-            mp = Mp(news, topic_this_document) #TMP
-            #mp = Mp(news, get_countries_by_count_2)
+            mp = Mp(news, topic_this_document) # TMP
+            # mp = Mp(news, get_countries_by_count_2)
 
             topic_meta = mp.multi_process_files(workers=5, chunk_size=1000)
             index = index + [i[0] for i in topic_meta]
             predicted_topics = predicted_topics + [i[1] for i in topic_meta]
             chunky_index = chunk_end
 
-            del topic_meta  ## clear memory
-            del mp ## clear memory
+            del topic_meta   # clear memory
+            del mp  # clear memory
 
 
         model_name = "ldaviz_t100"
-        ds = pd.Series(predicted_topics,name='{}_predicted_topics'.format(model_name),index=index)
-        new_df = df.join(ds) ## merge country meta
+        ds = pd.Series(predicted_topics, name='{}_predicted_topics'.format(model_name), index=index)
+        df = pd.read_pickle(meta_pkl)  # Re-load deleted df - not multiplied when multiprocessing anymore
+        new_df = df.join(ds)  # merge country meta
         del ds  # Free space
         new_df['country_n'] = new_df['country'].map(lambda x: len(x))
         new_df.to_pickle(os.path.join(meta_aug, 'doc_details_{}_topic.pkl'.format('crisis')))
