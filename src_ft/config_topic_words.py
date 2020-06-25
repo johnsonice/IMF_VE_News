@@ -160,6 +160,7 @@ if __name__ == "__main__":
         need_subfolders = [FREQUENCY, EVAL_WG, EVAL_TS]
         for fold in need_subfolders:
             maybe_create(os.path.join(fold, class_type))
+        maybe_create(os.path.join(EVAL_WG, class_type, eval_type))
 
     for w in weights:
         if not os.path.isfile(w):
