@@ -107,6 +107,7 @@ if __name__ == '__main__':
             streamer = MetaStreamer_SLOW(data_list[chunky_index:chunk_end]) #TMP
 
             news = streamer.multi_process_files(workers=10, chunk_size=1000)
+            del streamer # free memory
 
             mp = Mp(news, topic_this_document) #TMP
             #mp = Mp(news, get_countries_by_count_2)
@@ -114,8 +115,11 @@ if __name__ == '__main__':
             topic_meta = mp.multi_process_files(workers=10, chunk_size=1000)
             index = index + [i[0] for i in topic_meta]
             predicted_topics = predicted_topics + [i[1] for i in topic_meta]
-            del topic_meta  ## clear memory
             chunky_index = chunk_end
+
+            del topic_meta  ## clear memory
+            del mp ## clear memory
+
 
         model_name = "ldaviz_t100"
         ds = pd.Series(predicted_topics,name='{}_predicted_topics'.format(model_name),index=index)
