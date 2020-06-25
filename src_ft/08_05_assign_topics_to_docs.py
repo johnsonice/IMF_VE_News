@@ -120,9 +120,9 @@ if __name__ == '__main__':
             if chunky_index != 0:
                 read_series = pd.read_pickle(temp_pkl_file)
                 add_series = pd.Series(predicted_topics, name='{}_predicted_topics'.format(model_name), index=index)
+                sum_series = read_series.append()
                 del read_series
                 del add_series
-                sum_series = read_series.append()
             else:
                 sum_series = pd.Series(predicted_topics, name='{}_predicted_topics'.format(model_name), index=index)
 
