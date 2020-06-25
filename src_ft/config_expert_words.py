@@ -135,7 +135,7 @@ class_type_setups = [
 
         ]
 
-eval_type = 'final_topic_words'
+eval_type = 'expert_words'
 #%%
 
 def maybe_create(f):
@@ -157,7 +157,7 @@ if __name__ == "__main__":
 
     for setup in class_type_setups:
         class_type = setup[0]
-        need_subfolders = [FREQUENCY, EVAL_WG, EVAL_TS, os.path.join(EVAL_WG, eval_type)]
+        need_subfolders = [FREQUENCY, EVAL_WG, EVAL_TS]
         for fold in need_subfolders:
             maybe_create(os.path.join(fold, class_type))
 
