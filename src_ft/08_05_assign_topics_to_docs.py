@@ -84,6 +84,8 @@ if __name__ == '__main__':
     df = pd.read_pickle(meta_pkl)
 
     class_type_setups = config.class_type_setups
+    model_name = "ldaviz_t100"
+    temp_pkl_file = "temp_in_processing.pkl"
 
     df['data_path'] = json_data_path+'/'+df.index + '.json'
     print('see one example : \n', df['data_path'].iloc[0])
@@ -108,22 +110,34 @@ if __name__ == '__main__':
             streamer = MetaStreamer_SLOW(data_list[chunky_index:chunk_end])  # TMP
 
             news = streamer.multi_process_files(workers=10, chunk_size=1000)
-            del streamer # free memory
+            del streamer  # free memory
 
-            mp = Mp(news, topic_this_document) # TMP
+            mp = Mp(news, topic_this_document)  # TMP
             # mp = Mp(news, get_countries_by_count_2)
 
             topic_meta = mp.multi_process_files(workers=10, chunk_size=1000)
-            index = index + [i[0] for i in topic_meta]
-            predicted_topics = predicted_topics + [i[1] for i in topic_meta]
+
+            if chunky_index != 0:
+                read_series = pd.read_pickle(temp_pkl_file)
+                add_series = pd.Series(predicted_topics, name='{}_predicted_topics'.format(model_name), index=index)
+                del read_series
+                del add_series
+                sum_series = read_series.append()
+            else:
+                sum_series = pd.Series(predicted_topics, name='{}_predicted_topics'.format(model_name), index=index)
+
+            sum_series.to_pickle(temp_pkl_file)
+            del sum_series
+            print("Wrote up to", chunky_index)
+
             chunky_index = chunk_end
 
             del topic_meta   # clear memory
             del mp  # clear memory
 
+        ds = pd.read_pickle("temp_in_processing.pkl")
+        os.remove("temp_in_processing.pkl") # put into final
 
-        model_name = "ldaviz_t100"
-        ds = pd.Series(predicted_topics, name='{}_predicted_topics'.format(model_name), index=index)
         df = pd.read_pickle(meta_pkl)  # Re-load deleted df - not multiplied when multiprocessing anymore
         new_df = df.join(ds)  # merge country meta
         del ds  # Free space
