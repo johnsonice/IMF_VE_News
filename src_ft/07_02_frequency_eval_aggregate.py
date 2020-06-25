@@ -139,13 +139,14 @@ if __name__ == '__main__':
 
     class_type_setups = config.class_type_setups
     eval_type = config.eval_type
+    original_eval_path = args.eval_path
 
     for setup in class_type_setups:
         class_type = setup[0]
         freq_path = os.path.join(config.FREQUENCY, class_type)  # Moved the TF_DFs manually for speed since 06_0
         args.frequency_path = freq_path
 
-        args.eval_path = os.path.join(args.eval_path, class_type, eval_type)
+        args.eval_path = os.path.join(original_eval_path, class_type, eval_type)
         #print(search_words_sets)
         #%%
         # Get prec, rec, and fscore for each country for each word group
