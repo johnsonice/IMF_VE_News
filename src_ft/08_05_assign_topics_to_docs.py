@@ -107,13 +107,13 @@ if __name__ == '__main__':
             # streamer = MetaStreamer(data_list[chunky_index:chunk_end])
             streamer = MetaStreamer_SLOW(data_list[chunky_index:chunk_end])  # TMP
 
-            news = streamer.multi_process_files(workers=5, chunk_size=1000)
+            news = streamer.multi_process_files(workers=10, chunk_size=1000)
             del streamer # free memory
 
             mp = Mp(news, topic_this_document) # TMP
             # mp = Mp(news, get_countries_by_count_2)
 
-            topic_meta = mp.multi_process_files(workers=5, chunk_size=1000)
+            topic_meta = mp.multi_process_files(workers=10, chunk_size=1000)
             index = index + [i[0] for i in topic_meta]
             predicted_topics = predicted_topics + [i[1] for i in topic_meta]
             chunky_index = chunk_end
