@@ -200,7 +200,7 @@ country_dict_just_five = {
 }
 
 
-country_dict = country_dict_just_five
+country_dict = country_dict_original
 
 import os 
 cd = os.path.dirname(os.path.abspath(__file__))
