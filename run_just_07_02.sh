@@ -13,6 +13,12 @@ cp config_grouped_words.py config.py
 python config.py
 python 07_02_frequency_eval_aggregate.py -gsf grouped_search_words_final.csv -tn 15
 
+# Run 07_02 with the specific config needed
+rm config.py
+cp config_grouped_words_just5.py.py config.py
+python config.py
+python 07_02_frequency_eval_aggregate.py -gsf grouped_search_words_final.csv -tn 15
+
 # Revert to original config
 rm config.py
 cp config_temp.py config.py
