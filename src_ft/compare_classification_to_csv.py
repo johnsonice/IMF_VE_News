@@ -14,7 +14,7 @@ class_type_setups = config.class_type_setups
 
 base_eval_path = config.EVAL_WG
 combined_df = pd.DataFrame()
-eval_types = ['final_topic_words', 'expert_words']
+eval_types = ['grouped_words']
 for e_type in eval_types:
     for i in range(len(class_type_setups)):
         class_type = class_type_setups[i][0]
