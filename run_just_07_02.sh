@@ -5,17 +5,17 @@ source /home/chuang/anaconda3/bin/activate nlp
 cd src_ft
 
 # Save current config file
-cp config.py config_temp.py
+#cp config.py config_temp.py
 
 # Run 07_02 with the specific config needed
-rm config.py
-cp config_grouped_words.py config.py
-python config.py
-python 07_02_frequency_eval_aggregate.py -gsf grouped_search_words_final.csv -tn 15
+#rm config.py
+#cp config_grouped_words.py config.py
+#python config.py
+#python 07_02_frequency_eval_aggregate.py -gsf grouped_search_words_final.csv -tn 15
 
 # Run 07_02 with the specific config needed
-rm config.py
-cp config_grouped_words_just5.py.py config.py
+#rm config.py
+cp config_grouped_words_just5.py config.py
 python config.py
 python 07_02_frequency_eval_aggregate.py -gsf grouped_search_words_final.csv -tn 15
 
