@@ -12,7 +12,7 @@ pd.set_option('display.max_columns', 10)
 #import warnings 
 #%%
 sys.path.insert(0, './libs')
-from crisis_points import crisis_points, country_dict, ll_crisis_points
+from crisis_points import crisis_points, country_dict, ll_crisis_points, country_dict_just_five
 
 
 ## global arguments
@@ -77,7 +77,8 @@ EXPERT_TERMS = os.path.join(OLD_PROCESSING_FOLDER, 'search_terms', 'expert_terms
 
 
 ## file specific inputs ##
-countries=list(country_dict.keys())
+#countries=list(country_dict.keys())
+countries=list(country_dict_just_five.keys())
 
 common_terms = ['he', 'him', 'she', 'her', 'that', 'if', 'me', 'about', 'over']
 
