@@ -19,7 +19,9 @@ for e_type in eval_types:
     for i in range(len(class_type_setups)):
         class_type = class_type_setups[i][0]
         folder_path = os.path.join(base_eval_path, class_type)
-        file_path = os.path.join(folder_path, e_type, 'overall_agg_sim_True_overall_month_offset_24_smoothwindow_18_evaluation.csv')
+        file_path = os.path.join(folder_path, e_type, 'overall_agg_sim_True_overall_month_offset_{}_smoothwindow_'
+                                                      '{}_evaluation.csv'.format(config.months_prior,
+                                                                                 config.smooth_window_size))
         base_df = pd.read_csv(file_path)
         print("read df from", file_path)
         app_df = pd.DataFrame({'classification_type': [class_type],
