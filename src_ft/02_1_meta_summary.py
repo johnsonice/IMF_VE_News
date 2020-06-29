@@ -261,7 +261,6 @@ def get_country_name_count_2(text):
     return triple_pruned
 
 
-
 def get_countries_by_count(article):
     '''
     Identifies list of countries based on number of instances of this country except for if other countries

@@ -138,7 +138,7 @@ class_type_setups = [
 
         ]
 
-eval_type = 'final_topic_words'
+eval_type = 'final_topic_words' #TEMP
 #%%
 
 def maybe_create(f):

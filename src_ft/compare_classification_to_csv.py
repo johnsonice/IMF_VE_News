@@ -14,7 +14,7 @@ class_type_setups = config.class_type_setups
 
 base_eval_path = config.EVAL_WG
 combined_df = pd.DataFrame()
-eval_types = ['grouped_words']
+eval_types = ['final_topic_words'] #TEMP
 for e_type in eval_types:
     for i in range(len(class_type_setups)):
         class_type = class_type_setups[i][0]
@@ -39,7 +39,7 @@ for e_type in eval_types:
         print("Appended df", app_df)
 
     out_file = os.path.join(config.NEW_PROCESSING_FOLDER,
-                            'country_classification_comparison_using_{}.csv'.format(e_type))
+                            'country_classification_comparison_using_{}.csv'.format('grouped_words'))# TEMP
 
     try:
         already_written = pd.read_csv(out_file)
