@@ -135,8 +135,9 @@ if __name__ == '__main__':
             del topic_meta   # clear memory
             del mp  # clear memory
 
-        ds = pd.read_pickle("temp_in_processing.pkl")
-        os.remove("temp_in_processing.pkl") # put into final
+        ds = pd.read_pickle("/home/apsurek/data/temp_in_processing.pkl")
+        # os.remove("temp_in_processing.pkl") # put into final
+
 
         df = pd.read_pickle(meta_pkl)  # Re-load deleted df - not multiplied when multiprocessing anymore
         new_df = df.join(ds)  # merge country meta
