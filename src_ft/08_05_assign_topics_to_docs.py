@@ -85,7 +85,7 @@ if __name__ == '__main__':
 
     class_type_setups = config.class_type_setups
     model_name = "ldaviz_t100"
-    temp_pkl_file = "temp_in_processing.pkl"
+    temp_pkl_file = "/home/apsurek/temp_in_processing.pkl"
 
     df['data_path'] = json_data_path+'/'+df.index + '.json'
     print('see one example : \n', df['data_path'].iloc[0])
@@ -142,6 +142,5 @@ if __name__ == '__main__':
         df = pd.read_pickle(meta_pkl)  # Re-load deleted df - not multiplied when multiprocessing anymore
         new_df = df.join(ds)  # merge country meta
         del ds  # Free space
-        new_df['country_n'] = new_df['country'].map(lambda x: len(x))
-        new_df.to_pickle(os.path.join(meta_aug, 'doc_details_{}_topic.pkl'.format('crisis')))
+        new_df.to_pickle(os.path.join(meta_aug, 'doc_details_{}_topic_{}.pkl'.format('crisis',model_name)))
         print('augumented document meta data saved at {}'.format(meta_aug))
