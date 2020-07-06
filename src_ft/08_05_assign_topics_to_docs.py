@@ -122,17 +122,19 @@ if __name__ == '__main__':
 
             topic_meta = mp.multi_process_files(workers=10, chunk_size=1000)
 
-            print("TOPIC META:::")
-            print(topic_meta)
+            #print("TOPIC META:::")
+            #print(topic_meta)
 
             if chunky_index != 0:
                 read_series = pd.read_pickle(temp_pkl_file)
-                add_series = pd.Series(predicted_topics, name='{}_predicted_topics'.format(model_name), index=index)
+                add_series = pd.Series(topic_meta[0], name='{}_predicted_topics'.format(model_name),
+                                       index=topic_meta[0])
                 sum_series = read_series.append(add_series)
                 del read_series
                 del add_series
             else:
-                sum_series = pd.Series(predicted_topics, name='{}_predicted_topics'.format(model_name), index=index)
+                sum_series = pd.Series(topic_meta[0], name='{}_predicted_topics'.format(model_name),
+                                       index=topic_meta[0])
 
             print("SUM SERIES:")
             print(sum_series.head())
