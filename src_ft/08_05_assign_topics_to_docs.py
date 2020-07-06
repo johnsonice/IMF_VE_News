@@ -106,7 +106,7 @@ if __name__ == '__main__':
         data_length = len(data_list)
         index = []
         predicted_topics = []
-        while chunky_index < 100000: #data_length:
+        while chunky_index < data_length:
             if chunky_index%100000 == 0:
                 print("Passed ", chunky_index, " files")
             chunk_end = min(chunky_index+pre_chunk_size, data_length)
@@ -136,8 +136,8 @@ if __name__ == '__main__':
                 sum_series = pd.Series(topic_meta[0], name='{}_predicted_topics'.format(model_name),
                                        index=topic_meta[0])
 
-            print("SUM SERIES:")
-            print(sum_series.head())
+            #print("SUM SERIES:")
+            #print(sum_series.head())
 
             sum_series.to_pickle(temp_pkl_file)
             del sum_series
@@ -148,9 +148,8 @@ if __name__ == '__main__':
             del topic_meta   # clear memory
             del mp  # clear memory
 
-        ds = pd.read_pickle("/home/apsurek/data/temp_in_processing.pkl")
+        ds = pd.read_pickle(temp_pkl_file)
         # os.remove("temp_in_processing.pkl") # put into final
-
 
         df = pd.read_pickle(meta_pkl)  # Re-load deleted df - not multiplied when multiprocessing anymore
         new_df = df.join(ds)  # merge country meta
