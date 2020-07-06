@@ -46,8 +46,8 @@ def get_topic_prediction(text):
     bowed = common_dictionary.doc2bow(tokens)
     text_topics = loaded_model.get_document_topics(bowed, minimum_probability=0)
 
-    print(text_topics)
-    print(type(text_topics))
+    #print(text_topics)
+    #print(type(text_topics))
 
     return text_topics
 
@@ -75,7 +75,7 @@ def topic_this_document(article):
     else:
         topics = list()
 
-    print(article['an'], topics)
+    #print(article['an'], topics)
 
     return article['an'], topics
 
@@ -121,6 +121,9 @@ if __name__ == '__main__':
             # mp = Mp(news, get_countries_by_count_2)
 
             topic_meta = mp.multi_process_files(workers=10, chunk_size=1000)
+
+            print("TOPIC META:::")
+            print(topic_meta)
 
             if chunky_index != 0:
                 read_series = pd.read_pickle(temp_pkl_file)
