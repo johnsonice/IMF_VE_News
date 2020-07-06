@@ -46,6 +46,9 @@ def get_topic_prediction(text):
     bowed = common_dictionary.doc2bow(tokens)
     text_topics = loaded_model.get_document_topics(bowed, minimum_probability=0)
 
+    print(text_topics)
+    print(type(text_topics))
+
     return text_topics
 
 
@@ -71,6 +74,8 @@ def topic_this_document(article):
         topics = list(get_topic_prediction(snip))
     else:
         topics = list()
+
+    print(article['an'], topics)
 
     return article['an'], topics
 
@@ -125,6 +130,9 @@ if __name__ == '__main__':
                 del add_series
             else:
                 sum_series = pd.Series(predicted_topics, name='{}_predicted_topics'.format(model_name), index=index)
+
+            print("SUM SERIES:")
+            print(sum_series.head())
 
             sum_series.to_pickle(temp_pkl_file)
             del sum_series
