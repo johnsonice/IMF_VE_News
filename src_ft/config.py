@@ -121,15 +121,15 @@ class_type_setups = [
             #['Min2_AllCountry', 2, None, None, None, None], #Tmp
             #['Min1', 1, None, None, None, None], #Tmp
             #['Min2', 2, None, None, None, None], #Tmp
-            #['Min3', 3, None, None, None, None],
+            ['Min3', 3, None, None, None, None],
             #['Min5', 5, None, None, None, None],
             #['Min3_Max0', 3, 0, "sum", None, None],
             #['Min1_Max0', 1, 0, "sum", None, None],
             #['Min2_Max0', 2, 0, "sum", None, None],
-            ['Min1_Max2_sum', 1, 2, "sum", None, None],
-            ['Min1_Top1', 1, None, None, 1, None],
-            ['Min3_Top1', 3, None, None, 1, None],
-            ['Min1_Top3', 1, None, None, 3, None],
+            #['Min1_Max2_sum', 1, 2, "sum", None, None],
+            #['Min1_Top1', 1, None, None, 1, None],
+            #['Min3_Top1', 3, None, None, 1, None],
+            #['Min1_Top3', 1, None, None, 3, None],
             #['Min1_FullDoc', 1, None, None, None, None],
             #['Min2_FullDoc', 2, None, None, None, None],
             #['Min3_FullDoc', 3, None, None, None, None],
