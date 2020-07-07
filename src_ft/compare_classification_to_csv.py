@@ -38,7 +38,7 @@ for e_type in eval_types:
         combined_df = combined_df.append(app_df)
         print("Appended df", app_df)
 
-    out_file = os.path.join(config.NEW_PROCESSING_FOLDER,
+    out_file = os.path.join(base_eval_path,'classification_comparison',
                             'country_classification_comparison_using_{}.csv'.format('grouped_words'))# TEMP
 
     try:
