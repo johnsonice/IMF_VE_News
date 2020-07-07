@@ -106,7 +106,7 @@ if __name__ == '__main__':
         data_length = len(data_list)
         index = []
         predicted_topics = []
-        while chunky_index < 10000: #data_length:
+        while chunky_index < data_length:
             if chunky_index%100000 == 0:
                 print("Passed ", chunky_index, " files")
             chunk_end = min(chunky_index+pre_chunk_size, data_length)
