@@ -24,17 +24,17 @@ for e_type in eval_types:
                                                                                  config.smooth_window_size))
         base_df = pd.read_csv(file_path)
         print("read df from", file_path)
-        app_df = pd.DataFrame({'classification_type': [class_type],
-                               'sentiment_recall': [base_df['recall'][0]],
-                               'sentiment_prec': [base_df['prec'][0]],
-                               'sentiment_f2': [base_df['f2'][0]],
-                               'topic_recall': [base_df['recall'][1]],
-                               'topic_prec': [base_df['prec'][1]],
-                               'topic_f2': [base_df['f2'][1]],
-                               'topic_sent_recall': [base_df['recall'][2]],
-                               'topic_sent_prec': [base_df['prec'][2]],
-                               'topic_sent_f2': [base_df['f2'][2]]
-                            })
+
+        word_list = list(base_df['word'])
+        new_df_dict = {'classification_type': [class_type]}
+
+        for j in range(len(word_list)):
+            word = word_list[i]
+            new_df_dict[word+'_recall'] = base_df['recall'][j]
+            new_df_dict[word+'_prec'] = base_df['prec'][j]
+            new_df_dict[word+'_f2'] = base_df['f2'][j]
+
+        app_df = pd.DataFrame(new_df_dict)
         combined_df = combined_df.append(app_df)
         print("Appended df", app_df)
 
