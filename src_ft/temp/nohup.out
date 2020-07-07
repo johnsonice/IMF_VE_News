@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "temp_fix_topics_to_meta.py", line 22, in <module>
+    new_df.to_pickle(new_df_file)
+  File "/home/chuang/anaconda3/envs/nlp/lib/python3.6/site-packages/pandas/core/generic.py", line 2594, in to_pickle
+    protocol=protocol)
+  File "/home/chuang/anaconda3/envs/nlp/lib/python3.6/site-packages/pandas/io/pickle.py", line 73, in to_pickle
+    is_text=False)
+  File "/home/chuang/anaconda3/envs/nlp/lib/python3.6/site-packages/pandas/io/common.py", line 430, in _get_handle
+    f = open(path_or_buf, mode)
+NotADirectoryError: [Errno 20] Not a directory: '/data/News_data_raw/FT_WD_research/doc_meta/doc_details_crisis_aug_Min1.pkl/doc_details_crisis_topic_ldaviz_t100.pkl'
