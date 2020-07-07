@@ -90,7 +90,7 @@ if __name__ == '__main__':
 
     class_type_setups = config.class_type_setups
     model_name = "ldaviz_t100"
-    temp_pkl_file = "/home/apsurek/temp_in_processing.pkl"
+    temp_pkl_file = "/home/apsurek/temp_in_processing_2.pkl"
 
     df['data_path'] = json_data_path+'/'+df.index + '.json'
     print('see one example : \n', df['data_path'].iloc[0])
@@ -106,7 +106,7 @@ if __name__ == '__main__':
         data_length = len(data_list)
         index = []
         predicted_topics = []
-        while chunky_index < data_length:
+        while chunky_index < 10000: #data_length:
             if chunky_index%100000 == 0:
                 print("Passed ", chunky_index, " files")
             chunk_end = min(chunky_index+pre_chunk_size, data_length)
@@ -122,8 +122,10 @@ if __name__ == '__main__':
 
             topic_meta = mp.multi_process_files(workers=10, chunk_size=1000)
 
-            #print("TOPIC META:::")
-            #print(topic_meta)
+            print("TOPIC META 0 :::")
+            print(topic_meta[0])
+            print("TOPIC META 0 :::")
+            print(topic_meta[1])
 
             if chunky_index != 0:
                 read_series = pd.read_pickle(temp_pkl_file)

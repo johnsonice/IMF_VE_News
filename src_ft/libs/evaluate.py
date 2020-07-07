@@ -11,10 +11,11 @@ from anomaly_detection_hpfilter_mad import anomaly_detection
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-def evaluate(word_list, country, frequency_path,method='zscore', 
-             crisis_defs='kr',period='month', stemmed=False, 
+
+def evaluate(word_list, country, frequency_path, method='zscore',
+             crisis_defs='kr', period='month', stemmed=False,
              window=24, direction='incr', months_prior=24, fbeta=2,
-             eval_end_date=None,weights=None,z_thresh=1.96):
+             eval_end_date=None, weights=None, z_thresh=1.96):
     """
     evaluates how the aggregate frequency of the provided word list performs based on the evaluation method
     and the crisis definitions provided.
@@ -36,12 +37,12 @@ def evaluate(word_list, country, frequency_path,method='zscore',
             NB beta determines how you weight recall wrt precision. 2 means recall is weighted as twice as important.
     """
     # Value checks
-    assert method in ('zscore','hpfilter')
-    assert period in ('quarter','month','week','year')
+    assert method in ('zscore', 'hpfilter')
+    assert period in ('quarter', 'month', 'week', 'year')
     assert direction in ('incr', 'decr', None)
-    assert crisis_defs in ('kr','ll')
+    assert crisis_defs in ('kr', 'll')
     fq = period[0].lower()
-    assert fq in ('q','m')  ## make sure period is set to eight quarter or month
+    assert fq in ('q', 'm')  ## make sure period is set to eight quarter or month
     
     # Setup
     ag_freq = aggregate_freq(word_list, country, period, stemmed,frequency_path,weights=weights)        ## sum frequency for specified words - it is pd series with time as index
@@ -100,14 +101,15 @@ def get_preds_from_pd(ag_freq,country,method='zscore', crisis_defs='kr',period='
 
     return preds 
 
-def get_eval_stats(fq,starts,ends,preds,period,months_prior,fbeta=2):
+
+def get_eval_stats(fq, starts, ends, preds, period, months_prior, fbeta=2):
     
     # Calc number of true positives, false positives and false negatives
     # True Positives: The number of anomalies that occured within t years of a crisis onset (i.e. within forecast window)
     # False positives: The number of anomalies occuring ouside of either crisis or forecast windows
     # False Negatives: The number of crises without an anomaly occuring in the forecast window
     offset = pd.DateOffset(months=months_prior)
-    tp, fn, mid_crisis  = [], [], []
+    tp, fn, mid_crisis = [], [], []
     for s, e in zip(starts, ends):
         forecast_window = pd.PeriodIndex(pd.date_range(s.to_timestamp(how='s') - offset, s.to_timestamp(how='e'),freq=fq), freq=fq) 
         crisis_window = pd.PeriodIndex(pd.date_range(s.to_timestamp(how='s'), e.to_timestamp(how='e'),freq=fq), freq=fq) 
@@ -137,11 +139,13 @@ def get_eval_stats(fq,starts,ends,preds,period,months_prior,fbeta=2):
     #print(recall, precision, fscore, len(tp), len(fp), len(fn))
     return recall, precision, fscore, len(tp), len(fp), len(fn)
 
+
 def get_recall(tp, fn):
     try:
         return tp / (tp + fn)
     except ZeroDivisionError:
         return np.nan
+
 
 def get_precision(tp, fp):
     try:
@@ -149,16 +153,17 @@ def get_precision(tp, fp):
     except ZeroDivisionError:
         return np.nan
 
+
 def get_fscore(tp, fp, fn, beta):
     try:
         return ((1+beta**2) * tp) / ((1+beta**2) * tp + (beta**2 * fn) + fp)
-    except Zero :
+    except ZeroDivisionError:
         return np.nan
 
 
 ## get country specific statistics
 def get_country_stats(countries, words, frequency_path, window, months_prior, method, 
-                      crisis_defs,period,eval_end_date=None,weights=None,z_thresh=1.96):
+                      crisis_defs, period, eval_end_date=None, weights=None, z_thresh=1.96):
     country_stats = []
     for country in countries:
         stats = pd.Series(evaluate(words, 
@@ -178,7 +183,8 @@ def get_country_stats(countries, words, frequency_path, window, months_prior, me
     all_stats = pd.DataFrame(country_stats)
     return all_stats
 
-## get w2v related words with wieghts 
+
+## get w2v related words with weights
 def get_input_words_weights(args,wg,vecs=None,weighted=False):
     # use topn most similar terms as words for aggregate freq if args.sims
     if args.sims:
@@ -196,11 +202,11 @@ def get_input_words_weights(args,wg,vecs=None,weighted=False):
                 #print('Not in vocabulary: {}'.format(wg_update))
                 raise Exception('Not in vocabulary: {}'.format(wg_update))
                 
-        wgw = [(w,1) for w in wg]  ## assign weight 1 for original words
+        wgw = [(w, 1) for w in wg]  ## assign weight 1 for original words
         words_weights = sims + wgw   
     # otherwise the aggregate freq is just based on the term(s) in the current wg.
     else:
-        wgw = [(w,1) for w in wg]  ## assign weight 1 for original words
+        wgw = [(w, 1) for w in wg]  ## assign weight 1 for original words
         words_weights = wgw
     
     ## get words and weights as seperate list
@@ -209,6 +215,6 @@ def get_input_words_weights(args,wg,vecs=None,weighted=False):
     if weighted:    
         weights = [w[1] for w in words_weights]
     else:
-        weights= None
+        weights = None
     
-    return words,weights
+    return words, weights

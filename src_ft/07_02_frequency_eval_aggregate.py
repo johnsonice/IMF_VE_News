@@ -164,7 +164,7 @@ if __name__ == '__main__':
         df = pd.DataFrame(overall_res,columns=['word','sim_words','recall','prec','f2'])
         save_file_full = os.path.join(args.eval_path,
                                        'overall_agg_sim_{}_overall_{}_offset_{}_smoothwindow_{}_evaluation.csv'.format(
-                                           args.sims,args.period,args.months_prior,args.window))
+                                           args.sims, args.period, args.months_prior, args.window))
         df.to_csv(save_file_full)
         print("Saved at:", save_file_full)
 
