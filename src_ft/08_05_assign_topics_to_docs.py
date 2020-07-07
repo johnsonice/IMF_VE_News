@@ -159,13 +159,13 @@ if __name__ == '__main__':
         df = pd.read_pickle(meta_pkl)  # Re-load deleted df - not multiplied when multiprocessing anymore
         new_df = df.join(ds)  # merge country meta
         #new_df_file = os.path.join(meta_aug, 'doc_details_{}_topic_{}.pkl'.format('crisis', model_name))
-        new_df_file = "/data/News_data_raw/FT_WD_research/topic_test1.pkl"
+        new_df_file = "/data/News_data_raw/FT_WD_research/test/topic_test1.pkl"
         new_df.to_pickle(new_df_file)
         print('Topic document meta data saved at {}'.format(new_df_file))
 
         aug_df = pd.read_pickle(meta_aug_pkl)
         new_aug_df = aug_df.join(ds)
         #new_aug_file = os.path.join(meta_aug, 'doc_details_{}_aug_{}_topic_{}.pkl'.format('crisis', 'Min1', model_name))
-        new_aug_file = "/data/News_data_raw/FT_WD_research/topic_aug_test1.pkl"
+        new_aug_file = "/data/News_data_raw/FT_WD_research/test/topic_aug_test1.pkl"
         new_aug_df.to_pickle(new_aug_file)
         print('Aug topic document meta data saved at {}'.format(new_aug_file))
