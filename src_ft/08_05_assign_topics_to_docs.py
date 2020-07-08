@@ -90,7 +90,7 @@ if __name__ == '__main__':
 
     class_type_setups = config.class_type_setups
     model_name = "ldaviz_t100"
-    temp_pkl_file = "/data/News_data_raw/FT_WD_research/test/topic_data_series_t3.pkl"
+    temp_pkl_file = "/data/News_data_raw/FT_WD_research/test/topic_data_series_t4.pkl"
 
     df['data_path'] = json_data_path+'/'+df.index + '.json'
     print('see one example : \n', df['data_path'].iloc[0])
@@ -102,6 +102,11 @@ if __name__ == '__main__':
     part_i = 0
     partition_start = 0
     partition_size = 200000
+
+    if len(sys.argv) > 0:
+        part_i = sys.argv[0]
+        partition_start = partition_size * part_i
+
     while partition_start < data_length:
         partition_end = min(partition_start + partition_size, data_length)
 
