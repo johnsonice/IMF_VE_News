@@ -91,6 +91,7 @@ if __name__ == '__main__':
     class_type_setups = config.class_type_setups
     model_name = "ldaviz_t100"
     temp_pkl_file = "/data/News_data_raw/FT_WD_research/test/topic_data_series_t4.pkl"
+    topiccing_folder = "/data/News_data_raw/FT_WD_research/topiccing"
 
     df['data_path'] = json_data_path+'/'+df.index + '.json'
     print('see one example : \n', df['data_path'].iloc[0])
@@ -109,6 +110,7 @@ if __name__ == '__main__':
 
     while partition_start < data_length:
         partition_end = min(partition_start + partition_size, data_length)
+        partition_save_file = os.path.join(topiccing_folder, "series_savepoint_part{}.pkl".format(part_i))
 
         chunky_index = 0
         pre_chunk_size = 10000
@@ -125,13 +127,13 @@ if __name__ == '__main__':
                 # streamer = MetaStreamer(data_list[chunky_index:chunk_end])
                 streamer = MetaStreamer_SLOW(data_list[chunky_index:chunk_end])  # TMP
 
-                news = streamer.multi_process_files(workers=10, chunk_size=1000)
+                news = streamer.multi_process_files(workers=7, chunk_size=500)
                 del streamer  # free memory
 
                 mp = Mp(news, topic_this_document)  # TMP
                 # mp = Mp(news, get_countries_by_count_2)
 
-                topic_meta = mp.multi_process_files(workers=10, chunk_size=1000)
+                topic_meta = mp.multi_process_files(workers=7, chunk_size=500)
 
                 index = [i[0] for i in topic_meta]
                 country_list = [i[1] for i in topic_meta]
@@ -153,7 +155,7 @@ if __name__ == '__main__':
                 #print("SUM SERIES:")
                 #print(sum_series.head())
 
-                sum_series.to_pickle(temp_pkl_file)
+                sum_series.to_pickle(partition_save_file)
                 del sum_series
                 print("Wrote up to", chunky_index)
 
@@ -162,29 +164,6 @@ if __name__ == '__main__':
                 del topic_meta   # clear memory
                 del mp  # clear memory
 
-            ds = pd.read_pickle(temp_pkl_file)
-            # os.remove("temp_in_processing.pkl") # put into final
-
-            meta_root = config.DOC_META
-            meta_aug = config.AUG_DOC_META
-            meta_aug_pkl = os.path.join(config.AUG_DOC_META, 'doc_details_crisis_aug_{}.pkl'.format('Min1'))
-            meta_pkl = config.DOC_META_FILE
-
-            df = pd.read_pickle(meta_pkl)  # Re-load deleted df - not multiplied when multiprocessing anymore
-            new_df = df.join(ds)  # merge country meta
-            new_df_file = os.path.join(meta_aug, 'a_part{}_doc_details_{}_topic_{}.pkl'.format(part_i,'crisis', model_name))
-            #new_df_file = "/data/News_data_raw/FT_WD_research/test/topic_test1.pkl"
-            new_df.to_pickle(new_df_file)
-            print('Topic document meta data saved at {}'.format(new_df_file))
-
-            aug_df = pd.read_pickle(meta_aug_pkl)
-            new_aug_df = aug_df.join(ds)
-            new_aug_file = os.path.join(meta_aug, 'a_part{}_doc_details_{}_aug_{}_topic_{}.pkl'.format(part_i,'crisis', 'Min1', model_name))
-            #new_aug_file = "/data/News_data_raw/FT_WD_research/test/topic_aug_test1.pkl"
-            new_aug_df.to_pickle(new_aug_file)
-            print('Aug topic document meta data saved at {}'.format(new_aug_file))
-
             partition_start = partition_end
+            print('Completed part number {} writing up to {}'.format(part_i, partition_end))
             part_i = part_i + 1
-
-        print('Completed part number {} writing up to {}'.format(part_i, partition_end))
