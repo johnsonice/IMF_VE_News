@@ -90,85 +90,96 @@ if __name__ == '__main__':
 
     class_type_setups = config.class_type_setups
     model_name = "ldaviz_t100"
-    temp_pkl_file = "/data/News_data_raw/FT_WD_research/test/topic_data_series_t2.pkl"
+    temp_pkl_file = "/data/News_data_raw/FT_WD_research/test/topic_data_series_t3.pkl"
 
     df['data_path'] = json_data_path+'/'+df.index + '.json'
     print('see one example : \n', df['data_path'].iloc[0])
     pre_chunked = True  # The memory will explode otherwise
+    data_list = df['data_path'].tolist()
+    del df
+    data_length = len(data_list)
 
-    # Go through the files in chunks
-    if pre_chunked:
+    part_i = 0
+    partition_start = 0
+    partition_size = 200000
+    while partition_start < data_length:
+        partition_end = min(partition_start + partition_size, data_length)
 
-        data_list = df['data_path'].tolist()
-        del df
-        pre_chunk_size = 10000
         chunky_index = 0
-        data_length = len(data_list)
-        index = []
-        predicted_topics = []
-        while chunky_index < data_length:
-            if chunky_index%100000 == 0:
-                print("Passed ", chunky_index, " files")
-            chunk_end = min(chunky_index+pre_chunk_size, data_length)
+        pre_chunk_size = 10000
+        # Go through the files in chunks
+        if pre_chunked:
 
-            # streamer = MetaStreamer(data_list[chunky_index:chunk_end])
-            streamer = MetaStreamer_SLOW(data_list[chunky_index:chunk_end])  # TMP
+            index = []
+            predicted_topics = []
+            while chunky_index < partition_end:
+                if chunky_index%100000 == 0:
+                    print("Passed ", chunky_index, " files")
+                chunk_end = min(chunky_index+pre_chunk_size, partition_end)
 
-            news = streamer.multi_process_files(workers=10, chunk_size=1000)
-            del streamer  # free memory
+                # streamer = MetaStreamer(data_list[chunky_index:chunk_end])
+                streamer = MetaStreamer_SLOW(data_list[chunky_index:chunk_end])  # TMP
 
-            mp = Mp(news, topic_this_document)  # TMP
-            # mp = Mp(news, get_countries_by_count_2)
+                news = streamer.multi_process_files(workers=10, chunk_size=1000)
+                del streamer  # free memory
 
-            topic_meta = mp.multi_process_files(workers=10, chunk_size=1000)
+                mp = Mp(news, topic_this_document)  # TMP
+                # mp = Mp(news, get_countries_by_count_2)
 
-            index = [i[0] for i in topic_meta]
-            country_list = [i[1] for i in topic_meta]
+                topic_meta = mp.multi_process_files(workers=10, chunk_size=1000)
 
-            if chunky_index != 0:
-                read_series = pd.read_pickle(temp_pkl_file)
-                add_series = pd.Series(country_list, name='{}_predicted_topics'.format(model_name),
-                                       index=index)
-                sum_series = read_series.append(add_series)
-                del read_series
-                del add_series
-            else:
-                sum_series = pd.Series(country_list, name='{}_predicted_topics'.format(model_name),
-                                       index=index)
+                index = [i[0] for i in topic_meta]
+                country_list = [i[1] for i in topic_meta]
 
-            del index
-            del country_list
+                if chunky_index != 0:
+                    read_series = pd.read_pickle(temp_pkl_file)
+                    add_series = pd.Series(country_list, name='{}_predicted_topics'.format(model_name),
+                                           index=index)
+                    sum_series = read_series.append(add_series)
+                    del read_series
+                    del add_series
+                else:
+                    sum_series = pd.Series(country_list, name='{}_predicted_topics'.format(model_name),
+                                           index=index)
 
-            #print("SUM SERIES:")
-            #print(sum_series.head())
+                del index
+                del country_list
 
-            sum_series.to_pickle(temp_pkl_file)
-            del sum_series
-            print("Wrote up to", chunky_index)
+                #print("SUM SERIES:")
+                #print(sum_series.head())
 
-            chunky_index = chunk_end
+                sum_series.to_pickle(temp_pkl_file)
+                del sum_series
+                print("Wrote up to", chunky_index)
 
-            del topic_meta   # clear memory
-            del mp  # clear memory
+                chunky_index = chunk_end
 
-        ds = pd.read_pickle(temp_pkl_file)
-        # os.remove("temp_in_processing.pkl") # put into final
+                del topic_meta   # clear memory
+                del mp  # clear memory
 
-        meta_root = config.DOC_META
-        meta_aug = config.AUG_DOC_META
-        meta_aug_pkl = os.path.join(config.AUG_DOC_META, 'doc_details_crisis_aug_{}.pkl'.format('Min1'))
-        meta_pkl = config.DOC_META_FILE
+            ds = pd.read_pickle(temp_pkl_file)
+            # os.remove("temp_in_processing.pkl") # put into final
 
-        df = pd.read_pickle(meta_pkl)  # Re-load deleted df - not multiplied when multiprocessing anymore
-        new_df = df.join(ds)  # merge country meta
-        new_df_file = os.path.join(meta_aug, 'a_doc_details_{}_topic_{}.pkl'.format('crisis', model_name))
-        #new_df_file = "/data/News_data_raw/FT_WD_research/test/topic_test1.pkl"
-        new_df.to_pickle(new_df_file)
-        print('Topic document meta data saved at {}'.format(new_df_file))
+            meta_root = config.DOC_META
+            meta_aug = config.AUG_DOC_META
+            meta_aug_pkl = os.path.join(config.AUG_DOC_META, 'doc_details_crisis_aug_{}.pkl'.format('Min1'))
+            meta_pkl = config.DOC_META_FILE
 
-        aug_df = pd.read_pickle(meta_aug_pkl)
-        new_aug_df = aug_df.join(ds)
-        new_aug_file = os.path.join(meta_aug, 'a_doc_details_{}_aug_{}_topic_{}.pkl'.format('crisis', 'Min1', model_name))
-        #new_aug_file = "/data/News_data_raw/FT_WD_research/test/topic_aug_test1.pkl"
-        new_aug_df.to_pickle(new_aug_file)
-        print('Aug topic document meta data saved at {}'.format(new_aug_file))
+            df = pd.read_pickle(meta_pkl)  # Re-load deleted df - not multiplied when multiprocessing anymore
+            new_df = df.join(ds)  # merge country meta
+            new_df_file = os.path.join(meta_aug, 'a_part{}_doc_details_{}_topic_{}.pkl'.format(part_i,'crisis', model_name))
+            #new_df_file = "/data/News_data_raw/FT_WD_research/test/topic_test1.pkl"
+            new_df.to_pickle(new_df_file)
+            print('Topic document meta data saved at {}'.format(new_df_file))
+
+            aug_df = pd.read_pickle(meta_aug_pkl)
+            new_aug_df = aug_df.join(ds)
+            new_aug_file = os.path.join(meta_aug, 'a_part{}_doc_details_{}_aug_{}_topic_{}.pkl'.format(part_i,'crisis', 'Min1', model_name))
+            #new_aug_file = "/data/News_data_raw/FT_WD_research/test/topic_aug_test1.pkl"
+            new_aug_df.to_pickle(new_aug_file)
+            print('Aug topic document meta data saved at {}'.format(new_aug_file))
+
+            partition_start = partition_end
+            part_i = part_i + 1
+
+        print('Completed part number {} writing up to {}'.format(part_i, partition_end))
