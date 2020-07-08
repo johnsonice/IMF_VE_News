@@ -90,7 +90,7 @@ if __name__ == '__main__':
 
     class_type_setups = config.class_type_setups
     model_name = "ldaviz_t100"
-    temp_pkl_file = "/data/News_data_raw/FT_WD_research/test/topic_data_series.pkl"
+    temp_pkl_file = "/data/News_data_raw/FT_WD_research/test/topic_data_series_t1.pkl"
 
     df['data_path'] = json_data_path+'/'+df.index + '.json'
     print('see one example : \n', df['data_path'].iloc[0])
@@ -106,7 +106,7 @@ if __name__ == '__main__':
         data_length = len(data_list)
         index = []
         predicted_topics = []
-        while chunky_index < data_length:
+        while chunky_index < 10000: #data_length:
             if chunky_index%100000 == 0:
                 print("Passed ", chunky_index, " files")
             chunk_end = min(chunky_index+pre_chunk_size, data_length)
@@ -135,6 +135,9 @@ if __name__ == '__main__':
             else:
                 sum_series = pd.Series(country_list, name='{}_predicted_topics'.format(model_name),
                                        index=index)
+
+            del index
+            del country_list
 
             #print("SUM SERIES:")
             #print(sum_series.head())
