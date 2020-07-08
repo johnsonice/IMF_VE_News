@@ -104,7 +104,7 @@ if __name__ == '__main__':
     partition_size = 200000
 
     if len(sys.argv) > 0:
-        part_i = sys.argv[0]
+        part_i = int(sys.argv[0])
         partition_start = partition_size * part_i
 
     while partition_start < data_length:
