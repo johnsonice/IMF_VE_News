@@ -137,6 +137,7 @@ if __name__ == '__main__':
 
             index = [i[0] for i in topic_meta]
             country_list = [i[1] for i in topic_meta]
+            del topic_meta  # clear memory
 
             if chunky_index != 0:
                 read_series = pd.read_pickle(temp_pkl_file)
@@ -159,9 +160,6 @@ if __name__ == '__main__':
             del sum_series
 
             chunky_index = chunk_end
-
-            del topic_meta   # clear memory
-            del mp  # clear memory
 
         partition_series = pd.read_pickle(temp_pkl_file)
         partition_series.to_pickle(partition_save_file)
