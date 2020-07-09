@@ -101,13 +101,14 @@ if __name__ == '__main__':
     data_length = len(data_list)
 
     part_i = 0
-    partition_start = 0
     #partition_size = 200000
     partition_size = 20000 #TEST
 
     if len(sys.argv) > 1:
         part_i = int(sys.argv[1])
-        partition_start = partition_size * part_i
+
+    data_start = partition_size * part_i
+    partition_start = data_start
 
     while partition_start < data_length:
         partition_end = min(partition_start + partition_size, data_length)
@@ -139,7 +140,7 @@ if __name__ == '__main__':
             country_list = [i[1] for i in topic_meta]
             del topic_meta  # clear memory
 
-            if chunky_index != 0:
+            if (chunky_index - data_start) != 0:
                 read_series = pd.read_pickle(temp_pkl_file)
                 add_series = pd.Series(country_list, name='{}_predicted_topics'.format(model_name),
                                        index=index)
@@ -164,7 +165,10 @@ if __name__ == '__main__':
         partition_series = pd.read_pickle(temp_pkl_file)
         partition_series.to_pickle(partition_save_file)
 
-        os.remove(temp_pkl_file)
+        try:
+            os.remove(temp_pkl_file)
+        except IOError:
+            pass
 
         partition_start = partition_end
         print('Completed part number {} writing up to {}'.format(part_i, partition_end))
