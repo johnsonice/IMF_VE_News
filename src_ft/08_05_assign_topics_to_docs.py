@@ -142,7 +142,7 @@ if __name__ == '__main__':
             country_list = [i[1] for i in topic_meta]
             del topic_meta  # clear memory
 
-            if (chunky_index - data_start) != 0:
+            if (chunky_index - partition_start) != 0:
                 read_series = pd.read_pickle(temp_pkl_file)
                 add_series = pd.Series(country_list, name='{}_predicted_topics'.format(model_name),
                                        index=index)
