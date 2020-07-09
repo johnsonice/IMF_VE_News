@@ -29,7 +29,7 @@ for e_type in eval_types:
         new_df_dict = {'classification_type': [class_type]}
 
         for j in range(len(word_list)):
-            word = word_list[i]
+            word = word_list[j]
             new_df_dict[word+'_recall'] = base_df['recall'][j]
             new_df_dict[word+'_prec'] = base_df['prec'][j]
             new_df_dict[word+'_f2'] = base_df['f2'][j]
