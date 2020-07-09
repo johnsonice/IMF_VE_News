@@ -109,7 +109,7 @@ if __name__ == '__main__':
         part_i = int(sys.argv[1])
         partition_start = partition_size * part_i
 
-    while partition_start < 100000: #data_length:
+    while partition_start < data_length:
         partition_end = min(partition_start + partition_size, data_length)
         partition_save_file = os.path.join(topiccing_folder, "series_savepoint_part{}.pkl".format(part_i))
 
@@ -163,6 +163,8 @@ if __name__ == '__main__':
 
         partition_series = pd.read_pickle(temp_pkl_file)
         partition_series.to_pickle(partition_save_file)
+
+        os.remove(temp_pkl_file)
 
         partition_start = partition_end
         print('Completed part number {} writing up to {}'.format(part_i, partition_end))
