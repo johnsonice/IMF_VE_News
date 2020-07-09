@@ -101,14 +101,16 @@ if __name__ == '__main__':
     data_length = len(data_list)
 
     part_i = 0
-    #partition_size = 200000
-    partition_size = 20000 #TEST
+    partition_size = 200000
+    #partition_size = 20000 #TEST
 
     if len(sys.argv) > 1:
         part_i = int(sys.argv[1])
 
     data_start = partition_size * part_i
     partition_start = data_start
+
+    print("Data starting at index {}".format(data_start))
 
     while partition_start < data_length:
         partition_end = min(partition_start + partition_size, data_length)
@@ -170,6 +172,6 @@ if __name__ == '__main__':
         except IOError:
             pass
 
-        partition_start = partition_end
-        print('Completed part number {} writing up to {}'.format(part_i, partition_end))
+        print('Completed part number {} writing from {} up to {}'.format(part_i, partition_start, partition_end))
         part_i = part_i + 1
+        partition_start = partition_end
