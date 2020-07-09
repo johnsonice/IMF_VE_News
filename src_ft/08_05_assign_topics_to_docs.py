@@ -90,7 +90,7 @@ if __name__ == '__main__':
 
     class_type_setups = config.class_type_setups
     model_name = "ldaviz_t100"
-    temp_pkl_file = "/data/News_data_raw/FT_WD_research/test/topic_data_series_t4.pkl"
+    temp_pkl_file = "/data/News_data_raw/FT_WD_research/test/temp_processing_file.pkl"
     topiccing_folder = "/data/News_data_raw/FT_WD_research/topiccing"
 
     df['data_path'] = json_data_path+'/'+df.index + '.json'
@@ -102,68 +102,70 @@ if __name__ == '__main__':
 
     part_i = 0
     partition_start = 0
-    partition_size = 200000
+    #partition_size = 200000
+    partition_size = 20000 #TEST
 
     if len(sys.argv) > 1:
         part_i = int(sys.argv[1])
         partition_start = partition_size * part_i
 
-    while partition_start < data_length:
+    while partition_start < 100000: #data_length:
         partition_end = min(partition_start + partition_size, data_length)
         partition_save_file = os.path.join(topiccing_folder, "series_savepoint_part{}.pkl".format(part_i))
 
-        chunky_index = 0
         pre_chunk_size = 10000
-        # Go through the files in chunks
-        if pre_chunked:
+        index = []
+        predicted_topics = []
+        chunky_index = partition_start
+        while chunky_index < partition_end:
+            #if chunky_index%100000 == 0:
+            #    print("Passed ", chunky_index, " files")
+            chunk_end = min(chunky_index+pre_chunk_size, partition_end)
 
-            index = []
-            predicted_topics = []
-            while chunky_index < partition_end:
-                if chunky_index%100000 == 0:
-                    print("Passed ", chunky_index, " files")
-                chunk_end = min(chunky_index+pre_chunk_size, partition_end)
+            # streamer = MetaStreamer(data_list[chunky_index:chunk_end])
+            streamer = MetaStreamer_SLOW(data_list[chunky_index:chunk_end])  # TMP
 
-                # streamer = MetaStreamer(data_list[chunky_index:chunk_end])
-                streamer = MetaStreamer_SLOW(data_list[chunky_index:chunk_end])  # TMP
+            news = streamer.multi_process_files(workers=10, chunk_size=500)
+            del streamer  # free memory
 
-                news = streamer.multi_process_files(workers=7, chunk_size=500)
-                del streamer  # free memory
+            mp = Mp(news, topic_this_document)  # TMP
+            # mp = Mp(news, get_countries_by_count_2)
+            del news
 
-                mp = Mp(news, topic_this_document)  # TMP
-                # mp = Mp(news, get_countries_by_count_2)
+            topic_meta = mp.multi_process_files(workers=10, chunk_size=500)
+            del mp
 
-                topic_meta = mp.multi_process_files(workers=7, chunk_size=500)
+            index = [i[0] for i in topic_meta]
+            country_list = [i[1] for i in topic_meta]
 
-                index = [i[0] for i in topic_meta]
-                country_list = [i[1] for i in topic_meta]
+            if chunky_index != 0:
+                read_series = pd.read_pickle(temp_pkl_file)
+                add_series = pd.Series(country_list, name='{}_predicted_topics'.format(model_name),
+                                       index=index)
+                sum_series = read_series.append(add_series)
+                del read_series
+                del add_series
+            else:
+                sum_series = pd.Series(country_list, name='{}_predicted_topics'.format(model_name),
+                                       index=index)
 
-                if chunky_index != 0:
-                    read_series = pd.read_pickle(partition_save_file)
-                    add_series = pd.Series(country_list, name='{}_predicted_topics'.format(model_name),
-                                           index=index)
-                    sum_series = read_series.append(add_series)
-                    del read_series
-                    del add_series
-                else:
-                    sum_series = pd.Series(country_list, name='{}_predicted_topics'.format(model_name),
-                                           index=index)
+            del index
+            del country_list
 
-                del index
-                del country_list
+            #print("SUM SERIES:")
+            #print(sum_series.head())
 
-                #print("SUM SERIES:")
-                #print(sum_series.head())
+            sum_series.to_pickle(temp_pkl_file)
+            del sum_series
 
-                sum_series.to_pickle(partition_save_file)
-                del sum_series
-                print("Wrote up to", chunky_index)
+            chunky_index = chunk_end
 
-                chunky_index = chunk_end
+            del topic_meta   # clear memory
+            del mp  # clear memory
 
-                del topic_meta   # clear memory
-                del mp  # clear memory
+        partition_series = pd.read_pickle(temp_pkl_file)
+        partition_series.to_pickle(partition_save_file)
 
-            partition_start = partition_end
-            print('Completed part number {} writing up to {}'.format(part_i, partition_end))
-            part_i = part_i + 1
+        partition_start = partition_end
+        print('Completed part number {} writing up to {}'.format(part_i, partition_end))
+        part_i = part_i + 1
