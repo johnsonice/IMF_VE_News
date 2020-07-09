@@ -90,7 +90,7 @@ if __name__ == '__main__':
 
     class_type_setups = config.class_type_setups
     model_name = "ldaviz_t100"
-    temp_pkl_file = "/data/News_data_raw/FT_WD_research/test/temp_processing_file.pkl"
+    temp_pkl_file = "/data/News_data_raw/FT_WD_research/topiccing/temp_processing_file.pkl"
     topiccing_folder = "/data/News_data_raw/FT_WD_research/topiccing"
 
     df['data_path'] = json_data_path+'/'+df.index + '.json'
