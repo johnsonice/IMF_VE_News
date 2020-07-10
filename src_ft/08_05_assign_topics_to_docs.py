@@ -12,15 +12,8 @@ import sys,os
 sys.path.insert(0,'./libs')
 import config
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn; seaborn.set()
-from crisis_points import country_dict
-from nltk.tokenize import word_tokenize
-from stream import MetaStreamer_fast as MetaStreamer
 from stream import MetaStreamer_slow as MetaStreamer_SLOW
-#import time 
 from mp_utils import Mp
-import re
 import logging
 import gensim
 #plt.rcParams['figure.figsize']=(10,5)
@@ -45,9 +38,6 @@ def get_topic_prediction(text):
     tokens = text.split()
     bowed = common_dictionary.doc2bow(tokens)
     text_topics = loaded_model.get_document_topics(bowed, minimum_probability=0)
-
-    #print(text_topics)
-    #print(type(text_topics))
 
     return text_topics
 
@@ -74,8 +64,6 @@ def topic_this_document(article):
         topics = list(get_topic_prediction(snip))
     else:
         topics = list()
-
-    #print(article['an'], topics)
 
     return article['an'], topics
 

@@ -13,17 +13,7 @@ sys.path.insert(0,'..')
 sys.path.insert(0,'../libs')
 import config
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn; seaborn.set()
-from crisis_points import country_dict
-from nltk.tokenize import word_tokenize
-from stream import MetaStreamer_fast as MetaStreamer
-from stream import MetaStreamer_slow as MetaStreamer_SLOW
 #import time
-from mp_utils import Mp
-import re
-import logging
-import gensim
 #plt.rcParams['figure.figsize']=(10,5)
 
 f_handler = logging.FileHandler('err_log_7_1908.log')

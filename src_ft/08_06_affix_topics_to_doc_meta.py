@@ -12,21 +12,6 @@ import sys,os
 sys.path.insert(0,'./libs')
 import config
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn; seaborn.set()
-from crisis_points import country_dict
-from nltk.tokenize import word_tokenize
-from stream import MetaStreamer_fast as MetaStreamer
-from stream import MetaStreamer_slow as MetaStreamer_SLOW
-#import time 
-from mp_utils import Mp
-import re
-import logging
-import gensim
-#plt.rcParams['figure.figsize']=(10,5)
-
-f_handler = logging.FileHandler('err_log_7_1908.log')
-f_handler.setLevel(logging.WARNING)
 
 this_model = "lda_model_tfidf_100_None_4"
 
@@ -36,7 +21,6 @@ if __name__ == '__main__':
     meta_pkl = config.DOC_META_FILE
 
     model_name = "ldaviz_t100"
-    temp_pkl_file = "/data/News_data_raw/FT_WD_research/test/topic_data_series_t4.pkl"
     topiccing_folder = "/data/News_data_raw/FT_WD_research/topiccing"
 
     files_to_read = [x[2] for x in os.walk(topiccing_folder)]
@@ -48,9 +32,14 @@ if __name__ == '__main__':
             ds = ds.join(pd.read_pickle(this_pickle))
         print("Read up to part {}".format(file_index))
 
+        #Testing Part
+        if file_index == 2:
+            print("BROKE FROM LOOP AT {}".format(file_index))
+            break
+
     df = pd.read_pickle(meta_pkl)
-    new_df = df.join(ds)  # merge country meta
+    new_df = df.join(ds)  # merge topic meta
     #new_df_file = os.path.join(meta_aug, 'doc_details_{}_topic_{}.pkl'.format('crisis', model_name))
-    new_df_file = "/data/News_data_raw/FT_WD_research/test/topic_docu_test.pkl"
+    new_df_file = "/data/News_data_raw/FT_WD_research/test/topic_docu_test.pkl" # For test
     new_df.to_pickle(new_df_file)
     print('Topic document meta data saved at {}'.format(new_df_file))
