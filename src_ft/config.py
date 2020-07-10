@@ -77,14 +77,14 @@ EXPERT_TERMS = os.path.join(OLD_PROCESSING_FOLDER, 'search_terms', 'expert_terms
 
 
 ## file specific inputs ##
-#countries=list(country_dict.keys())
-countries=list(country_dict_just_five.keys())
+countries = list(country_dict.keys())
+#countries = list(country_dict_just_five.keys())
 
 common_terms = ['he', 'him', 'she', 'her', 'that', 'if', 'me', 'about', 'over']
 
 
-def load_search_words(folder,path):
-    file_path = os.path.join(folder,path)
+def load_search_words(folder, path):
+    file_path = os.path.join(folder, path)
     if os.path.exists(file_path):
         df = pd.read_csv(file_path)
         search_groups = df.to_dict()
@@ -115,7 +115,7 @@ targets = load_search_words(SEARCH_TERMS,GROUPED_SEARCH_FILE)
 #         'financial_crisis','crisis','depression','shock']
 
 #targets= ['able', 'enable', 'grow', 'adequately', 'benign', 'buoyant', 'buoyancy', 'calm', 'comfortable', 'confidence', 'confident', 'effective', 'enhance', 'favorable', 'favourable', 'favourably', 'healthy', 'improve', 'improvement', 'mitigate', 'mitigation', 'positive', 'positively', 'profits', 'profitable', 'rally', 'rebound', 'recover', 'recovery', 'resilience', 'resilient', 'smooth', 'solid', 'sound', 'stabilise', 'stabilize', 'stable', 'success', 'successful', 'successfully']
-
+''' TEMP
 class_type_setups = [
 
     ###
@@ -139,6 +139,12 @@ class_type_setups = [
             ['Min1_100topic_AvoidSelect_Over5', 1, None, None, None, [31, 47, 48, 64, 89]]
 
         ]
+'''
+
+class_type_setups = [
+            ['Min1_Top1_AllCountry', 1, None, None, 1, None],
+            ['Min3_Top1_AllCountry', 3, None, None, 1, None],
+]
 
 eval_type = 'grouped_words' #TEMP
 #%%

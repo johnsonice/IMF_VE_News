@@ -37,8 +37,7 @@ common_dictionary = gensim.corpora.Dictionary.load(common_dictionary_path)
 
 model_folder = "/data/News_data_raw/FT_WD/models/topics"
 this_model = "lda_model_tfidf_100_None_4"
-model_address = os.path.join(model_folder, this_model)
-loaded_model = gensim.models.ldamodel.LdaModel.load(model_address)
+aug_file_to_read = os.path.join(config.AUG_DOC_META
 
 if __name__ == '__main__':
     meta_root = config.DOC_META
@@ -60,21 +59,22 @@ if __name__ == '__main__':
     del df
     data_length = len(data_list)
 
-    files_to_read = [x[2] for x in os.walk(topiccing_folder)]
-    for file_index in range(len(files_to_read)):
-        this_pickle = os.path.join(topiccing_folder, files_to_read[file_index])
-        if file_index == 0:
-            ds = pd.read_pickle(this_pickle)
-        else:
-            ds = ds.join(pd.read_pickle(this_pickle))
-        print("Read up to part {}".format(file_index))
+    part_i = 0
+    partition_start = 0
+    partition_size = 200000
 
+    if len(sys.argv) > 1:
+        part_i = int(sys.argv[1])
+        partition_start = partition_size * part_i
+
+    # Sum the series together
 
     meta_root = config.DOC_META
     meta_aug = config.AUG_DOC_META
     meta_aug_pkl = os.path.join(config.AUG_DOC_META, 'doc_details_crisis_aug_{}.pkl'.format('Min1'))
     meta_pkl = config.DOC_META_FILE
 
+    ds = None ## TEMP
     df = pd.read_pickle(meta_pkl)  # Re-load deleted df - not multiplied when multiprocessing anymore
     new_df = df.join(ds)  # merge country meta
     new_df_file = os.path.join(meta_aug, 'a_part{}_doc_details_{}_topic_{}.pkl'.format(part_i,'crisis', model_name))
