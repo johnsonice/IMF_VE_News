@@ -35,7 +35,7 @@ write_to = '/data/News_data_raw/FT_WD_research/topiccing/series_savepoint_part{}
 for i in range(3):
     this_df_pkl = read_from.format(i)
     this_df = pd.read_pickle(this_df_pkl)
-    topic_series_subset = this_df['ldaviz_t100_predicted_topics'][i*200000, (i+1)*200000]
+    topic_series_subset = this_df['ldaviz_t100_predicted_topics'][i*200000: (i+1)*200000]
 
     write_to_pkl = write_to.format(i)
     print("Wrote up to part {} at file {}".format(i, write_to_pkl))
