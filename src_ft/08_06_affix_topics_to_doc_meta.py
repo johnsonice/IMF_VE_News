@@ -30,16 +30,11 @@ if __name__ == '__main__':
             ds = pd.read_pickle(this_pickle)
         else:
             ds = ds.append(pd.read_pickle(this_pickle))
-        print("Read up to part {}".format(file_index))
-
-        #Testing Part
-        if file_index == 2:
-            print("BROKE FROM LOOP AT {}".format(file_index))
-            break
+        print("Read {} files, this one {}".format(file_index, this_pickle))
 
     df = pd.read_pickle(meta_pkl)
     new_df = df.join(ds)  # merge topic meta
-    #new_df_file = os.path.join(meta_aug, 'doc_details_{}_topic_{}.pkl'.format('crisis', model_name))
-    new_df_file = "/data/News_data_raw/FT_WD_research/test/topic_docu_test.pkl" # For test
+    new_df_file = os.path.join(meta_aug, 'doc_details_{}_topic_{}.pkl'.format('crisis', model_name))
+    #new_df_file = "/data/News_data_raw/FT_WD_research/test/topic_docu_test.pkl" # For test
     new_df.to_pickle(new_df_file)
     print('Topic document meta data saved at {}'.format(new_df_file))
