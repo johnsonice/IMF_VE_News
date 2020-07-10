@@ -37,7 +37,7 @@ common_dictionary = gensim.corpora.Dictionary.load(common_dictionary_path)
 
 model_folder = "/data/News_data_raw/FT_WD/models/topics"
 this_model = "lda_model_tfidf_100_None_4"
-aug_file_to_read = os.path.join(config.AUG_DOC_META
+aug_file_to_read = os.path.join(config.AUG_DOC_META, )
 
 if __name__ == '__main__':
     meta_root = config.DOC_META

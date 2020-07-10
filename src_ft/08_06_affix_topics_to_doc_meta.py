@@ -28,37 +28,16 @@ import gensim
 f_handler = logging.FileHandler('err_log_7_1908.log')
 f_handler.setLevel(logging.WARNING)
 
-# TODO make flexible
-corpus_path = os.path.join(config.BOW_TFIDF_DOCS, 'tfidf.mm')
-corpus = gensim.corpora.MmCorpus(corpus_path)
-
-common_dictionary_path = os.path.join(config.BOW_TFIDF_DOCS, 'dictionary')
-common_dictionary = gensim.corpora.Dictionary.load(common_dictionary_path)
-
-model_folder = "/data/News_data_raw/FT_WD/models/topics"
 this_model = "lda_model_tfidf_100_None_4"
-model_address = os.path.join(model_folder, this_model)
-loaded_model = gensim.models.ldamodel.LdaModel.load(model_address)
 
 if __name__ == '__main__':
     meta_root = config.DOC_META
     meta_aug = config.AUG_DOC_META
     meta_pkl = config.DOC_META_FILE
-    json_data_path = config.JSON_LEMMA
 
-    df = pd.read_pickle(meta_pkl)
-
-    class_type_setups = config.class_type_setups
     model_name = "ldaviz_t100"
     temp_pkl_file = "/data/News_data_raw/FT_WD_research/test/topic_data_series_t4.pkl"
     topiccing_folder = "/data/News_data_raw/FT_WD_research/topiccing"
-
-    df['data_path'] = json_data_path+'/'+df.index + '.json'
-    print('see one example : \n', df['data_path'].iloc[0])
-    pre_chunked = True  # The memory will explode otherwise
-    data_list = df['data_path'].tolist()
-    del df
-    data_length = len(data_list)
 
     files_to_read = [x[2] for x in os.walk(topiccing_folder)]
     for file_index in range(len(files_to_read)):
@@ -69,23 +48,9 @@ if __name__ == '__main__':
             ds = ds.join(pd.read_pickle(this_pickle))
         print("Read up to part {}".format(file_index))
 
-
-    meta_root = config.DOC_META
-    meta_aug = config.AUG_DOC_META
-    meta_aug_pkl = os.path.join(config.AUG_DOC_META, 'doc_details_crisis_aug_{}.pkl'.format('Min1'))
-    meta_pkl = config.DOC_META_FILE
-
-    df = pd.read_pickle(meta_pkl)  # Re-load deleted df - not multiplied when multiprocessing anymore
+    df = pd.read_pickle(meta_pkl)
     new_df = df.join(ds)  # merge country meta
-    new_df_file = os.path.join(meta_aug, 'a_part{}_doc_details_{}_topic_{}.pkl'.format(part_i,'crisis', model_name))
-    #new_df_file = "/data/News_data_raw/FT_WD_research/test/topic_test1.pkl"
+    #new_df_file = os.path.join(meta_aug, 'doc_details_{}_topic_{}.pkl'.format('crisis', model_name))
+    new_df_file = "/data/News_data_raw/FT_WD_research/test/topic_docu_test.pkl"
     new_df.to_pickle(new_df_file)
     print('Topic document meta data saved at {}'.format(new_df_file))
-
-    aug_df = pd.read_pickle(meta_aug_pkl)
-    new_aug_df = aug_df.join(ds)
-    new_aug_file = os.path.join(meta_aug, 'a_part{}_doc_details_{}_aug_{}_topic_{}.pkl'.format(part_i,'crisis', 'Min1', model_name))
-    #new_aug_file = "/data/News_data_raw/FT_WD_research/test/topic_aug_test1.pkl"
-    new_aug_df.to_pickle(new_aug_file)
-    print('Aug topic document meta data saved at {}'.format(new_aug_file))
-
