@@ -23,7 +23,7 @@ if __name__ == '__main__':
     model_name = "ldaviz_t100"
     topiccing_folder = "/data/News_data_raw/FT_WD_research/topiccing"
 
-    files_to_read = [x[2] for x in os.walk(topiccing_folder)]
+    files_to_read = list(os.walk(topiccing_folder))[0][2]
     for file_index in range(len(files_to_read)):
         this_pickle = os.path.join(topiccing_folder, files_to_read[file_index])
         if file_index == 0:
