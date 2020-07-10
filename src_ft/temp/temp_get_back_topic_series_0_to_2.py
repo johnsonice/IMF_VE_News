@@ -38,5 +38,6 @@ for i in range(3):
     topic_series_subset = this_df['ldaviz_t100_predicted_topics'][i*200000: (i+1)*200000]
 
     write_to_pkl = write_to.format(i)
+    topic_series_subset.to_pickle(write_to_pkl)
     print("Wrote up to part {} at file {}".format(i, write_to_pkl))
 
