@@ -29,7 +29,7 @@ if __name__ == '__main__':
         if file_index == 0:
             ds = pd.read_pickle(this_pickle)
         else:
-            ds = ds.join(pd.read_pickle(this_pickle))
+            ds = ds.append(pd.read_pickle(this_pickle))
         print("Read up to part {}".format(file_index))
 
         #Testing Part
