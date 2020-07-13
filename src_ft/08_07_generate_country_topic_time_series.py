@@ -85,6 +85,7 @@ if __name__ == '__main__':
                     temp_pkl_file = open(country_temp_pkl, 'rb')
                     all_periods_dict = pkl.load(temp_pkl_file)
                     temp_pkl_file.close()
+                    print("Loaded pickle file {}".format(country_temp_pkl))
                 else:
                     all_periods_dict = {}
 
@@ -124,19 +125,21 @@ if __name__ == '__main__':
                 pkl.dump(all_periods_dict, temp_pkl_file) # Kept for safety
                 temp_pkl_file.close()
 
-                if part_i*partition_size >= data_length: # Indicates last partition
+                if (part_i+1)*partition_size >= data_length: # Indicates last partition - test this TODO
                     if len(all_periods_dict) == 0:
                         print("Country {} had no observations".format(country))
                         break
 
                     index_list = list(all_periods_dict.keys())
-                    this_country_df = pd.concat([pd.DataFrame(index=ind,columns=list(all_periods_dict[ind].keys()),
-                                                              data=list(all_periods_dict[ind].values()))
-                                                 for ind in index_list])
+                    columns = list(all_periods_dict[index_list[0]].keys())
+                    data = [list(all_periods_dict[ind].values()) for ind in index_list]
+                    this_country_df = pd.DataFrame(index=index_list, columns=columns, data=data)
                     country_save_file = os.path.join(save_folder, "{}_100_topic_time_series.csv".format(country))
+                    this_country_df = this_country_df.sort_index()
                     this_country_df.to_csv(country_save_file)
                     print("Country time series save at {}".format(country_save_file))
                     del this_country_df
 
                 del all_periods_dict
+
             del part_df
