@@ -91,7 +91,8 @@ if __name__ == '__main__':
             this_pickle = os.path.join(series_saved_at, files_to_read[file_index])
             ds = pd.read_pickle(this_pickle)
             print("DS\n",ds.head())
-            df.join(ds, how="left")
+            #df.join(ds, how="left")
+            df.join(ds)
             print("DF\n",df.head())
 
             print("Read {} files, this one {}".format(file_index, this_pickle))
