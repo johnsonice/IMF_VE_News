@@ -166,7 +166,8 @@ def maybe_create(f):
 if __name__ == "__main__":
     folders = [RAW_DATA_PATH, OLD_PROCESSING_FOLDER, NEW_PROCESSING_FOLDER, SEARCH_TERMS,
                DOC_META, AUG_DOC_META, JSON_LEMMA, JSON_LEMMA_SMALL, MODELS, NGRAMS, TOPIC_MODELS,
-               VS_MODELS, BOW_TFIDF_DOCS, FREQUENCY, EVAL, EVAL_WG, EVAL_TS]
+               VS_MODELS, BOW_TFIDF_DOCS, FREQUENCY, EVAL, EVAL_WG, EVAL_TS, topiccing_folder, topiccing_meta,
+               topiccing_time_series]
     weights = [DOC_META_FILE, PHRASER, W2V]
 
     for f in folders:
