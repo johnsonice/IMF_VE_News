@@ -91,10 +91,10 @@ if __name__ == '__main__':
             this_pickle = os.path.join(series_saved_at, files_to_read[file_index])
             ds = pd.read_pickle(this_pickle)
             df.join(ds, how="left")
+            print(df.head())
+            break
 
             print("Read {} files, this one {}".format(file_index, this_pickle))
 
-        unique_periods = set(df[period])
-
-        generate_country_time_series(countries, period, df, setup_name)
+        #generate_country_time_series(countries, period, df, setup_name)
 
