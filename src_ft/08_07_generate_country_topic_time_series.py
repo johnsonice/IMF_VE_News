@@ -85,14 +85,18 @@ if __name__ == '__main__':
         df = df.filter([period, 'country', 'country_n']) # Drop unnecessary columns from mem
 
         files_to_read = list(os.walk(series_saved_at))[0][2]
+        ds = None
         for file_index in range(len(files_to_read)):
             this_pickle = os.path.join(series_saved_at, files_to_read[file_index])
-            ds = pd.read_pickle(this_pickle)
-            print("DS\n",ds.head())
-            df = df.join(ds, how="left")
-            print("DF\n",df.head())
+            if ds is None:
+                ds = pd.read_pickle(this_pickle)
+            else:
+                ds = ds.append(pd.read_pickle(this_pickle))
 
             print("Read {} files, this one {}".format(file_index, this_pickle))
+
+        df = df.join(ds, how="left")
+        del ds  #Free mem
 
         generate_country_time_series(countries, period, df, setup_name)
 
