@@ -93,7 +93,6 @@ if __name__ == '__main__':
                 for i, this_period in enumerate(unique_periods):
 
                     this_period_df = this_country_df[this_country_df[period] == this_period]  # Look at only this period
-                    new_period_df = get_period_topic_average(this_period_df)
                     topics_list_series = this_period_df['{}_predicted_topics'.format(model_name)].to_list()
                     num_new_docs = this_period_df.shape[0]  # Needed for divisor and further averages
 
