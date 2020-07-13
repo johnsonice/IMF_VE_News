@@ -49,7 +49,6 @@ if __name__ == '__main__':
 
         save_folder = os.path.join(topiccing_folder, 'time_series', setup_name)
 
-        series_save_format = "series_savepoint_part{}.pkl"
         num_of_series = len(list(os.walk(series_saved_at))[0][2])
 
         for part_i in range(num_of_series):
@@ -59,7 +58,7 @@ if __name__ == '__main__':
 
             part_df = df[partition_start:partition_end]
 
-            this_series_file = series_save_format.format(part_i)
+            this_series_file = series_base_file.format(part_i)
             ds = pd.read_pickle(this_series_file)
             part_df = part_df.join(ds, how="left")
             del ds
