@@ -88,7 +88,7 @@ if __name__ == '__main__':
 
         files_to_read = list(os.walk(series_saved_at))[0][2]
         for file_index in range(len(files_to_read)):
-            this_pickle = os.path.join(topiccing_folder, files_to_read[file_index])
+            this_pickle = os.path.join(series_saved_at, files_to_read[file_index])
             ds = pd.read_pickle(this_pickle)
             df.join(ds, how="left")
 
