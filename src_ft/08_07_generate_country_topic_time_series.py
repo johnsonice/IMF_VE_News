@@ -23,6 +23,8 @@ def get_period_topic_average(this_period_df):
     topics_dict = {x: [0] for x in range(0, num_topics)}
     divisor = this_period_df.shape[0]
     for topics_list in topics_list_series:
+        print("TOPICS LIST")
+        print(topics_list)
         for tup in topics_list:
             topics_dict[tup[0]][0] += tup[1]/divisor
 
