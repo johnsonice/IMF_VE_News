@@ -1,0 +1,6 @@
+,date,week,month,quarter,crisis,data_path,country,country_n
+ftda-2000-0822-0022-2,2000-08-22,2000-08-21/2000-08-27,2000-08,2000Q3,0,/data/News_data_raw/FT_WD/json_lemma/ftda-2000-0822-0022-2.json,[],0
+ft-10d8c9d4-fc0f-11e8-aebf-99e208d3e521,2018-12-10,2018-12-10/2018-12-16,2018-12,2018Q4,0,/data/News_data_raw/FT_WD/json_lemma/ft-10d8c9d4-fc0f-11e8-aebf-99e208d3e521.json,[],0
+ftda-1987-0319-0005-5,1987-03-19,1987-03-16/1987-03-22,1987-03,1987Q1,0,/data/News_data_raw/FT_WD/json_lemma/ftda-1987-0319-0005-5.json,[],0
+ftda-1990-0206-0029-5,1990-02-06,1990-02-05/1990-02-11,1990-02,1990Q1,0,/data/News_data_raw/FT_WD/json_lemma/ftda-1990-0206-0029-5.json,[],0
+ftda-1983-0910-0015-0,1983-09-10,1983-09-05/1983-09-11,1983-09,1983Q3,0,/data/News_data_raw/FT_WD/json_lemma/ftda-1983-0910-0015-0.json,[],0
