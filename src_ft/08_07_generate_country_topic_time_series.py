@@ -16,15 +16,11 @@ from stream import MetaStreamer_uberfast as MetaStreamer
 from mp_utils import Mp
 
 def get_period_topic_average(this_period_df):
-    #if len(this_period_df) < 1:
-    #    return
 
     topics_list_series = this_period_df['{}_predicted_topics'.format(model_name)].to_list()
     topics_dict = {x: [0] for x in range(0, num_topics)}
     divisor = this_period_df.shape[0]
     for topics_list in topics_list_series:
-        print("TOPICS LIST")
-        print(topics_list)
         for tup in topics_list:
             topics_dict[tup[0]][0] += tup[1]/divisor
 
@@ -97,8 +93,6 @@ if __name__ == '__main__':
             print("DF\n",df.head())
 
             print("Read {} files, this one {}".format(file_index, this_pickle))
-
-            break
 
         generate_country_time_series(countries, period, df, setup_name)
 
