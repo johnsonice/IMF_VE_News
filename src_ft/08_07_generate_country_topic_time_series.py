@@ -102,7 +102,7 @@ if __name__ == '__main__':
                         num_docs = num_new_docs + num_old_docs
                         # Account for proportional weight of previously recorded observations
                         for topic_num in range(num_topics):
-                            topics_dict[topic_num] *= num_old_docs/num_docs
+                            topics_dict[topic_num][0] *= num_old_docs/num_docs
 
                     else:
                         topics_dict = {x: [0] for x in range(num_topics)}
