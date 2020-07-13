@@ -81,8 +81,9 @@ EXPERT_TERMS = os.path.join(OLD_PROCESSING_FOLDER, 'search_terms', 'expert_terms
 
 
 ## file specific inputs ##
-countries = list(country_dict.keys())
+# countries = list(country_dict.keys())
 #countries = list(country_dict_just_five.keys())
+countries = ['argentina']
 
 common_terms = ['he', 'him', 'she', 'her', 'that', 'if', 'me', 'about', 'over']
 
@@ -143,12 +144,13 @@ class_type_setups = [
             ['Min1_100topic_AvoidSelect_Over5', 1, None, None, None, [31, 47, 48, 64, 89]]
             ['Min1_Top1_AllCountry', 1, None, None, 1, None],
             ['Min3_Top1_AllCountry', 3, None, None, 1, None],
+            ['Min1_Max2_sum_AllCountry', 1, 2, "sum", None, None],
 
         ]
 '''
 
 class_type_setups = [
-    ['Min1_Max2_sum_AllCountry', 1, 2, "sum", None, None],
+    ['Min1', 1, None, None, None, None], #Tmp
 ]
 
 eval_type = 'grouped_words' #TEMP
