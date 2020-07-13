@@ -14,45 +14,7 @@ import config_topiccing as config
 import pandas as pd
 from stream import MetaStreamer_uberfast as MetaStreamer
 from mp_utils import Mp
-
-def get_period_topic_average(this_period_df):
-
-    topics_list_series = this_period_df['{}_predicted_topics'.format(model_name)].to_list()
-    topics_dict = {x: [0] for x in range(0, num_topics)}
-    divisor = this_period_df.shape[0]
-    for topics_list in topics_list_series:
-        for tup in topics_list:
-            topics_dict[tup[0]][0] += tup[1]/divisor
-
-    this_period_index_val = this_period_df[period][0]
-    period_topics_df = pd.DataFrame(data=topics_dict.values(), columns=topics_dict.keys(),
-                                    index=[this_period_index_val])
-
-    return period_topics_df
-
-
-def generate_country_time_series(countries, period, df, setup_name):
-    save_folder = os.path.join(topiccing_folder, 'time_series', setup_name) #TMP
-
-    for country in countries:
-        print("Working on country {}".format(country))
-        country_save_file = os.path.join(save_folder, "{}_100_topic_time_series.csv".format(country))
-        df['filter_country'] = df['country'].apply(lambda c: country in c)
-        this_country_df = df[df['filter_country']]
-        df = df.drop(columns=['filter_country'])
-        this_country_df = this_country_df.drop(columns=['filter_country'])
-        unique_periods = set(this_country_df[period])
-
-        for i, this_period in enumerate(unique_periods):
-            print("\r\tworking on period {} of {}...".format(i, len(unique_periods)), end=' ')
-            this_period_df = this_country_df[this_country_df[period]==this_period]
-            new_period_df = get_period_topic_average(this_period_df)
-            if i == 0:
-                topics_df = new_period_df
-            else:
-                topics_df = topics_df.join(new_period_df)
-        topics_df.to_csv(country_save_file)
-        print("Country time series save at {}".format(country_save_file))
+import pickle as pkl
 
 
 if __name__ == '__main__':
@@ -71,12 +33,13 @@ if __name__ == '__main__':
     countries = config.countries
     num_topics = 100
 
+    partition_size = 200000
+
     for setup in class_type_setups:
         setup_name = setup[0]
         meta_aug_pkl = os.path.join(config.AUG_DOC_META, 'doc_details_crisis_aug_{}.pkl'.format(setup_name))
 
         df = pd.read_pickle(meta_aug_pkl) # Read in the aug doc meta
-        df = df[df['country_n'] > 0] # Drop not-identified country documents
         df['data_path'] = json_data_path+'/'+df.index + '.json'
         print('see one example : \n', df['data_path'].iloc[0])
         data_list = df['data_path'].tolist()
@@ -84,19 +47,98 @@ if __name__ == '__main__':
         period = config.COUNTRY_FREQ_PERIOD
         df = df.filter([period, 'country', 'country_n']) # Drop unnecessary columns from mem
 
-        files_to_read = list(os.walk(series_saved_at))[0][2]
-        ds = None
-        for file_index in range(len(files_to_read)):
-            this_pickle = os.path.join(series_saved_at, files_to_read[file_index])
-            if ds is None:
-                ds = pd.read_pickle(this_pickle)
-            else:
-                ds = ds.append(pd.read_pickle(this_pickle))
+        save_folder = os.path.join(topiccing_folder, 'time_series', setup_name)
 
-            print("Read {} files, this one {}".format(file_index, this_pickle))
+        series_save_format = "series_savepoint_part{}.pkl"
+        num_of_series = len(list(os.walk(series_saved_at))[0][2])
 
-        df = df.join(ds, how="left")
-        del ds  #Free mem
+        for part_i in range(num_of_series):
+            print("Working on part {}".format(part_i))
+            partition_start = part_i*partition_size
+            partition_end = min(partition_start + partition_size, data_length)
 
-        generate_country_time_series(countries, period, df, setup_name)
+            part_df = df[partition_start:partition_end]
 
+            this_series_file = series_save_format.format(part_i)
+            ds = pd.read_pickle(this_series_file)
+            part_df = part_df.join(ds, how="left")
+            del ds
+
+            part_df = part_df[part_df['country_n'] > 0]  # Drop 0-country documents
+
+            for country in countries:
+                print("Working on country {}".format(country))
+
+                part_df['filter_country'] = part_df['country'].apply(lambda c: country in c)
+                this_country_df = part_df[part_df['filter_country']]  # look at only this country
+                part_df = part_df.drop(columns=['filter_country'])
+                this_country_df = this_country_df.drop(columns=['filter_country'])
+                unique_periods = set(this_country_df[period])
+
+                # Do not want to create pickles for things with no observations
+                if len(unique_periods) == 0:
+                    break
+
+                country_temp_pkl = os.path.join(save_folder, "{}_temp_in_process.pkl".format(country))
+
+                # If pkl exits, this is not part0, and there needs to be appends
+                if os.path.exists(country_temp_pkl):
+                    temp_pkl_file = open(country_temp_pkl, 'rb')
+                    all_periods_dict = pkl.load(temp_pkl_file)
+                    temp_pkl_file.close()
+                else:
+                    all_periods_dict = {}
+
+                print('Processing {} periods'.format(len(unique_periods)))
+
+                for i, this_period in enumerate(unique_periods):
+
+                    this_period_df = this_country_df[this_country_df[period] == this_period]  # Look at only this period
+                    new_period_df = get_period_topic_average(this_period_df)
+                    topics_list_series = this_period_df['{}_predicted_topics'.format(model_name)].to_list()
+                    num_new_docs = this_period_df.shape[0]  # Needed for divisor and further averages
+
+                    if this_period in all_periods_dict:
+                        topics_dict = all_periods_dict[this_period]
+                        num_old_docs = topics_dict['num_docs']
+                        num_docs = num_new_docs + num_old_docs
+                        # Account for proportional weight of previously recorded observations
+                        for topic_num in range(num_topics):
+                            topics_dict[topic_num] *= num_old_docs/num_docs
+
+                    else:
+                        topics_dict = {x: [0] for x in range(num_topics)}
+                        num_docs = num_new_docs
+
+                    topics_dict.update({'num_docs': num_docs})
+                    for topics_list in topics_list_series:
+
+                        # Check for out-of-order-reading
+                        if type(topics_list) is not list:
+                            raise ValueError("READING IN WRONG ORDER in period {}".format(this_period))
+
+                        for tup in topics_list:
+                            topics_dict[tup[0]][0] += tup[1] / num_docs
+
+                    all_periods_dict.update({this_period: topics_dict})
+                    del topics_dict
+                temp_pkl_file = open(country_temp_pkl, 'wb')
+                pkl.dump(all_periods_dict, temp_pkl_file) # Kept for safety
+                temp_pkl_file.close()
+
+                if part_i*partition_size >= data_length: # Indicates last partition
+                    if len(all_periods_dict) == 0:
+                        print("Country {} had no observations".format(country))
+                        break
+
+                    index_list = list(all_periods_dict.keys())
+                    this_country_df = pd.concat([pd.DataFrame(index=ind,columns=list(all_periods_dict[ind].keys()),
+                                                              data=list(all_periods_dict[ind].values()))
+                                                 for ind in index_list])
+                    country_save_file = os.path.join(save_folder, "{}_100_topic_time_series.csv".format(country))
+                    this_country_df.to_csv(country_save_file)
+                    print("Country time series save at {}".format(country_save_file))
+                    del this_country_df
+
+                del all_periods_dict
+            del part_df
