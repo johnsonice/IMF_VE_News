@@ -361,3 +361,11 @@ class MetaStreamer_fast(Streamer):
 class MetaStreamer_slow(Streamer):
     def retrieve_output(self, data):
         return [data]
+
+
+class MetaStreamer_uberfast(Streamer):
+    def retrieve_output(self, data):
+        data['body'] = None
+        data['title'] = None
+        data['snippet'] = None
+        return [data]

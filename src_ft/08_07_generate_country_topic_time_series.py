@@ -12,32 +12,20 @@ import sys,os
 sys.path.insert(0,'./libs')
 import config
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn; seaborn.set()
-from crisis_points import country_dict
-from nltk.tokenize import word_tokenize
-from stream import MetaStreamer_fast as MetaStreamer
-from stream import MetaStreamer_slow as MetaStreamer_SLOW
-#import time 
+from stream import MetaStreamer_uberfast as MetaStreamer
 from mp_utils import Mp
-import re
-import logging
-import gensim
-#plt.rcParams['figure.figsize']=(10,5)
 
-f_handler = logging.FileHandler('err_log_7_1908.log')
-f_handler.setLevel(logging.WARNING)
 
-# TODO make flexible
-corpus_path = os.path.join(config.BOW_TFIDF_DOCS, 'tfidf.mm')
-corpus = gensim.corpora.MmCorpus(corpus_path)
+def country_period_filter(time_df, country, period):
+    time_df['filter_country'] = time_df['country'].apply(lambda c: country in c)
+    df = time_df['data_path'][(time_df['filter_country'] == True) & (time_df[args.period] == period)]
 
-common_dictionary_path = os.path.join(config.BOW_TFIDF_DOCS, 'dictionary')
-common_dictionary = gensim.corpora.Dictionary.load(common_dictionary_path)
+    return df.tolist()
 
-model_folder = "/data/News_data_raw/FT_WD/models/topics"
-this_model = "lda_model_tfidf_100_None_4"
-aug_file_to_read = os.path.join(config.AUG_DOC_META, )
+
+def generate_country_time_series(countries, period, time_df, uniq_periods, out_dir, phraser, class_type):
+
+
 
 if __name__ == '__main__':
     meta_root = config.DOC_META
@@ -49,8 +37,10 @@ if __name__ == '__main__':
 
     class_type_setups = config.class_type_setups
     model_name = "ldaviz_t100"
-    temp_pkl_file = "/data/News_data_raw/FT_WD_research/test/topic_data_series_t4.pkl"
     topiccing_folder = "/data/News_data_raw/FT_WD_research/topiccing"
+
+    series_saved_at = os.path.join(topiccing_folder, '{}_topic_meta'.format(model_name))
+    series_base_file = os.path.join(series_saved_at, "series_savepoint_part{}.pkl")
 
     df['data_path'] = json_data_path+'/'+df.index + '.json'
     print('see one example : \n', df['data_path'].iloc[0])
@@ -62,17 +52,49 @@ if __name__ == '__main__':
     part_i = 0
     partition_start = 0
     partition_size = 200000
+    class_type_setups = config.class_type_setups
 
     if len(sys.argv) > 1:
         part_i = int(sys.argv[1])
         partition_start = partition_size * part_i
 
-    # Sum the series together
+    while partition_start < data_length:
+        partition_end = min(partition_start + partition_size, data_length)
+        partition_save_file = os.path.join(topiccing_folder, "series_savepoint_part{}.pkl".format(part_i))
 
-    meta_root = config.DOC_META
-    meta_aug = config.AUG_DOC_META
-    meta_aug_pkl = os.path.join(config.AUG_DOC_META, 'doc_details_crisis_aug_{}.pkl'.format('Min1'))
-    meta_pkl = config.DOC_META_FILE
+        series_file = series_base_file.format(part_i)
+        topic_series = pd.read_pickle(series_file)
+
+        pre_chunk_size = 10000
+        index = []
+        predicted_topics = []
+        chunky_index = partition_start
+        while chunky_index < partition_end:
+            chunk_end = min(chunky_index + pre_chunk_size, partition_end)
+            streamer = MetaStreamer(data_list[chunky_index:chunk_end])
+
+            news = streamer.multi_process_files(workers=10, chunk_size=500)
+            del streamer  # free memory
+
+            mp = Mp(news, generate_time_series)  # TMP
+            # mp = Mp(news, get_countries_by_count_2)
+            del news
+
+            # Discard docs without any countries
+
+            # Transform doc_meta time column to the period_start - based on "config.COUNTRY_FREQ_PERIOD - a string"
+
+
+            generate_country_time_series(countries,
+
+            for setup in class_type_setups:
+                setup_name = setup[0]
+                meta_aug_pkl = os.path.join(config.AUG_DOC_META, 'doc_details_crisis_aug_{}.pkl'.format(setup_name))
+
+
+
+
+
 
     ds = None ## TEMP
     df = pd.read_pickle(meta_pkl)  # Re-load deleted df - not multiplied when multiprocessing anymore

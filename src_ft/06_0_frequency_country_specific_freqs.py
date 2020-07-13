@@ -42,6 +42,7 @@ def country_period_filter(time_df,country,period):
     
     return df.tolist()
 
+
 def get_country_freqs(countries, period_choice, time_df, uniq_periods,outdir,phraser,class_type,filter_dict=None):
 
     # Get frequency data for each country supplied
@@ -59,7 +60,7 @@ def get_country_freqs(countries, period_choice, time_df, uniq_periods,outdir,phr
 #            streamer = DocStreamer_fast(doc_list, language='en', regions=[region[country]], region_inclusive=True,
 #                                    title_filter=[country],
 #                                    phraser=phraser,lemmatize=False).multi_process_files(workers=int(os.cpu_count()/2),chunk_size = 500)
-            streamer = DocStreamer_fast(doc_list, language='en',phraser=phraser,
+            streamer = DocStreamer_fast(doc_list, language='en', phraser=phraser,
                                         stopwords=[], lemmatize=False).multi_process_files(workers=15,chunk_size = 50)
             # count
             for doc in streamer:
