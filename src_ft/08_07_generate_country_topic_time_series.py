@@ -10,7 +10,7 @@ Created on 6/20/2020
 
 import sys,os
 sys.path.insert(0,'./libs')
-import config_topiccing as config
+import config
 import pandas as pd
 from stream import MetaStreamer_uberfast as MetaStreamer
 from mp_utils import Mp

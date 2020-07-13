@@ -148,7 +148,7 @@ class_type_setups = [
 '''
 
 class_type_setups = [
-    ['Min1_Max2_sum_AllCountry', 1, 2, "sum", None, None],
+    ['Min1_AllCountry', 1, 2, "sum", None, None],
 ]
 
 eval_type = 'grouped_words' #TEMP
