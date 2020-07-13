@@ -95,7 +95,8 @@ if __name__ == '__main__':
             print("DF\n",df.head())
 
             print("Read {} files, this one {}".format(file_index, this_pickle))
+
             break
 
-        #generate_country_time_series(countries, period, df, setup_name)
+        generate_country_time_series(countries, period, df, setup_name)
 
