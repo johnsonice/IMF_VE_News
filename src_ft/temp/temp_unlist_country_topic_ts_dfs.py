@@ -1,5 +1,5 @@
 import sys,os
-sys.path.insert(0,'./libs')
+sys.path.insert(0,'..')
 sys.path.insert(0,'../libs')
 import config
 import pandas as pd
