@@ -1,7 +1,7 @@
 import sys,os
 sys.path.insert(0,'..')
 sys.path.insert(0,'../libs')
-import config
+import config_topiccing as config
 import pandas as pd
 from stream import MetaStreamer_uberfast as MetaStreamer
 from mp_utils import Mp
