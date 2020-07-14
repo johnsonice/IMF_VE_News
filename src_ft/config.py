@@ -127,11 +127,12 @@ class_type_setups = [
             ['Min2_Max0', 2, 0, "sum", None, None],
             ['Min1_AllCountry', 1, None, None, None, None], #Tmp
             ['Min2_AllCountry', 2, None, None, None, None], #Tmp
+            
             ['Min1', 1, None, None, None, None], #Tmp
             ['Min2', 2, None, None, None, None], #Tmp
             ['Min3', 3, None, None, None, None],
             ['Min5', 5, None, None, None, None],
-            ['Min3_Max0', 3, 0, "sum", None, None],\
+            ['Min3_Max0', 3, 0, "sum", None, None],
             ['Min1_Max2_sum', 1, 2, "sum", None, None],
             ['Min1_Top1', 1, None, None, 1, None],
             ['Min3_Top1', 3, None, None, 1, None],
@@ -143,12 +144,13 @@ class_type_setups = [
             ['Min1_100topic_AvoidSelect_Over5', 1, None, None, None, [31, 47, 48, 64, 89]]
             ['Min1_Top1_AllCountry', 1, None, None, 1, None],
             ['Min3_Top1_AllCountry', 3, None, None, 1, None],
+            ['Min1_AllCountry', 1, 2, "sum", None, None],
 
         ]
 '''
 
 class_type_setups = [
-    ['Min1_AllCountry', 1, 2, "sum", None, None],
+    ['Min2_FullDoc_AllCountry', 2, None, None, None, None], #Tmp
 ]
 
 eval_type = 'grouped_words' #TEMP

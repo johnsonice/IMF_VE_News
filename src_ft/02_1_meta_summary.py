@@ -390,13 +390,13 @@ if __name__ == '__main__':
                     print("Passed ", chunky_index, " files")
                 chunk_end = min(chunky_index+pre_chunk_size, data_length)
 
-                streamer = MetaStreamer(data_list[chunky_index:chunk_end])
-                #streamer = MetaStreamer_SLOW(data_list[chunky_index:chunk_end]) #TMP
+                #streamer = MetaStreamer(data_list[chunky_index:chunk_end])
+                streamer = MetaStreamer_SLOW(data_list[chunky_index:chunk_end]) #TMP
 
                 news = streamer.multi_process_files(workers=10, chunk_size=5000)
 
-                mp = Mp(news, get_countries_by_count_2)
-                #mp = Mp(news, get_countries_by_count_2_slow) #TMP
+                #mp = Mp(news, get_countries_by_count_2)
+                mp = Mp(news, get_countries_by_count_2_slow) #TMP
 
                 country_meta = mp.multi_process_files(workers=10, chunk_size=5000)
                 index = index + [i[0] for i in country_meta]
