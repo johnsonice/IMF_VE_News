@@ -103,10 +103,10 @@ if __name__ == '__main__':
                         num_docs = num_new_docs + num_old_docs
                         # Account for proportional weight of previously recorded observations
                         for topic_num in range(num_topics):
-                            topics_dict[topic_num][0] *= num_old_docs/num_docs
+                            topics_dict[topic_num] *= num_old_docs/num_docs
 
                     else:
-                        topics_dict = {x: [0] for x in range(num_topics)}
+                        topics_dict = {x: 0 for x in range(num_topics)}
                         num_docs = num_new_docs
 
                     topics_dict.update({'num_docs': num_docs})
@@ -117,7 +117,7 @@ if __name__ == '__main__':
                             raise ValueError("READING IN WRONG ORDER in period {}".format(this_period))
 
                         for tup in topics_list:
-                            topics_dict[tup[0]][0] += tup[1] / num_docs
+                            topics_dict[tup[0]] += tup[1] / num_docs
 
                     all_periods_dict.update({this_period: topics_dict})
                     del topics_dict

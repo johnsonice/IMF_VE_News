@@ -140,6 +140,3 @@ if __name__ == "__main__":
         countries = config.countries
         mp = Mp(countries, export_country_ts_2)
         res = mp.multi_process_files(chunk_size=1)
-
-
-    
