@@ -81,9 +81,9 @@ EXPERT_TERMS = os.path.join(OLD_PROCESSING_FOLDER, 'search_terms', 'expert_terms
 
 
 ## file specific inputs ##
-# countries = list(country_dict.keys())
+countries = list(country_dict.keys())
 #countries = list(country_dict_just_five.keys())
-countries = ['argentina']
+#countries = ['argentina']
 
 common_terms = ['he', 'him', 'she', 'her', 'that', 'if', 'me', 'about', 'over']
 
