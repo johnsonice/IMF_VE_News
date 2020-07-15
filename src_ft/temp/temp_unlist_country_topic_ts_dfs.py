@@ -21,5 +21,5 @@ if __name__ == '__main__':
             export_csv = os.path.join(export_folder, "{}_100_topic_time_series.csv".format(country))
             load_df = pd.read_csv(load_csv)
             for topic_num in range(100):
-                load_df[str(topic_num)] = load_df[str(topic_num)].apply(lambda x: x[0])
+                load_df[str(topic_num)] = load_df[str(topic_num)].apply(lambda x: x[1:-1])
             load_df.to_csv(export_csv)
