@@ -14,6 +14,7 @@ import argparse
 from gensim.models.keyedvectors import KeyedVectors
 #from crisis_points import crisis_points
 from evaluate import evaluate, get_recall, get_precision, get_fscore ,get_input_words_weights,get_country_stats
+from evaluate_topiccing import evaluate_topic, get_topic_stats
 import pandas as pd
 #import numpy as np
 import os
@@ -45,54 +46,69 @@ def get_sim_words_set(args,word_group):
     sim_word_set = set(sim_word_group)
     return sim_word_set
 
-def run_evaluation(item,args,weights=None,export=True):
+def eval_one_country(country, args,export=True):
     # use topn most similar terms as words for aggregate freq if args.sims
     # get dataframe of evaluation metrics for each indivicual country
-    k,words = item
-    
-    all_stats = get_country_stats(args.countries, words, 
+    topics_list = range(args.num_topics)
+    weighted = args.weighted
+    read_folder = args.read_folder
+    save_folder = args.save_folder
+
+    all_topics = get_topic_stats(country, topics_list, read_folder, save_folder,
                                   args.frequency_path,
                                   args.window, 
                                   args.months_prior, 
                                   args.method, 
-                                  args.crisis_defs, 
+                                  args.crisis_defs,
                                   period=args.period,
+                                 export=export,
                                   eval_end_date=args.eval_end_date,
-                                  weights=weights,
+                                    weights=weighted,
                                   z_thresh=args.z_thresh)
 
 
     # Aggregate tp, fp, fn numbers for all countries to calc overall eval metrics
-    tp, fp, fn = all_stats['tp'].sum(), all_stats['fp'].sum(), all_stats['fn'].sum()
+    tp, fp, fn = all_topics['tp'].sum(), all_topics['fp'].sum(), all_topics['fn'].sum()
     recall = get_recall(tp, fn)
     prec = get_precision(tp, fp)
     f2 = get_fscore(tp, fp, fn, beta=2)
     avg = pd.Series([recall, prec, f2, tp, fp, fn], 
-                    name='aggregate', 
+                    name='aggregate_topics_{}'.format(country),
                     index=['recall','precision','fscore','tp','fp','fn'])
-    all_stats = all_stats.append(avg)
+    all_stats = all_topics.append(avg)
 
     # Save to file and print results
     if export:
-        all_stats.to_csv(os.path.join(args.eval_path,
-                                      'agg_sim_{}_{}_offset_{}_smoothwindow_{}_{}_evaluation.csv'.format(args.sims,
-                                                                                                       args.period,
-                                                                                                       args.months_prior,
-                                                                                                       args.window,
-                                                                                                       k)))
+        all_stats.to_csv(os.path.join(save_folder,
+                                      'agg_{}_100_topic_evaluation.csv'.format(country)))
     
-    print('\n\n{}:\nevaluated words: {}\n\trecall: {}, precision: {}, f-score: {}'.format(k,words,recall, prec, f2))
-    if args.weighted: 
-        return k,list(zip(words,weights)),recall, prec, f2
-    else:
-        return k,words,recall, prec, f2
+    print('Evaluated country {}'.format(country))
+
+    return avg
     #print('evaluated words: {}'.format(words))
-      
+
+
+def eval_countries(args, export=True):
+    countries = args.countries
+    overall_stats = []
+    for country in countries:
+        country_avgs = eval_one_country(country, args, export)
+        overall_stats.append(country_avgs)
+
+    overall_df = pd.DataFrame(overall_stats)
+
+    print("OVERALL DF")
+    print(overall_df)
+
+    if export:
+        overall_df.to_csv(os.path.join(args.save_folder,'overall_100_topic_evaluation.csv'))
+
+    return overall_df
+
 #        
 #%%
 if __name__ == '__main__':
-    
-    
+        
     parser = argparse.ArgumentParser()
     #parser.add_argument('-t', '--targets', action='store', dest='targets', default=config.targets)
     parser.add_argument('-f', '--frequency_path', action='store', dest='frequency_path', default=config.FREQUENCY)
@@ -112,58 +128,14 @@ if __name__ == '__main__':
     parser.add_argument('-gsf', '--search_file', action='store', dest='search_file',default=config.GROUPED_SEARCH_FILE)
     args = parser.parse_args()
 
-
-    # Parse input word groups, word_gropus is a list of list:
-    # something like this: [['fear'],['worry'],['concern'],['risk'],['threat'],['warn'],['maybe']]
- 
-    file_path = os.path.join(config.SEARCH_TERMS,args.search_file)
-    search_groups = read_grouped_search_words(file_path)  
-    ## it is a dictionary list:
-#       {'fear_language': [['fear']],
-#       'risk_language': [['threat'], ['warn']]}
-
-    if args.sims:
-        vecs = KeyedVectors.load(args.wv_path)
-        
-    if args.weighted:   
-        raise Exception('for now, this module only works for unweighted calculation')
-        print('Weighted flag = True ; Results are aggregated by weighted sum....')
-    else:
-        search_words_sets = dict()
-        for k,v in search_groups.items():
-            if args.sims:
-                search_words_sets[k]=list(get_sim_words_set(args,search_groups[k])) ## turn set to list
-            else:
-                search_words_sets[k] = [t for tl in v for t in tl] ## flattern the list of list 
-        weights = None
+    args.read_folder = '/data/News_data_raw/FT_WD_research/topiccing/time_series/Min1_AllCountry'
+    args.save_folder = '/data/News_data_raw/FT_WD_research/topiccing/eval/Min1_AllCountry'
 
     class_type_setups = config.class_type_setups
     eval_type = config.eval_type
     original_eval_path = args.eval_path
 
     for setup in class_type_setups:
-        class_type = setup[0]
-        freq_path = os.path.join(config.FREQUENCY, class_type)  # Moved the TF_DFs manually for speed since 06_0
-        args.frequency_path = freq_path
 
-        args.eval_path = os.path.join(original_eval_path, class_type, eval_type)
-        #print(search_words_sets)
-        #%%
-        # Get prec, rec, and fscore for each country for each word group
-        iter_items = list(search_words_sets.items())
+        eval_countries(args)
 
-        # run in multi process
-        def multi_run_eval(item,args=args,weights=None):
-            res_stats = run_evaluation(item,args,weights)
-            return res_stats
-
-        mp = Mp(iter_items,multi_run_eval)
-        overall_res = mp.multi_process_files(workers=2, chunk_size=1)  ## do not set workers to be too high, your memory will explode
-
-            ## export over all resoults to csv
-        df = pd.DataFrame(overall_res,columns=['word','sim_words','recall','prec','f2'])
-        save_file_full = os.path.join(args.eval_path,
-                                       'overall_agg_sim_{}_overall_{}_offset_{}_smoothwindow_{}_evaluation.csv'.format(
-                                           args.sims, args.period, args.months_prior, args.window))
-        df.to_csv(save_file_full)
-        print("Saved at:", save_file_full)
