@@ -30,7 +30,6 @@ def eval_one_country(country, args,export=True):
     save_folder = args.save_folder
 
     all_topics = get_topic_stats(country, topics_list, read_folder, save_folder,
-                                  args.frequency_path,
                                   args.window,
                                   args.months_prior,
                                   args.method,
