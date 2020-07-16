@@ -84,6 +84,57 @@ def aggregate_freq(word_list,country, period='quarter', stemmed=False,frequency_
     
     return grp_freq
 
+
+def weight_freq_topic(country, topics_list, period='quarter', frequency_path='../data/frequency',
+                   weighted=False):
+    assert isinstance(topics_list, list), 'Must pass a list to aggregate_freq'
+    if weighted is None:
+        weights = [1] * len(word_list)
+    assert isinstance(weights, list), 'Must pass a list to aggregate_freq'
+    assert len(weights) == len(word_list), 'Weights list must have the same length as word list'
+
+    ww = zip(word_list, weights)
+
+    #################
+    #################
+    # data_path_pkl = os.path.join(frequency_path,'{}_{}_word_freqs{}.pkl'.format(country, period, s_flag))
+    data_path_csv = os.path.join(frequency_path, '{}_{}_word_freqs{}.csv'.format(country, period, s_flag))
+    # data_path = os.path.join(frequency_path,'{}_{}_word_freqs{}.pkl'.format(country, period, s_flag))
+    ##################
+    ##################
+    #    try:
+    #        data = pd.read_pickle(data_path_pkl)
+    #        print('read from pkl')
+    #    except:
+
+    data = pd.read_csv(data_path_csv, index_col=0)
+    # print('read from csv')
+
+    ## fill nas only when document is missing
+    cs = list(data.columns)
+    for c in cs:
+        if data[c].sum() == 0:
+            pass
+        else:
+            data[c].fillna(0, inplace=True)
+
+    freqs = [data.loc[word] * weight for word, weight in ww if word in data.index]
+    grp_freq = sum(freqs)
+
+    ##if none of the words are in corpus, frp_freq qill return 0 need to check befor proceed
+    if isinstance(grp_freq, pd.Series):
+        return grp_freq
+    else:
+        try:
+            grp_freq = data.iloc[0]
+        except:
+            print(country)
+            print('no data for the entire country')
+            grp_freq = pd.Series(np.zeros(len(data.columns)), index=data.columns)
+        grp_freq.values[:] = np.nan
+
+    return grp_freq
+
 def rolling_z_score(freqs, window=24):
     def z_func(x):
         return (x[-1] - x[:-1].mean()) / x[:-1].std(ddof=0)

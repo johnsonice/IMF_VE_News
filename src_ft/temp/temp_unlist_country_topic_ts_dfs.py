@@ -22,4 +22,4 @@ if __name__ == '__main__':
             load_df = pd.read_csv(load_csv)
             for topic_num in range(100):
                 load_df[str(topic_num)] = load_df[str(topic_num)].apply(lambda x: x[1:-1])
-            load_df.to_csv(export_csv)
+            load_df.to_csv(export_csv, index=False)
