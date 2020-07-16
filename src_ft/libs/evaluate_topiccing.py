@@ -164,7 +164,7 @@ def get_fscore(tp, fp, fn, beta):
 def get_topic_stats(country, topic_list, read_folder, save_folder, window, months_prior, method,
                       crisis_defs, period, export=True, eval_end_date=None, weights=None, z_thresh=1.96):
 
-    eval_periods = pd.date_range(start='1980-01', end=eval_end_date['m'], freq='m').to_period('M')
+    eval_periods = pd.date_range(start='1980-01', end='2002-01', freq='m').to_period('M')
     temp_df = pd.DataFrame(index=eval_periods)
 
     read_file = os.path.join(read_folder, '{}_100_topic_time_series.csv'.format(country))
