@@ -21,34 +21,9 @@ import os
 from mp_utils import Mp
 import config
 
-#%%
-def read_grouped_search_words(file_path):
-    df = pd.read_csv(file_path)
-    search_groups = df.to_dict()
-    for k,v in search_groups.items():
-        temp_list = [i for i in list(v.values()) if not pd.isna(i)]
-        temp_list = [wg.split('&') for wg in temp_list]   ## split & for wv search 
-        search_groups[k]=temp_list
-    return search_groups
-
-def get_sim_words_set(args,word_group):
-    assert isinstance(word_group,list)     
-    sim_word_group = list()
-    for w in word_group:
-        try:
-            words, weights = get_input_words_weights(args,
-                                                 w,
-                                                 vecs=vecs,
-                                                 weighted=args.weighted)
-            sim_word_group.extend(words)
-        except:
-            print('Not in vocabulary {}'.format(w))
-    sim_word_set = set(sim_word_group)
-    return sim_word_set
-
 def eval_one_country(country, args,export=True):
     # use topn most similar terms as words for aggregate freq if args.sims
-    # get dataframe of evaluation metrics for each indivicual country
+    # get dataframe of evaluation metrics for each individual country
     topics_list = range(args.num_topics)
     weighted = args.weighted
     read_folder = args.read_folder
@@ -56,9 +31,9 @@ def eval_one_country(country, args,export=True):
 
     all_topics = get_topic_stats(country, topics_list, read_folder, save_folder,
                                   args.frequency_path,
-                                  args.window, 
-                                  args.months_prior, 
-                                  args.method, 
+                                  args.window,
+                                  args.months_prior,
+                                  args.method,
                                   args.crisis_defs,
                                   period=args.period,
                                  export=export,
@@ -119,7 +94,7 @@ if __name__ == '__main__':
     parser.add_argument('-cd', '--crisis_defs', action='store', dest='crisis_defs', default=config.crisis_defs)
     parser.add_argument('-sims', '--sims', action='store', dest='sims', default=config.SIM)
     parser.add_argument('-tn', '--topn', action='store', dest='topn',type=int, default=config.topn)    
-    parser.add_argument('-p', '--period', action='store', dest='period', default=config.COUNTRY_FREQ_PERIOD)
+    #parser.add_argument('-p', '--period', action='store', dest='period', default=config.COUNTRY_FREQ_PERIOD)
     parser.add_argument('-mp', '--months_prior', action='store', dest='months_prior', default=config.months_prior)
     parser.add_argument('-w', '--window', action='store', dest='window',default=config.smooth_window_size)
     parser.add_argument('-eed', '--eval_end_date', action='store', dest='eval_end_date',default=config.eval_end_date)
