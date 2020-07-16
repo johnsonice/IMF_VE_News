@@ -108,7 +108,7 @@ def eval_countries(args, export=True):
 #        
 #%%
 if __name__ == '__main__':
-        
+
     parser = argparse.ArgumentParser()
     #parser.add_argument('-t', '--targets', action='store', dest='targets', default=config.targets)
     parser.add_argument('-f', '--frequency_path', action='store', dest='frequency_path', default=config.FREQUENCY)
@@ -130,6 +130,9 @@ if __name__ == '__main__':
 
     args.read_folder = '/data/News_data_raw/FT_WD_research/topiccing/time_series/Min1_AllCountry'
     args.save_folder = '/data/News_data_raw/FT_WD_research/topiccing/eval/Min1_AllCountry'
+
+    args.num_topics = 100
+    args.weighted = False
 
     class_type_setups = config.class_type_setups
     eval_type = config.eval_type
