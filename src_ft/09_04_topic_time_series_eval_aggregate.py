@@ -54,9 +54,6 @@ def eval_one_country(country, args,export=True):
     read_folder = args.read_folder
     save_folder = args.save_folder
 
-    get_topic_stats(country, topic_list, read_folder, save_folder, window, months_prior, method,
-                    crisis_defs, period, export=True, eval_end_date=None, weights=None, z_thresh=1.96):
-
     all_topics = get_topic_stats(country, topics_list, read_folder, save_folder,
                                   args.frequency_path,
                                   args.window, 
