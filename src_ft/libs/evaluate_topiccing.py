@@ -195,7 +195,7 @@ def get_topic_stats(country, topic_list, read_folder, save_folder, window, month
     print(all_topic)
 
     if export:
-        all_topic.to_csv(os.path.join(save_folder, '{}_100_topic_eval.csv'.format(country)), index=False)
+        all_topic.to_csv(os.path.join(save_folder, '{}_100_topic_eval.csv'.format(country)))
 
     return all_topic
 

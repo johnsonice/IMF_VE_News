@@ -79,7 +79,39 @@ def eval_countries(args, export=True):
 
     return overall_df
 
-#        
+def eval_aggregate_topics(args, export=True):
+    countries = args.countries
+    save_folder = args.save_folder
+    num_topics = args.num_topics
+    agg_df = pd.DataFrame(index=range(num_topics), columns=['recall','precision','f2-score','tp', 'fp', 'fn'],
+                          data=[[0] * 6] * num_topics)
+
+    for country in countries:
+        this_read = os.path.join(save_folder, '{}_{}_topic_eval.csv'.format(country,num_topics))
+        tdf = pd.read_csv(this_read)
+
+        for top_num in range(num_topics):
+            agg_df.loc[top_num, 'tp'] = agg_df.loc[top_num, 'tp'] + tdf.loc[top_num, 'tp']
+            agg_df.loc[top_num, 'fp'] = agg_df.loc[top_num, 'fp'] + tdf.loc[top_num, 'fp']
+            agg_df.loc[top_num, 'fn'] = agg_df.loc[top_num, 'fn'] + tdf.loc[top_num, 'fn']
+
+    for top_num in range(num_topics):
+        tp = agg_df.loc[top_num, 'tp']
+        fp = agg_df.loc[top_num, 'fp']
+        fn = agg_df.loc[top_num, 'fn']
+        recall = get_recall(tp, fn)
+        prec = get_precision(tp, fp)
+        f2 = get_fscore(tp, fp, fn, beta=2)
+        agg_df.loc[top_num, 'recall'] = recall
+        agg_df.loc[top_num, 'precision'] = prec
+        agg_df.loc[top_num, 'f2-score'] = f2
+
+    if export:
+        save_name = os.path.join(save_folder, 'cross_country_{}_topic_eval.csv'.format(num_topics))
+        agg_df.to_csv(save_name)
+
+    return agg_df
+
 #%%
 if __name__ == '__main__':
 
@@ -113,7 +145,12 @@ if __name__ == '__main__':
     eval_type = config.eval_type
     original_eval_path = args.eval_path
 
+    '''
     for setup in class_type_setups:
-
+        args.setup_name = setup[0]
         eval_countries(args)
+    '''
 
+    for setup in class_type_setups:
+        args.setup_name = setup[0]
+        eval_aggregate_topics(args)
