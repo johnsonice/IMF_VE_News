@@ -125,9 +125,9 @@ class_type_setups = [
     ###
             ['Min1_Max0', 1, 0, "sum", None, None],
             ['Min2_Max0', 2, 0, "sum", None, None],
-            ['Min1_AllCountry', 1, None, None, None, None], #Tmp
-            ['Min2_AllCountry', 2, None, None, None, None], #Tmp
             
+            ['Min2_AllCountry', 2, None, None, None, None], #Tmp
+            ['Min2_FullDoc_AllCountry', 2, None, None, None, None], #Tmp
             ['Min1', 1, None, None, None, None], #Tmp
             ['Min2', 2, None, None, None, None], #Tmp
             ['Min3', 3, None, None, None, None],
@@ -150,10 +150,10 @@ class_type_setups = [
 '''
 
 class_type_setups = [
-    ['Min2_FullDoc_AllCountry', 2, None, None, None, None], #Tmp
+    ['Min1_AllCountry', 1, None, None, None, None], #Tmp
 ]
 
-eval_type = 'grouped_words' #TEMP
+eval_type = 'corporate_words' #TEMP
 #%%
 
 
