@@ -58,7 +58,7 @@ if __name__ == "__main__":
                     country_topics = list(country_df.index.values)
             else:
                 for i in range(num_topics):
-                    if list(country_df[i]['fscore'].values)[0] >= topic_f2_thresh:
+                    if country_df.at[i, 'fscore'] >= topic_f2_thresh:
                         country_topics.append(i)
 
             country_topic_dict.update({country: country_topics})
