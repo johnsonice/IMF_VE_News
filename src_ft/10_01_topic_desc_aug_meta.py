@@ -65,13 +65,13 @@ if __name__ == "__main__":
 
                 model_name = "ldaviz_t100"
                 topiccing_folder = "/data/News_data_raw/FT_WD_research/topiccing"
+                series_saved_at = os.path.join(topiccing_folder, '{}_topic_meta'.format(model_name))
                 series_base_file = os.path.join(series_saved_at, "series_savepoint_part{}.pkl")
                 data_length = aug_meta_df.size[0]
 
                 if debug:
                     data_length = 400000  # Test
 
-                series_saved_at = os.path.join(topiccing_folder, '{}_topic_meta'.format(model_name))
                 partition_size = 200000
                 num_of_series = len(list(os.walk(series_saved_at))[0][2])
 
