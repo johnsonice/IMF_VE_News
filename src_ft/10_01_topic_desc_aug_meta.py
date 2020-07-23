@@ -152,9 +152,9 @@ if __name__ == "__main__":
                         print(part_df.head())
 
                     if new_aug_df is None:
-                        new_aug_df.append(part_df)
-                    else:
                         new_aug_df = part_df
+                    else:
+                        new_aug_df.append(part_df)
 
                 if debug:
                     print("AUG META NEW HEAD")
