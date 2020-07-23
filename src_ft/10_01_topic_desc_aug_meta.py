@@ -99,7 +99,7 @@ if __name__ == "__main__":
                     part_df = part_df[part_df['country_n'] > 0]
 
                     part_ind = list(part_df.index.values)
-                    part_df['doc_topics'] = [0]#TODO PIck up here
+                    part_df['doc_topics'] = ""  #TODO PIck up here
                     for this_document in part_ind:
                         doc_topics = []
                         if type(doc_topic_min_level) is tuple:
