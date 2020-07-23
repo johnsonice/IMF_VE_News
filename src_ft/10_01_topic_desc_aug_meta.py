@@ -151,7 +151,7 @@ if __name__ == "__main__":
                         print("APPENDING PART HEAD")
                         print(part_df.head())
 
-                    if new_aug_df:
+                    if new_aug_df is None:
                         new_aug_df.append(part_df)
                     else:
                         new_aug_df = part_df
