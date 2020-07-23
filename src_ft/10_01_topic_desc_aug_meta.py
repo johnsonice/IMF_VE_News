@@ -45,6 +45,11 @@ if __name__ == "__main__":
             country_topic_info_file = os.path.join('/data/News_data_raw/FT_WD_research/topiccing/eval/Min1_AllCountry',
                                                    '{}_{}_topic_eval.csv'.format(country, num_topics))
             country_df = pd.read_csv(country_topic_info_file)
+
+            if debug:
+                print("COUNTRY DF HEAD")
+                print(country_df.head())
+
             country_topics = []
             if type(topic_f2_thresh) is tuple:
                 if topic_f2_thresh[0] == 'top':
