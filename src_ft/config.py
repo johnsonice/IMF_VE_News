@@ -119,15 +119,15 @@ targets = load_search_words(SEARCH_TERMS,GROUPED_SEARCH_FILE)
 #         'financial_crisis','crisis','depression','shock']
 
 #targets= ['able', 'enable', 'grow', 'adequately', 'benign', 'buoyant', 'buoyancy', 'calm', 'comfortable', 'confidence', 'confident', 'effective', 'enhance', 'favorable', 'favourable', 'favourably', 'healthy', 'improve', 'improvement', 'mitigate', 'mitigation', 'positive', 'positively', 'profits', 'profitable', 'rally', 'rebound', 'recover', 'recovery', 'resilience', 'resilient', 'smooth', 'solid', 'sound', 'stabilise', 'stabilize', 'stable', 'success', 'successful', 'successfully']
-''' TEMP
+'''TEMP
 class_type_setups = [
 
     ###
             ['Min1_Max0', 1, 0, "sum", None, None],
             ['Min2_Max0', 2, 0, "sum", None, None],
-            
+            ['Min1_AllCountry', 1, None, None, None, None], #Tmp
             ['Min2_AllCountry', 2, None, None, None, None], #Tmp
-            ['Min2_FullDoc_AllCountry', 2, None, None, None, None], #Tmp
+            
             ['Min1', 1, None, None, None, None], #Tmp
             ['Min2', 2, None, None, None, None], #Tmp
             ['Min3', 3, None, None, None, None],
@@ -141,19 +141,19 @@ class_type_setups = [
             ['Min2_FullDoc', 2, None, None, None, None],
             ['Min3_FullDoc', 3, None, None, None, None],
             ['Min1_100topic_AvoidSport_Over5', 1, None, None, None, [31, 89]],
-            ['Min1_100topic_AvoidSelect_Over5', 1, None, None, None, [31, 47, 48, 64, 89]]
+            ['Min1_100topic_AvoidSelect_Over5', 1, None, None, None, [31, 47, 48, 64, 89]],
             ['Min1_Top1_AllCountry', 1, None, None, 1, None],
             ['Min3_Top1_AllCountry', 3, None, None, 1, None],
             ['Min1_AllCountry', 1, 2, "sum", None, None],
 
         ]
-'''
 
+'''
 class_type_setups = [
-    ['Min1_AllCountry', 1, None, None, None, None], #Tmp
+    ['Min2_FullDoc_AllCountry', 2, None, None, None, None], #Tmp
 ]
 
-eval_type = 'corporate_words' #TEMP
+eval_type = 'grouped_words' #TEMP
 #%%
 
 
