@@ -105,35 +105,35 @@ if __name__ == "__main__":
                         if type(doc_topic_min_level) is tuple:
                             if doc_topic_min_level[0] == 'top':
                                 top_n = doc_topic_min_level[1]
-                                this_topics = list(part_df.loc[this_document, '{}_predicted_topics'.format(model_name)])
+                                this_topics = list(part_df.at[this_document, '{}_predicted_topics'.format(model_name)])
                                 this_topics.sort(key=lambda x: x[1])
                                 just_topics = [lambda x:x[0] for x in this_topics] # TODO test
 
                                 doc_topics = just_topics[:top_n]
                         else:
-                            all_topic = list(part_df.loc[this_document, '{}_predicted_topics'.format(model_name)])
+                            all_topic = list(part_df.at[this_document, '{}_predicted_topics'.format(model_name)])
                             for i in range(num_topics):
                                 if all_topic[i][1] >= doc_topic_min_level:
                                     doc_topics.append(i)
-                        part_df.loc[this_document, 'doc_topics'] = doc_topics
+                        part_df.at[this_document, 'doc_topics'] = doc_topics
 
                     # Keep only countries with the proper topic-country matchup
                     for country in countries:
                         valued_topics = country_topic_dict[country]
                         for this_document in part_ind:
-                            this_doc_countries = part_df.loc[this_document, 'country']
+                            this_doc_countries = part_df.at[this_document, 'country']
                             if country in this_doc_countries:
 
                                 # Keep all countries but this one
                                 temp_countries = [lambda x: x for x in this_doc_countries if x!=country]
-                                this_doc_topics = set(part_df.loc[this_document, '{}_predicted_topics'.format(model_name)])
+                                this_doc_topics = set(part_df.at[this_document, '{}_predicted_topics'.format(model_name)])
 
                                 # If topics intersect, add this country back in
                                 if len(this_doc_topics.intersection(valued_topics)) > 0:
                                     temp_countries.append(country)
 
                                 # Override country info
-                                part_df.loc[this_document, 'country'] = temp_countries
+                                part_df.at[this_document, 'country'] = temp_countries
 
                     if debug:
                         # TEST
