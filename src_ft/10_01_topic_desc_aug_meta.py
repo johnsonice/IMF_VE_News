@@ -32,7 +32,10 @@ if __name__ == "__main__":
 
     for topic_f2_thresh in topic_f2_thresholds:
 
-        save_name_append += '_threshold_' + str(topic_f2_thresh)
+        if type(topic_f2_thresh) is tuple:
+            save_name_append += '_threshold_' + str(topic_f2_thresh[0]) + '_' + str(topic_f2_thresh[1])
+        else:
+            save_name_append += '_threshold_' + str(topic_f2_thresh)
         print("Working on threshhold {}".format(topic_f2_thresh))
 
         country_topic_dict = {}
@@ -69,14 +72,18 @@ if __name__ == "__main__":
 
             for doc_topic_min_level in document_topic_min_levels:
 
-                save_name_append += '_docMinLevel_'+str(doc_topic_min_level)
+                if type(doc_topic_min_level) is tuple:
+                    save_name_append += '_docMinLevel_' + str(doc_topic_min_level[0]) + '_' + str(doc_topic_min_level[1])
+                else:
+                    save_name_append += '_docMinLevel_'+str(doc_topic_min_level)
 
                 data_length = aug_meta_df.shape[0]
 
                 if debug:
                     data_length = 400000  # Test
 
-                new_aug_save_file = os.path.join(topiccing_folder, "special_aug", 'doc_meta_aug'+save_name_append)
+                new_aug_save_file = os.path.join(topiccing_folder, "special_aug",
+                                                 'doc_meta_aug{}.pkl'.format(save_name_append))
                 new_aug_df = None  # Stores new information - account for the loss of countries for topic discrimination
 
                 for part_i in range(num_of_series):
@@ -127,9 +134,7 @@ if __name__ == "__main__":
                         for this_document in part_ind:
                             this_doc_countries = part_df.at[this_document, 'country']
                             if country in this_doc_countries:
-
-                                # Keep all countries but this one
-                                temp_countries = [x for x in this_doc_countries if x!=country]
+                                temp_countries = [x for x in this_doc_countries if x != country]
                                 this_doc_topics = set(part_df.at[this_document, '{}_predicted_topics'.format(model_name)])
 
                                 # If topics intersect, add this country back in
@@ -159,8 +164,6 @@ if __name__ == "__main__":
                         new_aug_df = part_df
                     else:
                         new_aug_df.append(part_df)
-
-
 
                 if debug:
                     print("AUG META NEW HEAD")
