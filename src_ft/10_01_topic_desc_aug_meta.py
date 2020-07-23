@@ -20,6 +20,14 @@ if __name__ == "__main__":
 
     num_topics = config.num_topics
 
+    model_name = "ldaviz_t100"
+    topiccing_folder = "/data/News_data_raw/FT_WD_research/topiccing"
+    series_saved_at = os.path.join(topiccing_folder, '{}_topic_meta'.format(model_name))
+    series_base_file = os.path.join(series_saved_at, "series_savepoint_part{}.pkl")
+
+    partition_size = 200000
+    num_of_series = len(list(os.walk(series_saved_at))[0][2])
+
     save_name_append = ''
 
     for topic_f2_thresh in topic_f2_thresholds:
@@ -63,17 +71,10 @@ if __name__ == "__main__":
 
                 save_name_append += '_docMinLevel_'+str(doc_topic_min_level)
 
-                model_name = "ldaviz_t100"
-                topiccing_folder = "/data/News_data_raw/FT_WD_research/topiccing"
-                series_saved_at = os.path.join(topiccing_folder, '{}_topic_meta'.format(model_name))
-                series_base_file = os.path.join(series_saved_at, "series_savepoint_part{}.pkl")
-                data_length = aug_meta_df.size[0]
+                data_length = aug_meta_df.shape[0]
 
                 if debug:
                     data_length = 400000  # Test
-
-                partition_size = 200000
-                num_of_series = len(list(os.walk(series_saved_at))[0][2])
 
                 new_aug_save_file = os.path.join(topiccing_folder, "special_aug", 'doc_meta_aug'+save_name_append)
                 new_aug_df = None  # Stores new information - account for the loss of countries for topic discrimination
