@@ -15,7 +15,8 @@ if __name__ == "__main__":
 
     if debug:
         countries = ['argentina']
-        topic_f2_thresholds = [('top', 1), .5]
+        #topic_f2_thresholds = [('top', 1), .5]
+        topic_f2_thresholds = [.5]
         document_topic_min_levels = [("top", 1)]
 
     num_topics = config.num_topics
@@ -52,7 +53,7 @@ if __name__ == "__main__":
                     country_topics = list(country_df.index.values)
             else:
                 for i in range(num_topics):
-                    if country_df[str(i)]['fscore'].values[0] >= topic_f2_thresh:
+                    if list(country_df[str(i)]['fscore'].values)[0] >= topic_f2_thresh:
                         country_topics.append(i)
 
             country_topic_dict.update({country: country_topics})
