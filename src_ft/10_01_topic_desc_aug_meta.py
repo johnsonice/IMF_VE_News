@@ -11,7 +11,7 @@ if __name__ == "__main__":
     topic_f2_thresholds = [('top', 1), ('top', 5), .5, .4, .3]
     document_topic_min_levels = [("top", 1), ("top", 2), .5, .25, .1, .05]
 
-    debug = True  # TEST
+    debug = False  # TEST
 
     if debug:
         countries = ['argentina']
@@ -158,7 +158,7 @@ if __name__ == "__main__":
                     # replace country_n info
                     part_df['country_n'] = part_df['country'].map(lambda x: len(x))
                     part_df = part_df[part_df['country_n'] > 0]
-                    part_df.drop(columns=['doc_topics'])
+                    part_df = part_df.drop(columns=['ldaviz_t100_predicted_topics', 'doc_topics'])
                     #part_df = part_df.filter('country', 'country_n')
 
                     if debug:
