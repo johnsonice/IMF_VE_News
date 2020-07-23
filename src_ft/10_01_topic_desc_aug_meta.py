@@ -122,11 +122,11 @@ if __name__ == "__main__":
                         valued_topics = country_topic_dict[country]
                         for this_document in part_ind:
                             this_doc_countries = part_df.loc[this_document, 'country']
-                            if country in this_doc_countries.intersect(countries):
+                            if country in this_doc_countries:
 
                                 # Keep all countries but this one
                                 temp_countries = [lambda x: x for x in this_doc_countries if x!=country]
-                                this_doc_topics = part_df.loc[this_document, '{}_predicted_topics'.format(model_name)]
+                                this_doc_topics = set(part_df.loc[this_document, '{}_predicted_topics'.format(model_name)])
 
                                 # If topics intersect, add this country back in
                                 if len(this_doc_topics.intersection(valued_topics)) > 0:
