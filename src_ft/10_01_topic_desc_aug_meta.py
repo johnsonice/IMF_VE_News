@@ -107,7 +107,7 @@ if __name__ == "__main__":
                                 top_n = doc_topic_min_level[1]
                                 this_topics = list(part_df.at[this_document, '{}_predicted_topics'.format(model_name)])
                                 this_topics.sort(key=lambda x: x[1])
-                                just_topics = [lambda x:x[0] for x in this_topics] # TODO test
+                                just_topics = [x[0] for x in this_topics]  # TODO test
 
                                 doc_topics = just_topics[:top_n]
                         else:
@@ -125,7 +125,7 @@ if __name__ == "__main__":
                             if country in this_doc_countries:
 
                                 # Keep all countries but this one
-                                temp_countries = [lambda x: x for x in this_doc_countries if x!=country]
+                                temp_countries = [x for x in this_doc_countries if x!=country]
                                 this_doc_topics = set(part_df.at[this_document, '{}_predicted_topics'.format(model_name)])
 
                                 # If topics intersect, add this country back in
@@ -143,7 +143,7 @@ if __name__ == "__main__":
                     # replace country_n info
                     part_df['country_n'] = part_df['country'].map(lambda x: len(x))
                     part_df = part_df[part_df['country_n'] > 0]
-                    part_df.drop('doc_topics')
+                    part_df.drop(columns=['doc_topics'])
                     #part_df = part_df.filter('country', 'country_n')
 
                     if debug:
