@@ -80,6 +80,10 @@ if __name__ == "__main__":
                 new_aug_df = None  # Stores new information - account for the loss of countries for topic discrimination
 
                 for part_i in range(num_of_series):
+                    if debug:
+                        if part_i == 2:
+                            break  # Bail for testing
+
                     print("Working on part {}".format(part_i))
                     partition_start = part_i * partition_size
                     partition_end = min(partition_start + partition_size, data_length)
@@ -155,6 +159,8 @@ if __name__ == "__main__":
                         new_aug_df = part_df
                     else:
                         new_aug_df.append(part_df)
+
+
 
                 if debug:
                     print("AUG META NEW HEAD")
