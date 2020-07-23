@@ -67,8 +67,9 @@ if WEIGHTED:
 EVAL_WG = os.path.join(EVAL, 'word_groups')
 EVAL_TS = os.path.join(EVAL, 'time_series')
 
-topiccing_model = 'ldaviz_t100'
-topiccing_folder = os.path.join(NEW_PROCESSING_FOLDER,"topiccing")
+num_topics = 100
+topiccing_model = 'ldaviz_t{}'.format(num_topics)
+topiccing_folder = os.path.join(NEW_PROCESSING_FOLDER, "topiccing")
 topiccing_meta = os.path.join(topiccing_folder, '{}_topic_meta'.format(topiccing_model))
 topiccing_time_series = os.path.join(topiccing_folder, 'time_series')
 
