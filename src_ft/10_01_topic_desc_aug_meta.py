@@ -29,15 +29,7 @@ if __name__ == "__main__":
     partition_size = 200000
     num_of_series = len(list(os.walk(series_saved_at))[0][2])
 
-    save_name_append = ''
-
     for topic_f2_thresh in topic_f2_thresholds:
-
-        if type(topic_f2_thresh) is tuple:
-            save_name_append += '_threshold_' + str(topic_f2_thresh[0]) + '_' + str(topic_f2_thresh[1])
-        else:
-            save_name_append += '_threshold_' + str(topic_f2_thresh)
-        print("Working on threshhold {}".format(topic_f2_thresh))
 
         country_topic_dict = {}
         for country in countries:
@@ -70,13 +62,21 @@ if __name__ == "__main__":
         for setup in setups:
             setup_name = setup[0]
 
-            save_name_append += '_setup_' + setup_name
-
             aug_doc_file = os.path.join(config.AUG_DOC_META, 'doc_details_{}_aug_{}.pkl'.format('crisis', setup_name))
             aug_meta_df = pd.read_pickle(aug_doc_file)
             #aug_meta_df = aug_meta_df.filter(['country', 'country_n'])
 
             for doc_topic_min_level in document_topic_min_levels:
+
+                save_name_append = ''
+
+                if type(topic_f2_thresh) is tuple:
+                    save_name_append += '_threshold_' + str(topic_f2_thresh[0]) + '_' + str(topic_f2_thresh[1])
+                else:
+                    save_name_append += '_threshold_' + str(topic_f2_thresh)
+                print("Working on threshhold {}".format(topic_f2_thresh))
+
+                save_name_append += '_setup_' + setup_name
 
                 if type(doc_topic_min_level) is tuple:
                     save_name_append += '_docMinLevel_' + str(doc_topic_min_level[0]) + '_' + str(doc_topic_min_level[1])
