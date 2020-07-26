@@ -24,8 +24,6 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from gensim.models.keyedvectors import KeyedVectors
 sns.set(color_codes=True)
-#%%
-
 
 #%%
 def get_word_vecs(vecs,keyword,topn=20):
