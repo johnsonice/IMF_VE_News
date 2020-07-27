@@ -8,9 +8,11 @@ if __name__ == "__main__":
     setups = config.class_type_setups
 
     countries = config.countries
-    topic_f2_thresholds = [('top', 1), ('top', 5), .5, .4, .3]
+    #topic_f2_thresholds = [('top', 1), ('top', 5), .5, .4, .3]
+    topic_f2_thresholds = [.1]
     #document_topic_min_levels = [("top", 1), ("top", 2), .5, .25, .1, .05]
-    document_topic_min_levels = [("top", 10), ("top", 20), .02, .01, .05]
+    #document_topic_min_levels = [("top", 10), ("top", 20), .02, .01, .05]
+    document_topic_min_levels = [.00001]
 
     debug = False  # TEST
 
