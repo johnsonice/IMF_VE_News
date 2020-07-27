@@ -146,7 +146,7 @@ if __name__ == "__main__":
                             this_doc_countries = part_df.at[this_document, 'country']
                             if country in this_doc_countries:
                                 temp_countries = [x for x in this_doc_countries if x != country]
-                                this_doc_topics = part_df.at[this_document, 'doc_topics']
+                                this_doc_topics = set(part_df.at[this_document, 'doc_topics'])
 
                                 # If topics intersect, add this country back in
                                 if len(this_doc_topics.intersection(valued_topics)) > 0:
