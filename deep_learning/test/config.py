@@ -56,7 +56,7 @@ NGRAMS = os.path.join(MODELS,'ngrams')
 VS_MODELS = os.path.join(MODELS,'vsms')
 TOPIC_MODELS = os.path.join(MODELS,'topics')
 BERT_MODEL=os.path.join(MODELS,'pre_trained_english')
-
+TRAINED_DEEP_MODEL=os.path.join(MODELS,'trained_deeplearning_model')
 
 SEARCH_TERMS = os.path.join(PROCESSING_FOLDER,'search_terms')
 BOW_TFIDF_DOCS = os.path.join(PROCESSING_FOLDER,'bow_tfidf_docs')
