@@ -29,31 +29,50 @@ class Simple_nn_model(nn.Module):
     """
     def __init__(self,input_size,hidden_size,num_classes,dropout_p=0.1,batchnorm=True,layernorm=False):
         super(Simple_nn_model,self).__init__()
+        self.batchnorm = batchnorm
+        self.layernorm = layernorm
         self.dropout = nn.Dropout(p=dropout_p)
         self.fc1=nn.Linear(input_size,hidden_size[0])
         self.fc2=nn.Linear(hidden_size[0],hidden_size[1])
         self.fc3=nn.Linear(hidden_size[1],num_classes)
         if batchnorm:
+            self.bn0 = nn.BatchNorm1d(num_features = input_size)
             self.bn1 = nn.BatchNorm1d(num_features = hidden_size[0])
             self.bn2 = nn.BatchNorm1d(num_features = hidden_size[1])
-        else:
-            self.bn1,self.bn2,self.bn3 = None,None,None
+        if layernorm:
+            self.ln0 = nn.LayerNorm(input_size)
+            self.ln1 = nn.LayerNorm(hidden_size[0])
+            self.ln2 = nn.LayerNorm(hidden_size[1])
             
     def forward(self,x):
-        out = x 
-        if not self.bn1 is None:
-            out=F.relu(self.bn1(self.fc1(out)))
-        else:
-            out=F.relu(self.fc1(out))
-        out = self.dropout(out)
         
-        if not self.bn2 is None:    
-            out = F.relu(self.bn2(self.fc2(out)))
-        else:
-            out=F.relu(self.fc2(out))
+        ## before fc1
+        if self.batchnorm:
+            x = self.bn0(x)
+        if self.layernorm:   
+            x = self.ln0(x)
+            
+        ## fc1
+        out = self.fc1(self.dropout(x))
+        if self.batchnorm:
+            out=self.bn1(out)
+        if self.layernorm:
+            out=self.ln1(out)
+            
+        out = self.dropout(F.relu(out))
+        
+        ## fc2
+        out = self.fc2(out)
+        if self.batchnorm:    
+            out =self.bn2(out)
+        if self.layernorm:
+            out =self.ln2(out)
+    
+        out=F.relu(out)
 
- 
+        ## fc3
         out = self.fc3(out)
+        
         return out 
 
 class Dynamic_simple_sequencial_model(object):
