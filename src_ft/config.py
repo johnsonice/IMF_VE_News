@@ -220,11 +220,11 @@ if __name__ == "__main__":
                     top_folder = os.path.join(topiccing_frequency, class_type, f2_thresh)
                     maybe_create(top_folder)
 
-                        for doc_thresh in document_topic_min_levels:
-                            if type(doc_thresh) is tuple:
-                                doc_thresh = '{}_{}'.format(doc_thresh[0], doc_thresh[1])
-                            else:
-                                doc_thresh = str(doc_thresh)
+                    for doc_thresh in document_topic_min_levels:
+                        if type(doc_thresh) is tuple:
+                            doc_thresh = '{}_{}'.format(doc_thresh[0], doc_thresh[1])
+                        else:
+                            doc_thresh = str(doc_thresh)
 
-                            bottom_folder = os.path.join(topiccing_frequency, class_type, f2_thresh, doc_thresh)
-                            maybe_create(bottom_folder)
+                        bottom_folder = os.path.join(topiccing_frequency, class_type, f2_thresh, doc_thresh)
+                        maybe_create(bottom_folder)
