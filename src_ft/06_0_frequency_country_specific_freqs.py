@@ -200,9 +200,14 @@ if __name__ == '__main__':
             for f2_thresh in topic_f2_thresholds:
                 if type(f2_thresh) is tuple:
                     f2_thresh = '{}_{}'.format(f2_thresh[0], f2_thresh[1])
+                else:
+                    f2_thresh = str(f2_thresh)
+
                 for doc_thresh in document_topic_thresholds:
                     if type(doc_thresh) is tuple:
                         doc_thresh = '{}_{}'.format(doc_thresh[0], doc_thresh[1])
+                    else:
+                        doc_thresh = str(doc_thresh)
 
                     args.doc_deets = os.path.join(topic_aug_folder,
                                                   'doc_meta_aug_threshold_{}_setup_{}_docMinLevel_{}.pkl'.format(

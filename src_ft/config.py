@@ -214,12 +214,17 @@ if __name__ == "__main__":
                 for f2_thresh in topic_f2_thresholds:
                     if type(f2_thresh) is tuple:
                         f2_thresh = '{}_{}'.format(f2_thresh[0], f2_thresh[1])
-                        top_folder = os.path.join(topiccing_frequency, class_type, f2_thresh)
-                        maybe_create(top_folder)
+                    else:
+                        f2_thresh = str(f2_thresh)
+
+                    top_folder = os.path.join(topiccing_frequency, class_type, f2_thresh)
+                    maybe_create(top_folder)
 
                         for doc_thresh in document_topic_min_levels:
                             if type(doc_thresh) is tuple:
                                 doc_thresh = '{}_{}'.format(doc_thresh[0], doc_thresh[1])
+                            else:
+                                doc_thresh = str(doc_thresh)
 
                             bottom_folder = os.path.join(topiccing_frequency, class_type, f2_thresh, doc_thresh)
                             maybe_create(bottom_folder)
