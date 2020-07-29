@@ -34,8 +34,6 @@ f_handler = logging.FileHandler('/home/apsurek/logs/err_log_6_01.log')
 f_handler.setLevel(logging.WARNING)
 
 
-
-
 #%%
 def get_stats(starts,ends,preds,offset,fbeta=2):
     tp, fn, mid_crisis  = [], [], []
@@ -90,6 +88,7 @@ def get_sim_words(vecs,wg,topn):
             return wg
     words = sims + wg
     return words
+
 
 #%%
 if __name__ == "__main__":

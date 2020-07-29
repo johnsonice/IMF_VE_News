@@ -34,6 +34,12 @@ handler.setFormatter(formatter)
 # add handlers to logger
 logger.addHandler(handler)
 
+def data_setup(doc_deets, period):
+    time_df = pd.read_pickle(doc_deets)
+    uniq_periods = set(time_df[period])
+    time_df = time_df[time_df['country_n'] > 0]  ## filter only docs with countries
+
+    return time_df, uniq_periods
 
 def country_period_filter(time_df,country,period):
     
@@ -43,7 +49,7 @@ def country_period_filter(time_df,country,period):
     return df.tolist()
 
 
-def get_country_freqs(countries, period_choice, time_df, uniq_periods,outdir,phraser,class_type,filter_dict=None):
+def get_country_freqs(countries, period_choice, time_df, uniq_periods,outdir,phraser,filter_dict=None):
 
     # Get frequency data for each country supplied
     print("\nCounting Word Freqs...")
@@ -95,7 +101,7 @@ def get_country_freqs(countries, period_choice, time_df, uniq_periods,outdir,phr
         
         # write csv
         #try:
-        out_csv = os.path.join(outdir, class_type, '{}_{}_word_freqs.csv'.format(country, period_choice))
+        out_csv = os.path.join(outdir, '{}_{}_word_freqs.csv'.format(country, period_choice))
         freqs_df.to_csv(out_csv)
         print('Country: {} saved to csv'.format(country))
         del freqs_df
@@ -129,48 +135,88 @@ if __name__ == '__main__':
 
     class_type_setups = config.class_type_setups
 
-    for setup in class_type_setups:
-        class_type = setup[0]
-        parser = argparse.ArgumentParser()
-        countries = config.countries
 
-        parser.add_argument('-c', '--countries', nargs='+', help='countries to get freq for',
-                            default=countries)
-        parser.add_argument('-corp', '--corpus', action='store', dest='corpus',
-                            default=config.JSON_LEMMA)
 
-        doc_meta_file = os.path.join(config.AUG_DOC_META, 'doc_details_crisis_aug_{}.pkl'.format(class_type))
 
-        parser.add_argument('-deets', '--doc_details', action='store', dest='doc_deets',
-                            default=doc_meta_file)
-        parser.add_argument('-p', '--period', action='store', dest='period',
-                            default=config.COUNTRY_FREQ_PERIOD)
-        parser.add_argument('-s', '--save_dir', action='store', dest='out_dir',
-                            default=config.FREQUENCY)
-        parser.add_argument('-ph', '--phraser', action='store', dest='phraser',
-                            default=config.PHRASER)
-        parser.add_argument('-wv', '--wv_path', action='store', dest='wv_path', default=config.W2V)
-        parser.add_argument('-f', '--wv_filter', action='store', dest='wv_filter', default='TRUE')
-        args = parser.parse_args()
-    #    except:
-    #        args = args_class(corpus=config.JSON_LEMMA,doc_deets=config.AUG_DOC_META_FILE,
-    #                          out_dir=config.FREQUENCY,period=config.COUNTRY_FREQ_PERIOD,
-    #                          phraser=config.PHRASER,countries=config.countries)
-            #%%
-        ## load dictionary
-        if args.wv_filter == 'TRUE':
-            vecs = KeyedVectors.load(args.wv_path)
-            wv_keys = vecs.wv.vocab.keys()
-            logger.info('use wv_filder, max length: {}'.format(len(wv_keys)))
-            del vecs ## clear memory
-        else:
-            wv_keys = None
+    parser = argparse.ArgumentParser()
+    countries = config.countries
 
+    parser.add_argument('-c', '--countries', nargs='+', help='countries to get freq for',
+                        default=countries)
+    parser.add_argument('-corp', '--corpus', action='store', dest='corpus',
+                        default=config.JSON_LEMMA)
+    parser.add_argument('-deets', '--doc_details', action='store', dest='doc_deets',
+                        default=config.AUG_DOC_META_FILE)
+    parser.add_argument('-p', '--period', action='store', dest='period',
+                        default=config.COUNTRY_FREQ_PERIOD)
+    parser.add_argument('-s', '--save_dir', action='store', dest='out_dir',
+                        default=config.FREQUENCY)
+    parser.add_argument('-ph', '--phraser', action='store', dest='phraser',
+                        default=config.PHRASER)
+    parser.add_argument('-wv', '--wv_path', action='store', dest='wv_path', default=config.W2V)
+    parser.add_argument('-f', '--wv_filter', action='store', dest='wv_filter', default='TRUE')
+    args = parser.parse_args()
+#    except:
+#        args = args_class(corpus=config.JSON_LEMMA,doc_deets=config.AUG_DOC_META_FILE,
+#                          out_dir=config.FREQUENCY,period=config.COUNTRY_FREQ_PERIOD,
+#                          phraser=config.PHRASER,countries=config.countries)
         #%%
-        # Data setup
-        time_df = pd.read_pickle(args.doc_deets)
-        uniq_periods = set(time_df[args.period])
-        time_df = time_df[time_df['country_n']>0]      ## filter only docs with countries
 
-        get_country_freqs(args.countries, args.period, time_df, uniq_periods, args.out_dir, args.phraser,class_type,
+    ## load dictionary
+    if args.wv_filter == 'TRUE':
+        vecs = KeyedVectors.load(args.wv_path)
+        wv_keys = vecs.wv.vocab.keys()
+        logger.info('use wv_filder, max length: {}'.format(len(wv_keys)))
+        del vecs  ## clear memory
+    else:
+        wv_keys = None
+
+    # TODO rethink framework
+    experimental = True
+    just_five = False
+    # mode = "topiccing_discrimination"
+    mode = "country_classification"
+    if experimental:
+
+        # Only look at a sub-sample of countries
+        if just_five:
+            countries = config.countries_just_five
+
+        if mode == "country_classification":
+            for setup in class_type_setups:
+                class_type = setup[0]
+                args.doc_deets = os.path.join(config.AUG_DOC_META, 'doc_details_crisis_aug_{}.pkl'.format(class_type))
+                args.out_dir = os.path.join(config.FREQUENCY, class_type)
+                time_df, uniq_periods = data_setup(args.doc_deets, args.period)
+
+                get_country_freqs(args.countries, args.period, time_df, uniq_periods, args.out_dir, args.phraser,
+                                  filter_dict=wv_keys)
+        elif mode == "topiccing_discrimination":
+            topic_aug_folder = config.topic_aug_folder
+            topic_f2_thresholds = config.topic_f2_thresholds
+            document_topic_thresholds = config.document_topic_min_levels
+            class_type = "Min1_AllCountry"
+
+            for f2_thresh in topic_f2_thresholds:
+                if type(f2_thresh) is tuple:
+                    f2_thresh = '{}_{}'.format(f2_thresh[0], f2_thresh[1])
+                for doc_thresh in document_topic_thresholds:
+                    if type(doc_thresh) is tuple:
+                        doc_thresh = '{}_{}'.format(doc_thresh[0], doc_thresh[1])
+
+                    args.doc_deets = os.path.join(topic_aug_folder,
+                                                  'doc_meta_aug_threshold_{}_setup_{}_docMinLevel_{}.pkl'.format(
+                                                      f2_thresh, class_type, doc_thresh))
+                    args.out_dir = os.path.join(config.topiccing_frequency, class_type, f2_thresh, doc_thresh)
+
+                    time_df, uniq_periods = data_setup(args.doc_deets, args.period)
+
+                    get_country_freqs(args.countries, args.period, time_df, uniq_periods, args.out_dir, args.phraser,
+                                      filter_dict=wv_keys)
+
+    else:
+        # Data setup
+        time_df, uniq_periods = data_setup(args.doc_deets, args.period)
+
+        get_country_freqs(args.countries, args.period, time_df, uniq_periods, args.out_dir, args.phraser,
                           filter_dict=wv_keys)

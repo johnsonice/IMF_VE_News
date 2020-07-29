@@ -166,8 +166,6 @@ country_dict_all = {
     'zimbabwe': ['Zimbabwe','Zimbabwean','Harrare'],
 }
 
-
-
 country_dict_original = {
     'argentina': ['argentina'],
     'bolivia': ['bolivia'],
@@ -190,15 +188,6 @@ country_dict_original = {
     'uruguay': ['uruguay'],
     'venezuela': ['venezuela'], ## these is the original list
 }
-
-country_dict_just_five = {
-    'argentina': ['argentina'],
-    'bolivia': ['bolivia'],
-    'brazil': ['brazil'],
-    'chile': ['chile'],
-    'colombia': ['colombia']
-}
-
 
 country_dict = country_dict_original
 

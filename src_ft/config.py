@@ -43,47 +43,66 @@ eval_end_date = {'q': '2001Q4',
 ########################
 RAW_DATA_PATH = '/data/News_data_raw/Financial_Times_processed'
 
-OLD_PROCESSING_FOLDER = '/data/News_data_raw/FT_WD'
-NEW_PROCESSING_FOLDER = '/data/News_data_raw/FT_WD_research'
-DOC_META = os.path.join(OLD_PROCESSING_FOLDER, 'doc_meta')
-AUG_DOC_META = os.path.join(NEW_PROCESSING_FOLDER, 'doc_meta')
-JSON_LEMMA = os.path.join(OLD_PROCESSING_FOLDER, 'json_lemma')
-JSON_LEMMA_SMALL = os.path.join(OLD_PROCESSING_FOLDER, 'json_lemma_small')
 
-MODELS = os.path.join(OLD_PROCESSING_FOLDER, 'models')
+## Traditional Configuration ##
+PROCESSING_FOLDER = '/data/News_data_raw/FT_WD'
+DOC_META = os.path.join(PROCESSING_FOLDER, 'doc_meta')
+AUG_DOC_META = os.path.join(PROCESSING_FOLDER, 'doc_meta')
+JSON_LEMMA = os.path.join(PROCESSING_FOLDER, 'json_lemma')
+JSON_LEMMA_SMALL = os.path.join(PROCESSING_FOLDER, 'json_lemma_small')
+
+
+## Experimental configuration ##
+experimenting = True
+NEW_PROCESSING_FOLDER = '/data/News_data_raw/FT_WD_research' # experi
+if experimenting:
+    AUG_DOC_META = os.path.join(NEW_PROCESSING_FOLDER, 'doc_meta')
+    # experiment_mode = "country_classification"
+    experiment_mode = "topiccing_discrimination"
+
+## machine learning models locations ##
+MODELS = os.path.join(PROCESSING_FOLDER, 'models')
 NGRAMS = os.path.join(MODELS, 'ngrams')
 VS_MODELS = os.path.join(MODELS, 'vsms')
 TOPIC_MODELS = os.path.join(MODELS, 'topics')
 
 
-SEARCH_TERMS = os.path.join(OLD_PROCESSING_FOLDER, 'search_terms')
-BOW_TFIDF_DOCS = os.path.join(OLD_PROCESSING_FOLDER, 'bow_tfidf_docs')
+## search term configuration ##
+SEARCH_TERMS = os.path.join(PROCESSING_FOLDER, 'search_terms')
+BOW_TFIDF_DOCS = os.path.join(PROCESSING_FOLDER, 'bow_tfidf_docs')
 FREQUENCY = os.path.join(NEW_PROCESSING_FOLDER, 'frequency', 'csv')
 
+
+## time series evaluation ##
 EVAL = os.path.join(NEW_PROCESSING_FOLDER, 'eval')
 if WEIGHTED:
     EVAL = os.path.join(NEW_PROCESSING_FOLDER, 'eval_weighted')
-
 EVAL_WG = os.path.join(EVAL, 'word_groups')
 EVAL_TS = os.path.join(EVAL, 'time_series')
 
+## document-topic assessment information"
 num_topics = 100
 topiccing_model = 'ldaviz_t{}'.format(num_topics)
 topiccing_folder = os.path.join(NEW_PROCESSING_FOLDER, "topiccing")
 topiccing_meta = os.path.join(topiccing_folder, '{}_topic_meta'.format(topiccing_model))
 topiccing_time_series = os.path.join(topiccing_folder, 'time_series')
+topiccing_frequency = os.path.join(topiccing_folder, 'frequency')
+if experimenting and experiment_mode == "topiccing_discrimination":
+    topiccing_aug_meta = os.path.join(topiccing_folder, "special_aug")
+    document_topic_min_levels = [("top", 1), ("top", 2), .5, .25, .1, .05, ("top", 10), ("top", 20), .02, .01]
+    topic_f2_thresholds = [('top', 1), ('top', 5), ('top', 10), .5, .4, .3]
 
 ## global file path ##
 DOC_META_FILE = os.path.join(DOC_META, 'doc_details_crisis.pkl')
 AUG_DOC_META_FILE = os.path.join(AUG_DOC_META, 'doc_details_crisis_aug.pkl')
 PHRASER = os.path.join(NGRAMS, '2grams_default_10_20_NOSTOP')
 W2V = os.path.join(VS_MODELS, 'word_vecs_5_50_200')
-EXPERT_TERMS = os.path.join(OLD_PROCESSING_FOLDER, 'search_terms', 'expert_terms.csv')
+EXPERT_TERMS = os.path.join(PROCESSING_FOLDER, 'search_terms', 'expert_terms.csv')
 
 
 ## file specific inputs ##
 countries = list(country_dict.keys())
-#countries = list(country_dict_just_five.keys())
+countries_just_five = countries[:5]
 
 common_terms = ['he', 'him', 'she', 'her', 'that', 'if', 'me', 'about', 'over']
 
@@ -167,10 +186,10 @@ def maybe_create(f):
 
 
 if __name__ == "__main__":
-    folders = [RAW_DATA_PATH, OLD_PROCESSING_FOLDER, NEW_PROCESSING_FOLDER, SEARCH_TERMS,
+    folders = [RAW_DATA_PATH, PROCESSING_FOLDER, NEW_PROCESSING_FOLDER, SEARCH_TERMS,
                DOC_META, AUG_DOC_META, JSON_LEMMA, JSON_LEMMA_SMALL, MODELS, NGRAMS, TOPIC_MODELS,
                VS_MODELS, BOW_TFIDF_DOCS, FREQUENCY, EVAL, EVAL_WG, EVAL_TS, topiccing_folder, topiccing_meta,
-               topiccing_time_series]
+               topiccing_time_series, topiccing_frequency]
     weights = [DOC_META_FILE, PHRASER, W2V]
 
     for f in folders:
@@ -178,7 +197,7 @@ if __name__ == "__main__":
 
     for setup in class_type_setups:
         class_type = setup[0]
-        need_subfolders = [FREQUENCY, EVAL_WG, EVAL_TS, topiccing_time_series]
+        need_subfolders = [FREQUENCY, EVAL_WG, EVAL_TS, topiccing_time_series, topiccing_frequency]
         for fold in need_subfolders:
             maybe_create(os.path.join(fold, class_type))
         maybe_create(os.path.join(EVAL_WG, class_type, eval_type))
@@ -186,3 +205,21 @@ if __name__ == "__main__":
     for w in weights:
         if not os.path.isfile(w):
             print('File not exist:{}'.format(w))
+
+    if experimenting:
+        if experiment_mode == "topiccing_discrimination":
+            for setup in class_type_setups:
+                class_type = setup[0]
+
+                for f2_thresh in topic_f2_thresholds:
+                    if type(f2_thresh) is tuple:
+                        f2_thresh = '{}_{}'.format(f2_thresh[0], f2_thresh[1])
+                        top_folder = os.path.join(topiccing_frequency, class_type, f2_thresh)
+                        maybe_create(top_folder)
+
+                        for doc_thresh in document_topic_min_levels:
+                            if type(doc_thresh) is tuple:
+                                doc_thresh = '{}_{}'.format(doc_thresh[0], doc_thresh[1])
+
+                            bottom_folder = os.path.join(topiccing_frequency, class_type, f2_thresh, doc_thresh)
+                            maybe_create(bottom_folder)
