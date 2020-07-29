@@ -19,19 +19,13 @@ import os
 import pandas as pd
 import sys
 sys.path.insert(0,'./libs')
-#sys.path.insert(0,'..')
-import ujson as json
 import config
 from frequency_utils import rolling_z_score, aggregate_freq, signif_change
 from evaluate import get_recall,get_precision,get_fscore
 from gensim.models.keyedvectors import KeyedVectors
 from  crisis_points import crisis_points
 from mp_utils import Mp
-import random
-import statistics as stats
-import logging
-f_handler = logging.FileHandler('/home/apsurek/logs/err_log_6_01.log')
-f_handler.setLevel(logging.WARNING)
+from functools import partial as functools_partial
 
 
 #%%
@@ -94,48 +88,58 @@ def get_sim_words(vecs,wg,topn):
 if __name__ == "__main__":
     period = config.COUNTRY_FREQ_PERIOD
     vecs = KeyedVectors.load(config.W2V)
-    
-    def export_country_ts(country,period=period,vecs=vecs):
+    frequency_path = config.FREQUENCY
+    countries = config.countries
+    out_dir = config.EVAL_TS
+
+    def export_country_ts(country, period=period, vecs=vecs, frequency_path=frequency_path, out_dir=out_dir):
         series_wg = list()
         for wg in config.targets:
             word_groups = get_sim_words(vecs,wg,15)
-            df = aggregate_freq(word_groups, country,period=period,stemmed=False,frequency_path=config.FREQUENCY)
+            df = aggregate_freq(word_groups, country,period=period,stemmed=False,frequency_path=frequency_path)
             df.name = wg
             series_wg.append(df)
         
         df_all = pd.concat(series_wg,axis=1)
-        out_csv = os.path.join(config.EVAL_TS, '{}_{}_time_series.csv'.format(country,period))
+        out_csv = os.path.join(out_dir, '{}_{}_time_series.csv'.format(country,period))
         df_all.to_csv(out_csv)
         
         return country, df_all
 
+    if config.experimenting:
+        class_type_setups = config.class_type_setups
 
-    class_type = None
+        for setup in class_type_setups:
+            class_type = setup[0]
+            in_directory = os.path.join(frequency_path, class_type)
+            out_directory = os.path.join(out_dir, class_type)
+            if config.experiment_mode == "country_classification":
+                export_country_ts_exp_1 = functools_partial(export_country_ts, frequency_path=in_directory,
+                                                            out_dir=out_directory)
+                mp = Mp(countries, export_country_ts)
+                res = mp.multi_process_files(chunk_size=1)
 
-    frequency_path = config.FREQUENCY
+            elif config.experiment_mode == "topiccing_discrimination":
+                for f2_thresh in config.topic_f2_thresholds:
+                    if type(f2_thresh) is tuple:
+                        f2_thresh = '{}_{}'.format(f2_thresh[0], f2_thresh[1])
+                    else:
+                        f2_thresh = str(f2_thresh)
 
-    class_type_setups = config.class_type_setups
+                    for doc_thresh in config.document_topic_min_levels:
+                        if type(doc_thresh) is tuple:
+                            doc_thresh = '{}_{}'.format(doc_thresh[0], doc_thresh[1])
+                        else:
+                            doc_thresh = str(doc_thresh)
+                            in_directory = os.path.join(in_directory, f2_thresh, doc_thresh)
+                            out_directory = os.path.join(out_directory, f2_thresh, doc_thresh)
 
-    for setup in class_type_setups:
+                            export_country_ts_exp_1 = functools_partial(export_country_ts, frequency_path=in_directory,
+                                                                        out_dir=out_directory)
+                            mp = Mp(countries, export_country_ts)
+                            res = mp.multi_process_files(chunk_size=1)
 
-        class_type = setup[0]
-        freq_path = os.path.join(frequency_path, class_type)  # Moved the TF_DFs manually for speed since 06_0
+    else:
 
-        def export_country_ts_2(country, period=period, vecs=vecs, class_type=class_type, frequency_path=freq_path):
-            series_wg = list()
-            for wg in config.targets:
-                word_groups = get_sim_words(vecs, wg, 15)
-                df = aggregate_freq(word_groups, country, period=period, stemmed=False, frequency_path=frequency_path)
-                df.name = wg
-                series_wg.append(df)
-
-            df_all = pd.concat(series_wg, axis=1)
-            out_csv = os.path.join(config.EVAL_TS, class_type, '{}_{}_time_series.csv'.format(country, period))
-            df_all.to_csv(out_csv)
-
-            return country, df_all
-
-
-        countries = config.countries
-        mp = Mp(countries, export_country_ts_2)
+        mp = Mp(countries, export_country_ts)
         res = mp.multi_process_files(chunk_size=1)

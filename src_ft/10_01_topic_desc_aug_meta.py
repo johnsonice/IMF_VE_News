@@ -92,7 +92,7 @@ if __name__ == "__main__":
                 if debug:
                     data_length = 400000  # Test
 
-                new_aug_save_file = os.path.join(topiccing_folder, "special_aug",
+                new_aug_save_file = os.path.join(config.topiccing_aug_meta,
                                                  'doc_meta_aug{}.pkl'.format(save_name_append))
                 new_aug_df = None  # Stores new information - account for the loss of countries for topic discrimination
 

@@ -70,13 +70,19 @@ TOPIC_MODELS = os.path.join(MODELS, 'topics')
 ## search term configuration ##
 SEARCH_TERMS = os.path.join(PROCESSING_FOLDER, 'search_terms')
 BOW_TFIDF_DOCS = os.path.join(PROCESSING_FOLDER, 'bow_tfidf_docs')
-FREQUENCY = os.path.join(NEW_PROCESSING_FOLDER, 'frequency', 'csv')
+FREQUENCY = os.path.join(PROCESSING_FOLDER, 'frequency', 'csv')
+if experimenting:
+    FREQUENCY = os.path.join(NEW_PROCESSING_FOLDER, 'frequency', 'csv')
 
 
 ## time series evaluation ##
-EVAL = os.path.join(NEW_PROCESSING_FOLDER, 'eval')
+EVAL = os.path.join(PROCESSING_FOLDER, 'eval')
 if WEIGHTED:
-    EVAL = os.path.join(NEW_PROCESSING_FOLDER, 'eval_weighted')
+    EVAL = os.path.join(PROCESSING_FOLDER, 'eval_weighted')
+if experimenting:
+    EVAL = os.path.join(NEW_PROCESSING_FOLDER, 'eval')
+    if WEIGHTED:
+        EVAL = os.path.join(NEW_PROCESSING_FOLDER, 'eval_weighted')
 EVAL_WG = os.path.join(EVAL, 'word_groups')
 EVAL_TS = os.path.join(EVAL, 'time_series')
 
@@ -87,8 +93,8 @@ topiccing_folder = os.path.join(NEW_PROCESSING_FOLDER, "topiccing")
 topiccing_meta = os.path.join(topiccing_folder, '{}_topic_meta'.format(topiccing_model))
 topiccing_time_series = os.path.join(topiccing_folder, 'time_series')
 topiccing_frequency = os.path.join(topiccing_folder, 'frequency')
+topiccing_aug_meta = os.path.join(topiccing_folder, "special_aug")
 if experimenting and experiment_mode == "topiccing_discrimination":
-    topiccing_aug_meta = os.path.join(topiccing_folder, "special_aug")
     document_topic_min_levels = [("top", 1), ("top", 2), .5, .25, .1, .05, ("top", 10), ("top", 20), .02, .01]
     topic_f2_thresholds = [('top', 1), ('top', 5), ('top', 10), .5, .4, .3]
 
