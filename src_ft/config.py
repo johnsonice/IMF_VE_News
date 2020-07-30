@@ -234,5 +234,8 @@ if __name__ == "__main__":
                         else:
                             doc_thresh = str(doc_thresh)
 
-                        bottom_folder = os.path.join(topiccing_frequency, class_type, f2_thresh, doc_thresh)
+                        bottom_folder = os.path.join(top_folder, doc_thresh)
                         maybe_create(bottom_folder)
+
+                        if just_five:
+                            sub_exp_folder = os.path.join(bottom_folder, 'j5_countries')

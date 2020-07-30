@@ -209,14 +209,12 @@ if __name__ == '__main__':
                     else:
                         doc_thresh = str(doc_thresh)
 
-                    j5_append = ""
-                    if config.just_five:
-                        j5_append = "_j5_countries"
-
                     args.doc_deets = os.path.join(topic_aug_folder,
-                                                  'doc_meta_aug_threshold_{}_setup_{}_docMinLevel_{}{}.pkl'.format(
-                                                      f2_thresh, class_type, doc_thresh, j5_append))
+                                                  'doc_meta_aug_threshold_{}_setup_{}_docMinLevel_{}.pkl'.format(
+                                                      f2_thresh, class_type, doc_thresh))
                     args.out_dir = os.path.join(config.topiccing_frequency, class_type, f2_thresh, doc_thresh)
+                    if config.just_five:
+                        args.out_dir = os.path.join(args.out_dir, "j5_countries")
 
                     time_df, uniq_periods = data_setup(args.doc_deets, args.period)
 
