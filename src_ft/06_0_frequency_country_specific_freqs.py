@@ -195,6 +195,11 @@ if __name__ == '__main__':
             topic_aug_folder = config.topic_aug_folder
             topic_f2_thresholds = config.topic_f2_thresholds
             document_topic_thresholds = config.document_topic_min_levels
+
+            debug = True
+            if debug:
+                topic_f2_thresholds = [('top', 10), .5]
+                document_topic_thresholds = [("top", 2), .5]
             class_type = "Min1_AllCountry"
 
             for f2_thresh in topic_f2_thresholds:
