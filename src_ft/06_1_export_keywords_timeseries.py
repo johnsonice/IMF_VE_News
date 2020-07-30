@@ -117,7 +117,7 @@ if __name__ == "__main__":
             if config.experiment_mode == "country_classification":
                 export_country_ts_exp_1 = functools_partial(export_country_ts, frequency_path=in_directory,
                                                             out_dir=out_directory)
-                mp = Mp(countries, export_country_ts)
+                mp = Mp(countries, export_country_ts_exp_1)
                 res = mp.multi_process_files(chunk_size=1)
 
             elif config.experiment_mode == "topiccing_discrimination":
@@ -133,8 +133,8 @@ if __name__ == "__main__":
                         else:
                             doc_thresh = str(doc_thresh)
 
-                        in_directory = os.path.join(in_directory, f2_thresh, doc_thresh)
-                        out_directory = os.path.join(out_directory, f2_thresh, doc_thresh)
+                        in_directory = os.path.join(config.topiccing_frequency, f2_thresh, doc_thresh)
+                        out_directory = os.path.join(config.topiccing_eval, f2_thresh, doc_thresh)
 
                         if config.just_five:
                             in_directory = os.path.join(in_directory, 'j5_countries')

@@ -100,6 +100,7 @@ topiccing_folder = os.path.join(NEW_PROCESSING_FOLDER, "topiccing")
 topiccing_meta = os.path.join(topiccing_folder, '{}_topic_meta'.format(topiccing_model))
 topiccing_time_series = os.path.join(topiccing_folder, 'time_series')
 topiccing_frequency = os.path.join(topiccing_folder, 'frequency')
+topiccing_eval = os.path.join(topiccing_folder, 'eval')
 topiccing_aug_meta = os.path.join(topiccing_folder, "special_aug")
 if experimenting and experiment_mode == "topiccing_discrimination":
     document_topic_min_levels = [("top", 1), ("top", 2), .5, .25, .1, .05, ("top", 10), ("top", 20), .02, .01]
@@ -197,7 +198,7 @@ if __name__ == "__main__":
     folders = [RAW_DATA_PATH, PROCESSING_FOLDER, NEW_PROCESSING_FOLDER, SEARCH_TERMS,
                DOC_META, AUG_DOC_META, JSON_LEMMA, JSON_LEMMA_SMALL, MODELS, NGRAMS, TOPIC_MODELS,
                VS_MODELS, BOW_TFIDF_DOCS, FREQUENCY, EVAL, EVAL_WG, EVAL_TS, topiccing_folder, topiccing_meta,
-               topiccing_time_series, topiccing_frequency]
+               topiccing_time_series, topiccing_frequency, topiccing_eval]
     weights = [DOC_META_FILE, PHRASER, W2V]
 
     for f in folders:
@@ -205,7 +206,7 @@ if __name__ == "__main__":
 
     for setup in class_type_setups:
         class_type = setup[0]
-        need_subfolders = [FREQUENCY, EVAL_WG, EVAL_TS, topiccing_time_series, topiccing_frequency]
+        need_subfolders = [FREQUENCY, EVAL_WG, EVAL_TS, topiccing_time_series, topiccing_frequency, topiccing_eval]
         for fold in need_subfolders:
             maybe_create(os.path.join(fold, class_type))
         maybe_create(os.path.join(EVAL_WG, class_type, eval_type))
@@ -216,27 +217,30 @@ if __name__ == "__main__":
 
     if experimenting:
         if experiment_mode == "topiccing_discrimination":
-            for setup in class_type_setups:
-                class_type = setup[0]
 
-                for f2_thresh in topic_f2_thresholds:
-                    if type(f2_thresh) is tuple:
-                        f2_thresh = '{}_{}'.format(f2_thresh[0], f2_thresh[1])
-                    else:
-                        f2_thresh = str(f2_thresh)
+            topic_assessments = [topiccing_frequency, topiccing_eval]
+            for topic_assessment in topic_assessments:
+                for setup in class_type_setups:
+                    class_type = setup[0]
 
-                    top_folder = os.path.join(topiccing_frequency, class_type, f2_thresh)
-                    maybe_create(top_folder)
-
-                    for doc_thresh in document_topic_min_levels:
-                        if type(doc_thresh) is tuple:
-                            doc_thresh = '{}_{}'.format(doc_thresh[0], doc_thresh[1])
+                    for f2_thresh in topic_f2_thresholds:
+                        if type(f2_thresh) is tuple:
+                            f2_thresh = '{}_{}'.format(f2_thresh[0], f2_thresh[1])
                         else:
-                            doc_thresh = str(doc_thresh)
+                            f2_thresh = str(f2_thresh)
 
-                        bottom_folder = os.path.join(top_folder, doc_thresh)
-                        maybe_create(bottom_folder)
+                        top_folder = os.path.join(topic_assessment, class_type, f2_thresh)
+                        maybe_create(top_folder)
 
-                        if just_five:
-                            sub_exp_folder = os.path.join(bottom_folder, 'j5_countries')
-                            maybe_create(sub_exp_folder)
+                        for doc_thresh in document_topic_min_levels:
+                            if type(doc_thresh) is tuple:
+                                doc_thresh = '{}_{}'.format(doc_thresh[0], doc_thresh[1])
+                            else:
+                                doc_thresh = str(doc_thresh)
+
+                            bottom_folder = os.path.join(top_folder, doc_thresh)
+                            maybe_create(bottom_folder)
+
+                            if just_five:
+                                sub_exp_folder = os.path.join(bottom_folder, 'j5_countries')
+                                maybe_create(sub_exp_folder)
