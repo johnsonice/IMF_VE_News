@@ -120,24 +120,29 @@ if __name__ == "__main__":
                 res = mp.multi_process_files(chunk_size=1)
 
             elif config.experiment_mode == "topiccing_discrimination":
-                for f2_thresh in config.topic_f2_thresholds:
+                for f2_thresh in [('top', 10)]:  # config.topic_f2_thresholds:
                     if type(f2_thresh) is tuple:
                         f2_thresh = '{}_{}'.format(f2_thresh[0], f2_thresh[1])
                     else:
                         f2_thresh = str(f2_thresh)
 
-                    for doc_thresh in config.document_topic_min_levels:
+                    for doc_thresh in [.5]:  # config.document_topic_min_levels:
                         if type(doc_thresh) is tuple:
                             doc_thresh = '{}_{}'.format(doc_thresh[0], doc_thresh[1])
                         else:
                             doc_thresh = str(doc_thresh)
-                            in_directory = os.path.join(in_directory, f2_thresh, doc_thresh)
-                            out_directory = os.path.join(out_directory, f2_thresh, doc_thresh)
 
-                            export_country_ts_exp_1 = functools_partial(export_country_ts, frequency_path=in_directory,
-                                                                        out_dir=out_directory)
-                            mp = Mp(countries, export_country_ts)
-                            res = mp.multi_process_files(chunk_size=1)
+                        in_directory = os.path.join(in_directory, f2_thresh, doc_thresh)
+                        out_directory = os.path.join(out_directory, f2_thresh, doc_thresh)
+
+                        if config.just_five:
+                            in_directory = os.path.join(in_directory, 'j5_countries')
+                            out_directory = os.path.join(out_directory, 'j5_countries')
+
+                        export_country_ts_exp_1 = functools_partial(export_country_ts, frequency_path=in_directory,
+                                                                    out_dir=out_directory)
+                        mp = Mp(countries, export_country_ts)
+                        res = mp.multi_process_files(chunk_size=1)
 
     else:
 
