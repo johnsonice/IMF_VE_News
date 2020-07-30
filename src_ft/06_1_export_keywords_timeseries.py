@@ -142,7 +142,7 @@ if __name__ == "__main__":
 
                         export_country_ts_exp_1 = functools_partial(export_country_ts, frequency_path=in_directory,
                                                                     out_dir=out_directory)
-                        mp = Mp(countries, export_country_ts)
+                        mp = Mp(countries, export_country_ts_exp_1)
                         res = mp.multi_process_files(chunk_size=1)
 
     else:
