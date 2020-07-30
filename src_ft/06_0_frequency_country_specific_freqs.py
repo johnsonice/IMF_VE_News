@@ -103,7 +103,7 @@ def get_country_freqs(countries, period_choice, time_df, uniq_periods,outdir,phr
         #try:
         out_csv = os.path.join(outdir, '{}_{}_word_freqs.csv'.format(country, period_choice))
         freqs_df.to_csv(out_csv)
-        print('Country: {} saved to csv'.format(country))
+        print('Country: {} saved to csv at {}.'.format(country, out_csv))
         del freqs_df
         #except:
         #    logger.warning("Problem saving country: {}. Skipped for now.".format(country))
@@ -199,7 +199,8 @@ if __name__ == '__main__':
             debug = True
             if debug:
                 topic_f2_thresholds = [('top', 10), .5]
-                document_topic_thresholds = [("top", 2), .5]
+                #document_topic_thresholds = [("top", 2), .5]
+                document_topic_thresholds = [.5]
             class_type = "Min1_AllCountry"
 
             for f2_thresh in topic_f2_thresholds:
