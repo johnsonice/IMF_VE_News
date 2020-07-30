@@ -239,3 +239,4 @@ if __name__ == "__main__":
 
                         if just_five:
                             sub_exp_folder = os.path.join(bottom_folder, 'j5_countries')
+                            maybe_create(sub_exp_folder)
