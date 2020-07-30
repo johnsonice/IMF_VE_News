@@ -186,7 +186,7 @@ if __name__ == '__main__':
                 get_country_freqs(args.countries, args.period, time_df, uniq_periods, args.out_dir, args.phraser,
                                   filter_dict=wv_keys)
         elif mode == "topiccing_discrimination":
-            topic_aug_folder = config.topic_aug_folder
+            topic_aug_folder = config.topiccing_aug_meta
             topic_f2_thresholds = config.topic_f2_thresholds
             document_topic_thresholds = config.document_topic_min_levels
 
