@@ -172,15 +172,9 @@ if __name__ == '__main__':
         wv_keys = None
 
     # TODO rethink framework
-    experimental = True
-    just_five = False
-    # mode = "topiccing_discrimination"
-    mode = "country_classification"
+    experimental = config.experimenting
+    mode = config.experiment_mode
     if experimental:
-
-        # Only look at a sub-sample of countries
-        if just_five:
-            countries = config.countries_just_five
 
         if mode == "country_classification":
             for setup in class_type_setups:
@@ -215,9 +209,13 @@ if __name__ == '__main__':
                     else:
                         doc_thresh = str(doc_thresh)
 
+                    j5_append = ""
+                    if config.just_five:
+                        j5_append = "_j5_countries"
+
                     args.doc_deets = os.path.join(topic_aug_folder,
-                                                  'doc_meta_aug_threshold_{}_setup_{}_docMinLevel_{}.pkl'.format(
-                                                      f2_thresh, class_type, doc_thresh))
+                                                  'doc_meta_aug_threshold_{}_setup_{}_docMinLevel_{}{}.pkl'.format(
+                                                      f2_thresh, class_type, doc_thresh, j5_append))
                     args.out_dir = os.path.join(config.topiccing_frequency, class_type, f2_thresh, doc_thresh)
 
                     time_df, uniq_periods = data_setup(args.doc_deets, args.period)

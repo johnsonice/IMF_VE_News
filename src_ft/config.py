@@ -51,6 +51,9 @@ AUG_DOC_META = os.path.join(PROCESSING_FOLDER, 'doc_meta')
 JSON_LEMMA = os.path.join(PROCESSING_FOLDER, 'json_lemma')
 JSON_LEMMA_SMALL = os.path.join(PROCESSING_FOLDER, 'json_lemma_small')
 
+## file specific inputs ##
+countries = list(country_dict.keys())
+countries_just_five = countries[:5]
 
 ## Experimental configuration ##
 experimenting = True
@@ -59,6 +62,10 @@ if experimenting:
     AUG_DOC_META = os.path.join(NEW_PROCESSING_FOLDER, 'doc_meta')
     # experiment_mode = "country_classification"
     experiment_mode = "topiccing_discrimination"
+    just_five = True
+    # Only look at a sub-sample of countries
+    if just_five:
+        countries = countries_just_five
 
 ## machine learning models locations ##
 MODELS = os.path.join(PROCESSING_FOLDER, 'models')
@@ -104,11 +111,6 @@ AUG_DOC_META_FILE = os.path.join(AUG_DOC_META, 'doc_details_crisis_aug.pkl')
 PHRASER = os.path.join(NGRAMS, '2grams_default_10_20_NOSTOP')
 W2V = os.path.join(VS_MODELS, 'word_vecs_5_50_200')
 EXPERT_TERMS = os.path.join(PROCESSING_FOLDER, 'search_terms', 'expert_terms.csv')
-
-
-## file specific inputs ##
-countries = list(country_dict.keys())
-countries_just_five = countries[:5]
 
 common_terms = ['he', 'him', 'she', 'her', 'that', 'if', 'me', 'about', 'over']
 
