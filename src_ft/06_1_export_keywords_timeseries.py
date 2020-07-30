@@ -89,8 +89,8 @@ if __name__ == "__main__":
     period = config.COUNTRY_FREQ_PERIOD
     vecs = KeyedVectors.load(config.W2V)
     frequency_path = config.FREQUENCY
-    #countries = config.countries
-    countries = ['argentina']
+    countries = config.countries
+    #countries = ['argentina']
     out_dir = config.EVAL_TS
 
     def export_country_ts(country, period=period, vecs=vecs, frequency_path=frequency_path, out_dir=out_dir):

@@ -103,6 +103,7 @@ topiccing_frequency = os.path.join(topiccing_folder, 'frequency')
 topiccing_eval = os.path.join(topiccing_folder, 'eval')
 topiccing_aug_meta = os.path.join(topiccing_folder, "special_aug")
 if experimenting and experiment_mode == "topiccing_discrimination":
+    #document_topic_min_levels = [("top", 1), ("top", 2), .5, .25, .1, .05, ("top", 10), ("top", 20), .02, .01]
     document_topic_min_levels = [("top", 1), ("top", 2), .5, .25, .1, .05, ("top", 10), ("top", 20), .02, .01]
     topic_f2_thresholds = [('top', 1), ('top', 5), ('top', 10), .5, .4, .3]
 
