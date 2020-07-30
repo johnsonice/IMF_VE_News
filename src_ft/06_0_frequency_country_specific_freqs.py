@@ -190,7 +190,7 @@ if __name__ == '__main__':
             topic_f2_thresholds = config.topic_f2_thresholds
             document_topic_thresholds = config.document_topic_min_levels
 
-            debug = True
+            debug = False
             if debug:
                 topic_f2_thresholds = [('top', 10), .5]
                 #document_topic_thresholds = [("top", 2), .5]
