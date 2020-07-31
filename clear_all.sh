@@ -1,3 +1,4 @@
+# Clears all results from folders
 rm data/bow_tfidf_docs/*
 rm data/doc_meta/*
 rm data/eval/experts/*

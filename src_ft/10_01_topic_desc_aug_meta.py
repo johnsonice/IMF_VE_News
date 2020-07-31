@@ -50,7 +50,9 @@ if __name__ == "__main__":
             if type(topic_f2_thresh) is tuple:
                 if topic_f2_thresh[0] == 'top':
                     top_n = topic_f2_thresh[1]
-                    country_df = country_df.sort_values(['fscore'])[:top_n]
+
+                    # Get first n of descneding value sort
+                    country_df = country_df.sort_values(['fscore'], ascending=False)[:top_n]
                     country_topics = list(country_df.index.values)
             else:
                 for i in range(num_topics):
@@ -117,20 +119,27 @@ if __name__ == "__main__":
                     part_df = part_df.join(ds, how="left")
                     del ds
 
+                    # Discard zero-country documents
                     part_df = part_df[part_df['country_n'] > 0]
 
-                    part_ind = list(part_df.index.values)
-                    part_df['doc_topics'] = ""  #TODO PIck up here
+                    part_ind = list(part_df.index.values)  # Save index from dataframe
+                    part_df['doc_topics'] = ""  # Fill doc_topics column with empty strings (alt - NaN)
+
+                    # Identify topics expressed in each document
                     for this_document in part_ind:
                         doc_topics = []
+
+                        # Look at top_n topics
                         if type(doc_topic_min_level) is tuple:
                             if doc_topic_min_level[0] == 'top':
                                 top_n = doc_topic_min_level[1]
                                 this_topics = list(part_df.at[this_document, '{}_predicted_topics'.format(model_name)])
-                                this_topics.sort(key=lambda x: x[1])
+                                this_topics.sort(key=lambda x: x[1], reverse=True)  # Sort descending order
                                 just_topics = [x[0] for x in this_topics]  # TODO test
 
                                 doc_topics = just_topics[:top_n]
+
+                        # Look at all topics identified above a threshold
                         else:
                             all_topic = list(part_df.at[this_document, '{}_predicted_topics'.format(model_name)])
                             for i in range(num_topics):
@@ -139,11 +148,12 @@ if __name__ == "__main__":
                         part_df.at[this_document, 'doc_topics'] = doc_topics
 
                     # Keep only countries with the proper topic-country matchup
-                    for country in countries:
+                    for country in countries:  # Itterate over countried
                         valued_topics = country_topic_dict[country]
-                        for this_document in part_ind:
+                        for this_document in part_ind:  # Iterate over filed in part
                             this_doc_countries = part_df.at[this_document, 'country']
                             if country in this_doc_countries:
+                                # Save all countries, except this one
                                 temp_countries = [x for x in this_doc_countries if x != country]
                                 this_doc_topics = set(part_df.at[this_document, 'doc_topics'])
 
@@ -154,30 +164,17 @@ if __name__ == "__main__":
                                 # Override country info
                                 part_df.at[this_document, 'country'] = temp_countries
 
-                    if debug:
-                        # TEST
-                        print("WITH TOPIC PART HEAD")
-                        print(part_df.head())
-
                     # replace country_n info
                     part_df['country_n'] = part_df['country'].map(lambda x: len(x))
+
+                    # Keep only documents and columns needed
                     part_df = part_df[part_df['country_n'] > 0]
                     part_df = part_df.drop(columns=['ldaviz_t100_predicted_topics', 'doc_topics'])
-                    #part_df = part_df.filter('country', 'country_n')
-
-                    if debug:
-                        # TEST
-                        print("APPENDING PART HEAD")
-                        print(part_df.head())
 
                     if new_aug_df is None:
                         new_aug_df = part_df
                     else:
                         new_aug_df = new_aug_df.append(part_df)
-
-                if debug:
-                    print("AUG META NEW HEAD")
-                    print(new_aug_df.head())
 
                 new_aug_df.to_pickle(new_aug_save_file)
 
