@@ -8,14 +8,17 @@ from topic_model_utils import topic2df ##print_topics_gensim
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--corpus', action='store', dest='corp_dir', default=os.path.join(config.BOW_TFIDF_DOCS,'tfidf.mm'))
-    parser.add_argument('-d', '--dictionary', action='store', dest='dict_dir', default=os.path.join(config.BOW_TFIDF_DOCS,'dictionary'))
+    parser.add_argument('-c', '--corpus', action='store', dest='corp_dir', default=os.path.join(config.BOW_TFIDF_DOCS,
+                                                                                                'tfidf.mm'))
+    parser.add_argument('-d', '--dictionary', action='store', dest='dict_dir',
+                        default=os.path.join(config.BOW_TFIDF_DOCS, 'dictionary'))
     parser.add_argument('-clip', '--clip', action='store', dest='clip', default=None)
-    parser.add_argument('-top', '--n_topics', action='store', nargs='+', dest='n_top_list', type=int, default=[80,100,120,140,160,180,200])
+    parser.add_argument('-top', '--n_topics', action='store', nargs='+', dest='n_top_list', type=int,
+                        default=[80, 100, 120, 140, 160, 180, 200])
     parser.add_argument('-p', '--passes', action='store', dest='passes', type=int, default=4)
     parser.add_argument('-m', '--model_folder', action='store', dest='model_folder', default=config.TOPIC_MODELS)
     parser.add_argument('-s', '--save', action='store', dest='save_dir', default=config.SEARCH_TERMS)
-    parser.add_argument('-e', '--export_terms', action='store', dest='export_terms',default=True)
+    parser.add_argument('-e', '--export_terms', action='store', dest='export_terms', default=True)
     args = parser.parse_args()
     
     

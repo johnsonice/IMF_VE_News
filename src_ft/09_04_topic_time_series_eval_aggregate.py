@@ -54,7 +54,8 @@ def eval_one_country(country, args,export=True):
     # Save to file and print results
     if export:
         all_stats.to_csv(os.path.join(save_folder,
-                                      'agg_{}_100_topic_evaluation.csv'.format(country)))
+                                      'agg_{}_{}_period_{}_topic_evaluation.csv'.format(country, config.num_topics,
+                                                                                        config.COUNTRY_FREQ_PERIOD)))
     
     print('Evaluated country {}'.format(country))
 
@@ -134,8 +135,8 @@ if __name__ == '__main__':
     parser.add_argument('-gsf', '--search_file', action='store', dest='search_file',default=config.GROUPED_SEARCH_FILE)
     args = parser.parse_args()
 
-    args.read_folder = '/data/News_data_raw/FT_WD_research/topiccing/time_series/Min1_AllCountry'
-    args.save_folder = '/data/News_data_raw/FT_WD_research/topiccing/eval/Min1_AllCountry'
+    args.read_folder = os.path.join(config.topiccing_time_series,'Min1_AllCountry')
+    args.save_folder = os.path.join(config.topiccing_eval_levels_ts, 'Min1_AllCountry')
 
     args.num_topics = 100
     args.weighted = False

@@ -38,8 +38,9 @@ if __name__ == "__main__":
         country_topic_dict = {}
         for country in countries:
 
-            country_topic_info_file = os.path.join('/data/News_data_raw/FT_WD_research/topiccing/eval/Min1_AllCountry',
-                                                   '{}_{}_topic_eval.csv'.format(country, num_topics))
+            country_topic_info_file = os.path.join(config.topiccing_eval_levels_ts,'Min1_AllCountry',
+                                                   'agg_{}_{}_period_{}_topic_evaluation.csv'.format(
+                                                       country, config.num_topics, config.COUNTRY_FREQ_PERIOD))
             country_df = pd.read_csv(country_topic_info_file)
 
             if debug:
