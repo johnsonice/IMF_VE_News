@@ -127,46 +127,89 @@ if __name__ == '__main__':
         
     if args.weighted:   
         raise Exception('for now, this module only works for unweighted calculation')
-        print('Weighted flag = True ; Results are aggregated by weighted sum....')
+        #print('Weighted flag = True ; Results are aggregated by weighted sum....')
     else:
         search_words_sets = dict()
-        for k,v in search_groups.items():
+        for k, v in search_groups.items():
             if args.sims:
-                search_words_sets[k]=list(get_sim_words_set(args,search_groups[k])) ## turn set to list
+                search_words_sets[k] = list(get_sim_words_set(args,search_groups[k])) ## turn set to list
             else:
                 search_words_sets[k] = [t for tl in v for t in tl] ## flattern the list of list 
         weights = None
 
-    class_type_setups = config.class_type_setups
-    eval_type = config.eval_type
-    original_eval_path = args.eval_path
+    iter_items = list(search_words_sets.items())
 
-    for setup in class_type_setups:
-        class_type = setup[0]
-        freq_path = os.path.join(config.FREQUENCY, class_type)  # Moved the TF_DFs manually for speed since 06_0
-        args.frequency_path = freq_path
-
-        args.eval_path = os.path.join(original_eval_path, class_type, eval_type)
-        #print(search_words_sets)
-        #%%
+    def multi_run_eval(item, args=args, weights=None):
         # Get prec, rec, and fscore for each country for each word group
-        iter_items = list(search_words_sets.items())
+        res_stats = run_evaluation(item, args, weights)
+        return res_stats
 
-        # run in multi process
-        def multi_run_eval(item,args=args,weights=None):
-            res_stats = run_evaluation(item,args,weights)
-            return res_stats
 
-        mp = Mp(iter_items,multi_run_eval)
-        overall_res = mp.multi_process_files(workers=2, chunk_size=1)  ## do not set workers to be too high, your memory will explode
+    def main_process(args, iter_items):
+        '''
+        The meat of the program - evaluates the time series provided to it, saves the result to a properly named file
+            and directory
+        :param args:
+        :param iter_items:
+        :return:
+        '''
 
-            ## export over all resoults to csv
-        df = pd.DataFrame(overall_res,columns=['word','sim_words','recall','prec','f2'])
+        # run the eval function in multi process mode
+        mp = Mp(iter_items, multi_run_eval)
+        overall_res = mp.multi_process_files(workers=2,  # do not set workers to be too high, your memory will explode
+                                             chunk_size=1)
+
+        ## export over all resoults to csv
+        df = pd.DataFrame(overall_res, columns=['word', 'sim_words', 'recall', 'prec', 'f2'])
         save_file_full = os.path.join(args.eval_path,
-                                       'overall_agg_sim_{}_overall_{}_offset_{}_smoothwindow_{}_evaluation.csv'.format(
-                                           args.sims, args.period, args.months_prior, args.window))
+                                      'overall_agg_sim_{}_overall_{}_offset_{}_smoothwindow_{}_evaluation.csv'.format(
+                                          args.sims, args.period, args.months_prior, args.window))
         df.to_csv(save_file_full)
         print("Saved at:", save_file_full)
 
-    #
+    # If experimenting
+    if config.experimenting:
+        class_type_setups = config.class_type_setups
+        eval_type = config.eval_type
+        original_eval_path = args.eval_path
+        original_freq_path = args.frequency_path
 
+        # iterate over different country-document classification
+        for setup in class_type_setups:
+            class_type = setup[0]
+
+            # Only test classification modes
+            if config.experiment_mode == "country_classification":
+                freq_path = os.path.join(original_freq_path, class_type)  # Moved the TF_DFs manually for speed since 06_0
+                ev_path = os.path.join(original_eval_path, class_type)
+
+                args.frequency_path = freq_path
+                args.eval_path = ev_path
+
+                main_process(args, iter_items)
+
+            # Test classification by country, discrimination of per-document topiccing results
+            elif config.experiment_mode == "topiccing_discrimination":
+                for f2_thresh in config.topic_f2_thresholds:
+                    if type(f2_thresh) is tuple:
+                        f2_thresh = '{}_{}'.format(f2_thresh[0], f2_thresh[1])
+                    else:
+                        f2_thresh = str(f2_thresh)
+
+                    for doc_thresh in config.document_topic_min_levels:
+                        if type(doc_thresh) is tuple:
+                            doc_thresh = '{}_{}'.format(doc_thresh[0], doc_thresh[1])
+                        else:
+                            doc_thresh = str(doc_thresh)
+
+                        freq_path = os.path.join(config.topiccing_frequency, class_type, f2_thresh, doc_thresh)
+                        ev_path = os.path.join(config.topiccing_eval_wg, class_type, f2_thresh, doc_thresh)
+
+                        args.frequency_path = freq_path
+                        args.eval_path = ev_path
+
+                        main_process(args, iter_items)
+
+    # If not experimenting, just run the process with the default/passed arguments once
+    else:
+        main_process(args, iter_items)
