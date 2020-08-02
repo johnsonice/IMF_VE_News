@@ -2,6 +2,9 @@ source /home/chuang/anaconda3/bin/activate nlp
 cd src_ft
 python config.py
 
+# TODO TEMP REMOVEEE
+python 08_07_generate_country_topic_time_series.py
+
 python 09_04_topic_time_series_eval_aggregate.py
 
 python 10_01_topic_desc_aug_meta.py
