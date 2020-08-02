@@ -9,47 +9,77 @@ usage: python3 frequency_eval.py <TERM1> <TERM2> ...
 NOTE: to see an explanation of optional arguments, use python3 frequency_eval.py --help
 """
 import sys
-sys.path.insert(0,'./libs')
+sys.path.insert(0, './libs')
 import argparse
 from gensim.models.keyedvectors import KeyedVectors
-#from crisis_points import crisis_points
 from evaluate import evaluate, get_recall, get_precision, get_fscore ,get_input_words_weights,get_country_stats
 import pandas as pd
-#import numpy as np
 import os
 from mp_utils import Mp
 import config
 
-#%%
+
 def read_grouped_search_words(file_path):
+    """
+    Read the search words, by group, from the indicated file
+    :param file_path:
+    :return: 'dict' mapping key(group name) -> value(list of str words-in-group)
+    """
+
     df = pd.read_csv(file_path)
     search_groups = df.to_dict()
-    for k,v in search_groups.items():
-        temp_list = [i for i in list(v.values()) if not pd.isna(i)]
-        temp_list = [wg.split('&') for wg in temp_list]   ## split & for wv search 
-        search_groups[k]=temp_list
+    for k, v in search_groups.items():
+        temp_list = [i for i in list(v.values()) if not pd.isna(i)]  # Save all non-NA values - different len groups
+        temp_list = [wg.split('&') for wg in temp_list]   # split & for wv search
+        search_groups[k] = temp_list  # Map str key group name -> list[str] group words
     return search_groups
 
+
 def get_sim_words_set(args,word_group):
-    assert isinstance(word_group,list)     
+    """
+    Return the top n most similar words based on the word2vec model
+
+    :param args: configuration arguments
+    :param word_group: list[str] of seed words
+    :return: A 'set' of words associated with any of the passed words
+    """
+
+    assert isinstance(word_group,list)  # Must pass a list
+
+    # Iterate over list
     sim_word_group = list()
     for w in word_group:
+
+        # Save associated top n words, weights - if exist in the word2vec model
         try:
             words, weights = get_input_words_weights(args,
                                                  w,
                                                  vecs=vecs,
                                                  weighted=args.weighted)
             sim_word_group.extend(words)
+
+        # If a word does not exist in the word2vec model, alert and ignore
         except:
             print('Not in vocabulary {}'.format(w))
-    sim_word_set = set(sim_word_group)
+    sim_word_set = set(sim_word_group)  # Eliminate duplicate associated words for group
+
     return sim_word_set
 
-def run_evaluation(item,args,weights=None,export=True):
+
+def run_evaluation(item,args,weights=None): # TODO clean up naming practice - wth is "item"
+    """
+    TODO docstring
+    :param item:
+    :param args:
+    :param weights:
+    :param export:
+    :return:
+    """
     # use topn most similar terms as words for aggregate freq if args.sims
     # get dataframe of evaluation metrics for each indivicual country
-    k,words = item
-    
+    k, words = item # TODO how is words defined
+
+    # Get evaluation stats per country
     all_stats = get_country_stats(args.countries, words, 
                                   args.frequency_path,
                                   args.window, 
@@ -61,35 +91,35 @@ def run_evaluation(item,args,weights=None,export=True):
                                   weights=weights,
                                   z_thresh=args.z_thresh)
 
-
     # Aggregate tp, fp, fn numbers for all countries to calc overall eval metrics
-    tp, fp, fn = all_stats['tp'].sum(), all_stats['fp'].sum(), all_stats['fn'].sum()
-    recall = get_recall(tp, fn)
-    prec = get_precision(tp, fp)
-    f2 = get_fscore(tp, fp, fn, beta=2)
-    avg = pd.Series([recall, prec, f2, tp, fp, fn], 
+    aggregate_tp, aggregate_fp, aggregate_fn = all_stats['tp'].sum(), all_stats['fp'].sum(), all_stats['fn'].sum()
+    aggregate_recall = get_recall(aggregate_tp, aggregate_fn)
+    aggregate_prec = get_precision(aggregate_tp, aggregate_fp)
+    aggregate_f2 = get_fscore(aggregate_tp, aggregate_fp, aggregate_fn, beta=2)
+    aggregate_stats = pd.Series([aggregate_recall, aggregate_prec, aggregate_f2, aggregate_tp, aggregate_fp, aggregate_fn],
                     name='aggregate', 
                     index=['recall','precision','fscore','tp','fp','fn'])
-    all_stats = all_stats.append(avg)
+    all_stats = all_stats.append(aggregate_stats)
 
-    # Save to file and print results
-    if export:
+    # Save to file if export
+    if args.export:
         all_stats.to_csv(os.path.join(args.eval_path,
                                       'agg_sim_{}_{}_offset_{}_smoothwindow_{}_{}_evaluation.csv'.format(args.sims,
                                                                                                        args.period,
                                                                                                        args.months_prior,
                                                                                                        args.window,
                                                                                                        k)))
-    
-    print('\n\n{}:\nevaluated words: {}\n\trecall: {}, precision: {}, f-score: {}'.format(k,words,recall, prec, f2))
+
+    # Print results if verbose
+    if args.verbose:
+        print('\n\n{}:\nevaluated words: {}\n\trecall: {}, precision: {}, f-score: {}'.format(k,words,aggregate_recall, aggregate_prec, aggregate_f2))
     if args.weighted: 
-        return k,list(zip(words,weights)),recall, prec, f2
+        return k,list(zip(words,weights)),aggregate_recall, aggregate_prec, aggregate_f2
     else:
-        return k,words,recall, prec, f2
+        return k,words,aggregate_recall, aggregate_prec, aggregate_f2
     #print('evaluated words: {}'.format(words))
-      
-#        
-#%%
+
+
 if __name__ == '__main__':
     
     
@@ -167,6 +197,9 @@ if __name__ == '__main__':
         df.to_csv(save_file_full)
         print("Saved at:", save_file_full)
 
+        args.verbose = True # Todo modularize
+        args.export = True # TODO modularize
+
     # If experimenting
     if config.experimenting:
         class_type_setups = config.class_type_setups
@@ -186,30 +219,36 @@ if __name__ == '__main__':
                 args.frequency_path = freq_path
                 args.eval_path = ev_path
 
+                # Execute the process setups times
                 main_process(args, iter_items)
 
             # Test classification by country, discrimination of per-document topiccing results
             elif config.experiment_mode == "topiccing_discrimination":
+                # Per each topic-power in-country
                 for f2_thresh in config.topic_f2_thresholds:
                     if type(f2_thresh) is tuple:
                         f2_thresh = '{}_{}'.format(f2_thresh[0], f2_thresh[1])
                     else:
                         f2_thresh = str(f2_thresh)
 
+                    # Per each topic-level in-document
                     for doc_thresh in config.document_topic_min_levels:
                         if type(doc_thresh) is tuple:
                             doc_thresh = '{}_{}'.format(doc_thresh[0], doc_thresh[1])
                         else:
                             doc_thresh = str(doc_thresh)
 
+                        # Set the specific frequency and evaluation directories to use
                         freq_path = os.path.join(config.topiccing_frequency, class_type, f2_thresh, doc_thresh)
                         ev_path = os.path.join(config.topiccing_eval_wg, class_type, f2_thresh, doc_thresh)
 
                         args.frequency_path = freq_path
                         args.eval_path = ev_path
 
+                        # Execute the process (setups x f2_thresh x topic_levels) times
                         main_process(args, iter_items)
 
     # If not experimenting, just run the process with the default/passed arguments once
     else:
+        # Execute process (1 times)
         main_process(args, iter_items)
