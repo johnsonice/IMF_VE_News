@@ -149,7 +149,7 @@ if __name__ == '__main__':
     class_type_setups = config.class_type_setups
     eval_type = config.eval_type
     original_eval_path = args.eval_path
-    # To here 
+    # To here
 
 
     # Iterate over all the setups - evaluate the within-country topic power
