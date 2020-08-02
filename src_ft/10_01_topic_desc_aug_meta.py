@@ -32,16 +32,16 @@ if __name__ == "__main__":
 
     partition_size = 200000
     num_of_series = len(list(os.walk(series_saved_at))[0][2])
+    class_type = 'Min1_AllCountry'
 
     for topic_f2_thresh in topic_f2_thresholds:
 
         country_topic_dict = {}
         for country in countries:
-
-            country_topic_info_file = os.path.join(config.topiccing_eval_levels_ts,'Min1_AllCountry',
-                                                   'agg_{}_{}_period_{}_topic_evaluation.csv'.format(
-                                                       country, config.num_topics, config.COUNTRY_FREQ_PERIOD))
-            country_df = pd.read_csv(country_topic_info_file)
+            read_file_name = os.path.join(config.topiccing_eval_levels_ts, class_type,
+                                          'agg_{}_{}_period_{}_topic_evaluation.csv'.format(
+                                              country, config.COUNTRY_FREQ_PERIOD, config.num_topics))
+            country_df = pd.read_csv(read_file_name)
 
             if debug:
                 print("COUNTRY DF HEAD")
