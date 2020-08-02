@@ -9,17 +9,14 @@ usage: python3 frequency_eval.py <TERM1> <TERM2> ...
 NOTE: to see an explanation of optional arguments, use python3 frequency_eval.py --help
 """
 import sys
-sys.path.insert(0,'./libs')
+sys.path.insert(0, './libs')
 import argparse
-from gensim.models.keyedvectors import KeyedVectors
-#from crisis_points import crisis_points
 from evaluate import evaluate, get_recall, get_precision, get_fscore ,get_input_words_weights,get_country_stats
 from evaluate_topiccing import evaluate_topic, get_topic_stats
 import pandas as pd
-#import numpy as np
 import os
-from mp_utils import Mp
 import config
+
 
 def eval_one_country(country, args,export=True):
     # use topn most similar terms as words for aggregate freq if args.sims
@@ -29,73 +26,71 @@ def eval_one_country(country, args,export=True):
     read_folder = args.read_folder
     save_folder = args.save_folder
 
-    all_topics = get_topic_stats(country, topics_list, read_folder, save_folder,
-                                  args.window,
-                                  args.months_prior,
-                                  args.method,
-                                  args.crisis_defs,
-                                  period=args.period,
-                                 export=export,
-                                  eval_end_date=args.eval_end_date,
-                                    weights=weighted,
-                                  z_thresh=args.z_thresh)
+    # Weight monthly topic values by a factor of the in-month document count
+    if weighted:
+        raise NotImplementedError("The weighted mode of topic evaluation is unsupported at present")
 
+    # Get all per-topic results for this country (df)
+    all_topics = get_topic_stats(country, topics_list, read_folder, save_folder, args.window, args.months_prior,
+                                 args.method, args.crisis_defs, period=args.period, export=export,
+                                 eval_end_date=args.eval_end_date, weights=weighted, z_thresh=args.z_thresh)
 
-    # Aggregate tp, fp, fn numbers for all countries to calc overall eval metrics
-    tp, fp, fn = all_topics['tp'].sum(), all_topics['fp'].sum(), all_topics['fn'].sum()
-    recall = get_recall(tp, fn)
-    prec = get_precision(tp, fp)
-    f2 = get_fscore(tp, fp, fn, beta=2)
-    avg = pd.Series([recall, prec, f2, tp, fp, fn], 
-                    name='aggregate_topics_{}'.format(country),
-                    index=['recall','precision','fscore','tp','fp','fn'])
-    all_stats = all_topics.append(avg)
-
-    # Save to file and print results
-    if export:
-        all_stats.to_csv(os.path.join(save_folder,
-                                      'agg_{}_{}_period_{}_topic_evaluation.csv'.format(country, config.num_topics,
-                                                                                        config.COUNTRY_FREQ_PERIOD)))
-    
     print('Evaluated country {}'.format(country))
 
-    return avg
-    #print('evaluated words: {}'.format(words))
+    # Save to file and print confirmation
+    if export:
+        export_file_name = os.path.join(save_folder, 'agg_{}_{}_period_{}_topic_evaluation.csv'.format(
+            country, config.COUNTRY_FREQ_PERIOD, config.num_topics))
+        all_topics.to_csv(export_file_name)
+
+        print('Topic evaluation saved at {}'.format(export_file_name))
+
+    # Also returns the df in-memory
+    return all_topics
 
 
 def eval_countries(args, export=True):
+    """
+    Evaluate all of the countries, one by one
+    :param args:
+    :param export:
+    :return:
+    """
     countries = args.countries
-    overall_stats = []
     for country in countries:
         country_avgs = eval_one_country(country, args, export)
-        overall_stats.append(country_avgs)
 
-    overall_df = pd.DataFrame(overall_stats)
-
-    print("OVERALL DF")
-    print(overall_df)
-
-    if export:
-        overall_df.to_csv(os.path.join(args.save_folder,'overall_100_topic_evaluation.csv'))
-
-    return overall_df
 
 def eval_aggregate_topics(args, export=True):
+    """
+    Assess the predictive ability of all
+    :param args:
+    :param export:
+    :return:
+    """
     countries = args.countries
     save_folder = args.save_folder
     num_topics = args.num_topics
-    agg_df = pd.DataFrame(index=range(num_topics), columns=['recall','precision','f2-score','tp', 'fp', 'fn'],
+
+    # Create dataframe filled with 0s
+    agg_df = pd.DataFrame(index=range(num_topics), columns=['recall', 'precision', 'f2-score', 'tp', 'fp', 'fn'],
                           data=[[0] * 6] * num_topics)
 
+    # Look through all the countries
     for country in countries:
-        this_read = os.path.join(save_folder, '{}_{}_topic_eval.csv'.format(country,num_topics))
-        tdf = pd.read_csv(this_read)
 
+        # Read country topic evaluation
+        read_file_name = os.path.join(save_folder, 'agg_{}_{}_period_{}_topic_evaluation.csv'.format(
+            country, config.COUNTRY_FREQ_PERIOD, config.num_topics))
+        tdf = pd.read_csv(read_file_name)
+
+        # Take sums of predictions across all the topics
         for top_num in range(num_topics):
             agg_df.loc[top_num, 'tp'] = agg_df.loc[top_num, 'tp'] + tdf.loc[top_num, 'tp']
             agg_df.loc[top_num, 'fp'] = agg_df.loc[top_num, 'fp'] + tdf.loc[top_num, 'fp']
             agg_df.loc[top_num, 'fn'] = agg_df.loc[top_num, 'fn'] + tdf.loc[top_num, 'fn']
 
+    # Calculate and save recall, precision, f2 for each topic
     for top_num in range(num_topics):
         tp = agg_df.loc[top_num, 'tp']
         fp = agg_df.loc[top_num, 'fp']
@@ -107,15 +102,23 @@ def eval_aggregate_topics(args, export=True):
         agg_df.loc[top_num, 'precision'] = prec
         agg_df.loc[top_num, 'f2-score'] = f2
 
-    if export:
-        save_name = os.path.join(save_folder, 'cross_country_{}_topic_eval.csv'.format(num_topics))
-        agg_df.to_csv(save_name)
+    print("Cross-country topic time series evaluated")
 
+    # Save to file if exporting
+    if export:
+        save_name = os.path.join(save_folder, 'cross_country_{}_period_{}_topic_eval.csv'.format(
+            num_topics, config.COUNTRY_FREQ_PERIOD))
+        agg_df.to_csv(save_name)
+        print('Cross-country topic evaluation saved ad {}'.format(save_name))
+
+    # Also return df in-memory
     return agg_df
 
-#%%
+
 if __name__ == '__main__':
 
+    # Read arguments from bash
+    # TODO delete uncessary
     parser = argparse.ArgumentParser()
     #parser.add_argument('-t', '--targets', action='store', dest='targets', default=config.targets)
     parser.add_argument('-f', '--frequency_path', action='store', dest='frequency_path', default=config.FREQUENCY)
@@ -135,23 +138,26 @@ if __name__ == '__main__':
     parser.add_argument('-gsf', '--search_file', action='store', dest='search_file',default=config.GROUPED_SEARCH_FILE)
     args = parser.parse_args()
 
+    # TODO clean up
     args.read_folder = os.path.join(config.topiccing_time_series,'Min1_AllCountry')
     args.save_folder = os.path.join(config.topiccing_eval_levels_ts, 'Min1_AllCountry')
 
-    args.num_topics = 100
-    args.weighted = False
-    args.period = 'm'
+    args.num_topics = config.num_topics
+    args.weighted = config.topiccing_level_weighted
+    args.period = config.COUNTRY_FREQ_PERIOD
 
     class_type_setups = config.class_type_setups
     eval_type = config.eval_type
     original_eval_path = args.eval_path
+    # To here
 
-    '''
+
+    # Iterate over all the setups - evaluate the within-country topic power
     for setup in class_type_setups:
         args.setup_name = setup[0]
         eval_countries(args)
-    '''
 
+    # Iterate over all the setups - evaluate the aggregate topics power
     for setup in class_type_setups:
         args.setup_name = setup[0]
         eval_aggregate_topics(args)
