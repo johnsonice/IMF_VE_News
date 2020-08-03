@@ -5,7 +5,6 @@ import sys
 sys.path.insert(0,'./libs')
 import config
 import os
-from glob import glob
 import re
 import ujson as json
 from mp_utils import Mp
