@@ -2,39 +2,18 @@
 collate info for documents to speed things up downstream
 """
 import sys
-sys.path.insert(0,'./libs')
+sys.path.insert(0, './libs')
 import config
 import argparse
 import pandas as pd
 from datetime import datetime as dt
-import ujson as json
-from glob import glob
 from crisis_points import crisis_points
 from frequency_utils import list_crisis_docs
 import os
 from stream import MetaStreamer_fast as MetaStreamer
 
-#%%
-#def time_index(docs, lang=None, verbose=False):
-#    doc_details = {}
-#    tot = len(docs)
-#    for i, doc in enumerate(docs):
-#        if verbose:
-#            print('\r{} of {} processed'.format(i, tot), end='')
-#        with open(doc, 'r', encoding='utf-8') as f:
-#            art = json.loads(f.read())
-#            try:
-#                if lang:
-#                    if art['language_code'] != lang:
-#                        continue
-#                date = pd.to_datetime(dt.fromtimestamp(art['publication_date'] / 1e3))
-#                doc_details[art['an']] = {'date': date}
-#            except Exception as e:
-#                print(art['an'] + ': ' + e.characters_written)region_matched
-#    data = pd.DataFrame(doc_details).T
-#    return data
-## multi processed json input
-def time_index(docs, lang=None, verbose=False,date_format='DNA'):
+
+def time_index(docs, lang=None, verbose=False, date_format='DNA'):
     doc_details = {}
     tot = len(docs)
     print('Convert dates....')
@@ -52,7 +31,7 @@ def time_index(docs, lang=None, verbose=False,date_format='DNA'):
             
     data = pd.DataFrame(doc_details).T
     return data
-#%%
+
 
 def period_info(doc_deets):
     dates = pd.DatetimeIndex(doc_deets['date'])
@@ -90,12 +69,14 @@ if __name__ == '__main__':
         parser.add_argument('-p', '--period', action='store', dest='period', default='crisis')
         parser.add_argument('-v', '--verbose', action='store', dest='verbose', default=True)
         args = parser.parse_args()
-    except:
-        args = args_class(config.JSON_LEMMA,config.DOC_META, verbose = True)
+    except: # TODO check possible parser exceptions
+        # TODO change to infomrative error? Add default arguments instead of this stuff lol
+        args = args_class(config.JSON_LEMMA, config.DOC_META, verbose=True)
     
-    streamer = MetaStreamer(args.in_dir, language='en',verbose=args.verbose)  
-    deets = time_index(streamer.multi_process_files(workers=31,chunk_size=5000), lang='en', verbose=False,date_format='FT')
+    streamer = MetaStreamer(args.in_dir, language='en', verbose=args.verbose)
+    deets = time_index(streamer.multi_process_files(workers=31, chunk_size=5000), lang='en', verbose=False,
+                       date_format='FT')
     deets = period_info(deets)
-    deets = label_crisis(deets, path = args.in_dir, verbose=args.verbose, period=args.period)
+    deets = label_crisis(deets, path=args.in_dir, verbose=args.verbose, period=args.period)
     deets.to_pickle(os.path.join(args.out_dir, 'doc_details_{}.pkl'.format(args.period)))
  

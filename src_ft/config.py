@@ -206,7 +206,7 @@ if __name__ == "__main__":
                DOC_META, AUG_DOC_META, JSON_LEMMA, JSON_LEMMA_SMALL, MODELS, NGRAMS, TOPIC_MODELS,
                VS_MODELS, BOW_TFIDF_DOCS, FREQUENCY, EVAL, EVAL_WG, EVAL_TS, topiccing_folder, topiccing_meta,
                topiccing_time_series, topiccing_frequency, topiccing_eval, topiccing_eval_ts, topiccing_eval_wg,
-               topiccing_eval_levels_ts]
+               topiccing_eval_levels_ts, topiccing_aug_meta]
     weights = [DOC_META_FILE, PHRASER, W2V]
 
     for f in folders:
