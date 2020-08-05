@@ -9,10 +9,9 @@ import ujson as json
 from mp_utils import Mp
 from stream import SentStreamer_fast as SentStreamer
 from spacy.lang.en.stop_words import STOP_WORDS as stops
-bad_char = ['!','"','#','$','%','&',"'",'(',')','*','+',',','-','.','/',':',';','<','=','>','?','@','[','\\',']','^','`','{','|','}','~','NUMBER','=','-','«','.']
+bad_char = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?',
+            '@', '[', '\\', ']', '^', '`', '{', '|', '}', '~', 'NUMBER', '=', '-', '«', '.']
 
-
-#%%
 
 def deep_clean(token):
     """
@@ -22,11 +21,11 @@ def deep_clean(token):
     """
 
     # Remove tiny words
-    if len(token)<=3:
+    if len(token) <= 3:
         return False
 
     # Remove extremely long words
-    if len(token)>20:
+    if len(token) > 20:
         return False
 
     # Remove stopwords
@@ -42,12 +41,11 @@ def deep_clean(token):
     return True
 
 
-def preprocess(json_article,lemma = True):
+def preprocess(json_article):
     """
     Process entire body of an article, then save after eliminating unwanted words, signs
     :param json_article: a dict representing a single article. Must map key('body') -> value(text of article) to work
         properly
-    :param lemma: A boolean flag indicating if the article should be lemmatized. Optional. Default = True.
     :return: The article with body cleaned / False if the article body does not exist
     """
 
@@ -62,9 +60,7 @@ def preprocess(json_article,lemma = True):
         return json_article
 
     # If no body in article, print alert, return False
-    # TODO MOVE TO THIS one
-    # except KeyError and NoneObjectNotCallable: # Find what this one is called
-    except Exception:
+    except (KeyError, AttributeError):
         print('no text in article {}'.format(json_article['an']))
         return False        
 

@@ -80,6 +80,7 @@ BOW_TFIDF_DOCS = os.path.join(PROCESSING_FOLDER, 'bow_tfidf_docs')
 FREQUENCY = os.path.join(PROCESSING_FOLDER, 'frequency', 'csv')
 if experimenting:
     FREQUENCY = os.path.join(NEW_PROCESSING_FOLDER, 'frequency', 'csv')
+    EXP_SEARCH_TERMS = os.path.join(NEW_PROCESSING_FOLDER, 'search_terms')
 
 
 ## time series evaluation ##
@@ -202,31 +203,54 @@ def maybe_create(f):
 
 
 if __name__ == "__main__":
+    """
+    Create all of the directories and subdriectories required to execute the codebase
+    """
+
     folders = [RAW_DATA_PATH, PROCESSING_FOLDER, NEW_PROCESSING_FOLDER, SEARCH_TERMS,
                DOC_META, AUG_DOC_META, JSON_LEMMA, JSON_LEMMA_SMALL, MODELS, NGRAMS, TOPIC_MODELS,
-               VS_MODELS, BOW_TFIDF_DOCS, FREQUENCY, EVAL, EVAL_WG, EVAL_TS, topiccing_folder, topiccing_meta,
-               topiccing_time_series, topiccing_frequency, topiccing_eval, topiccing_eval_ts, topiccing_eval_wg,
-               topiccing_eval_levels_ts, topiccing_aug_meta]
+               VS_MODELS, BOW_TFIDF_DOCS, FREQUENCY, EVAL, EVAL_WG, EVAL_TS, EXP_SEARCH_TERMS]
+    topiccing_folders = [topiccing_folder, topiccing_meta, topiccing_time_series, topiccing_frequency, topiccing_eval,
+                         topiccing_eval_ts, topiccing_eval_wg, topiccing_eval_levels_ts, topiccing_aug_meta]
     weights = [DOC_META_FILE, PHRASER, W2V]
 
+    # Create basic folders
     for f in folders:
         maybe_create(f)
 
-    for setup in class_type_setups:
-        class_type = setup[0]
-        need_subfolders = [FREQUENCY, EVAL_WG, EVAL_TS, topiccing_time_series, topiccing_frequency, topiccing_eval_ts,
-                           topiccing_eval_wg, topiccing_eval_levels_ts]
-        for fold in need_subfolders:
-            maybe_create(os.path.join(fold, class_type))
-        maybe_create(os.path.join(EVAL_WG, class_type, eval_type))
-
+    # Create weights folders
     for w in weights:
         if not os.path.isfile(w):
             print('File not exist:{}'.format(w))
 
+    # Create experimental folders
     if experimenting:
+
+        # Create subfolders for country classification evaluation
+        for setup in class_type_setups:
+            class_type = setup[0]
+            need_subfolders = [FREQUENCY, EVAL_WG, EVAL_TS]
+            for fold in need_subfolders:
+                maybe_create(os.path.join(fold, class_type))
+            maybe_create(os.path.join(EVAL_WG, class_type, eval_type))
+
+        # Create topiccing folders
         if experiment_mode == "topiccing_discrimination":
 
+            # Basic topiccing folders
+            for f in topiccing_folders:
+                maybe_create(f)
+
+            # Create subfolders for country classification evaluation
+            for setup in class_type_setups:
+                class_type = setup[0]
+                need_subfolders = [topiccing_time_series, topiccing_frequency, topiccing_eval_ts, topiccing_eval_wg,
+                                   topiccing_eval_levels_ts]
+                for fold in need_subfolders:
+                    maybe_create(os.path.join(fold, class_type))
+                maybe_create(os.path.join(topiccing_eval_wg, class_type, eval_type))
+
+            # Create topic-discrimination subfolders
             topic_assessments = [topiccing_frequency, topiccing_eval_ts, topiccing_eval_wg]
             for topic_assessment in topic_assessments:
                 for setup in class_type_setups:

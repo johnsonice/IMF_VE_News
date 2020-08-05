@@ -142,6 +142,8 @@ if __name__ == '__main__':
     parser.add_argument('-gsf', '--search_file', action='store', dest='search_file',default=config.GROUPED_SEARCH_FILE)
     args = parser.parse_args()
 
+    args.verbose = True  # Todo modularize
+    args.export = True  # TODO modularize
 
     # Parse input word groups, word_gropus is a list of list:
     # something like this: [['fear'],['worry'],['concern'],['risk'],['threat'],['warn'],['maybe']]
@@ -197,8 +199,7 @@ if __name__ == '__main__':
         df.to_csv(save_file_full)
         print("Saved at:", save_file_full)
 
-        args.verbose = True # Todo modularize
-        args.export = True # TODO modularize
+
 
     # If experimenting
     if config.experimenting:

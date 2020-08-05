@@ -135,14 +135,10 @@ if __name__ == '__main__':
 
     class_type_setups = config.class_type_setups
 
-
-
-
+    # Configure arguments (read from bash, or use default)
     parser = argparse.ArgumentParser()
-    countries = config.countries
-
     parser.add_argument('-c', '--countries', nargs='+', help='countries to get freq for',
-                        default=countries)
+                        default=config.countries)
     parser.add_argument('-corp', '--corpus', action='store', dest='corpus',
                         default=config.JSON_LEMMA)
     parser.add_argument('-deets', '--doc_details', action='store', dest='doc_deets',

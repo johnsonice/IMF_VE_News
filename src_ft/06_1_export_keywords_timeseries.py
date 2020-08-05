@@ -134,7 +134,7 @@ if __name__ == "__main__":
                             doc_thresh = str(doc_thresh)
 
                         in_directory = os.path.join(config.topiccing_frequency, class_type, f2_thresh, doc_thresh)
-                        out_directory = os.path.join(config.topiccing_eval, class_type, f2_thresh, doc_thresh)
+                        out_directory = os.path.join(config.topiccing_eval_ts, class_type, f2_thresh, doc_thresh)
 
                         if config.just_five:
                             in_directory = os.path.join(in_directory, 'j5_countries')

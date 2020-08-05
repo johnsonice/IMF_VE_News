@@ -125,7 +125,7 @@ def get_countries(article,country_dict=country_dict):
     else:
         cl = list()
         
-    return article['an'],cl
+    return article['an'], cl
 
 
 def get_country_name_count(text, country_dict=country_dict, min_count=min_this, rex=None):
