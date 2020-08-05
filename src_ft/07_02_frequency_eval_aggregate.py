@@ -243,6 +243,10 @@ if __name__ == '__main__':
                         freq_path = os.path.join(config.topiccing_frequency, class_type, f2_thresh, doc_thresh)
                         ev_path = os.path.join(config.topiccing_eval_wg, class_type, f2_thresh, doc_thresh)
 
+                        if config.just_five:
+                            freq_path = os.path.join(freq_path, 'j5_countries')
+                            ev_path = os.path.join(ev_path, 'j5_countries')
+
                         args.frequency_path = freq_path
                         args.eval_path = ev_path
 
