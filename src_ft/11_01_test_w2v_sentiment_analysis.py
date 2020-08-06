@@ -193,10 +193,10 @@ if __name__ == "__main__":
 
     non_sentiment_items = get_group_items(non_sentiment_groups)
     sentiment_items = flatten_search_groups(sentiment_groups)
-    non_w2v_sent_base = non_sentiment_items.extend(sentiment_items)
+    non_sentiment_items.extend(sentiment_items)
     base_items = get_group_items(base_groups)
 
-    print("NON W2V items is :", non_w2v_sent_base)
+    print("NON W2V items is :", non_sentiment_items)
 
     print("BASE ITEMS IS :", base_items)
 
