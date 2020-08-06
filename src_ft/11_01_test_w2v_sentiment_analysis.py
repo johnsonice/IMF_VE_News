@@ -131,6 +131,9 @@ if __name__ == "__main__":
     parser.add_argument('-gsf', '--search_file', action='store', dest='search_file',default=config.GROUPED_SEARCH_FILE)
     args = parser.parse_args()
 
+    if args.sims:
+        vecs = KeyedVectors.load(args.wv_path)
+
     args.verbose = True  # Todo modularize
     args.export = False  # TODO modularize
     args.eval_path = config.EXP_SEARCH_EVAL
@@ -195,7 +198,7 @@ if __name__ == "__main__":
 
     print("NON W2V items is :", non_w2v_sent_base)
 
-    print("BASE ITEMS IS :", base_items)    
+    print("BASE ITEMS IS :", base_items)
 
     # run the evals
 
