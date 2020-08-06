@@ -79,8 +79,9 @@ SEARCH_TERMS = os.path.join(PROCESSING_FOLDER, 'search_terms')
 BOW_TFIDF_DOCS = os.path.join(PROCESSING_FOLDER, 'bow_tfidf_docs')
 FREQUENCY = os.path.join(PROCESSING_FOLDER, 'frequency', 'csv')
 if experimenting:
-    FREQUENCY = os.path.join(NEW_PROCESSING_FOLDER, 'frequency', 'csv')
+    FREQUENCY = os.path.join(NEW_PROCESSING_FOLDER, 'frequency', 'csv') #TODO think about changing to exp_freq
     EXP_SEARCH_TERMS = os.path.join(NEW_PROCESSING_FOLDER, 'search_terms')
+    EXP_SEARCH_EVAL = os.path.join(EXP_SEARCH_TERMS, 'eval')
 
 
 ## time series evaluation ##

@@ -170,6 +170,7 @@ if __name__ == '__main__':
         weights = None
 
     iter_items = list(search_words_sets.items())
+    print("THE ITER ITEMS ARE:", iter_items) #TODO TEMPS
 
     def multi_run_eval(item, args=args, weights=None):
         # Get prec, rec, and fscore for each country for each word group
@@ -196,8 +197,11 @@ if __name__ == '__main__':
         save_file_full = os.path.join(args.eval_path,
                                       'overall_agg_sim_{}_overall_{}_offset_{}_smoothwindow_{}_evaluation.csv'.format(
                                           args.sims, args.period, args.months_prior, args.window))
-        df.to_csv(save_file_full)
-        print("Saved at:", save_file_full)
+        print(df.head()) #TODO TEMP
+
+        # TODO bring back
+        #df.to_csv(save_file_full)
+        #print("Saved at:", save_file_full)
 
 
 

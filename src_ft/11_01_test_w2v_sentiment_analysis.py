@@ -32,73 +32,67 @@ if __name__ == "__main__":
 
     args.verbose = True  # Todo modularize
     args.export = True  # TODO modularize
+    args.eval_path = config.EXP_SEARCH_EVAL
+    args.frequency_path = os.path.join(config.NEW_PROCESSING_FOLDER, 'frequency', 'csv', 'Min1_AllCountry') # TEMP
 
-    read_file_path = os.path.join(config.SEARCH_TERMS, args.search_file)
-    write_file_path = os.path.join(config.EXP_SEARCH_TERMS, args.search_file)
+    group_search_file = os.path.join(config.SEARCH_TERMS, args.search_file)
+    exp_files_directory = config.EXP_SEARCH_TERMS
 
-    search_groups = read_grouped_search_words(read_file_path)
-    search
+    search_groups = read_grouped_search_words(group_search_file)
 
+    def save_these_word_groups(all_groups, group_names):
+        return_dict = {}
+        for name in group_names:
+            return_dict[name] = all_groups[name]
 
-    search_words_sets = dict()
-    for k, v in search_groups.items():
-        if args.sims:
-            search_words_sets[k] = list(get_sim_words_set(args,search_groups[k])) ## turn set to list
-        else:
-            search_words_sets[k] = [t for tl in v for t in tl] ## flattern the list of list
-    weights = None
+        return return_dict
 
-    iter_items = list(search_words_sets.items())
+    def get_group_items(search_groups):
+        search_words_sets = dict()
+        for k, v in search_groups.items():
+            if args.sims:
+                search_words_sets[k] = list(get_sim_words_set(args, search_groups[k]))  ## turn set to list
+            else:
+                search_words_sets[k] = [t for tl in v for t in tl]  ## flattern the list of list
+        weights = None
 
-    def multi_optimize_word_groups(search_group, args=args, weights=None):
-        base_item = get_sim_words_set(args, search_group)
-        base_eval = run_evaluation(item, args, weights)
+        iter_items = list(search_words_sets.items())
 
+        return iter_items
 
-    def multi_optimize_word_groups(item, args=args, weights=None):
+    def multi_run_eval(item, args=args, weights=None):
         # Get prec, rec, and fscore for each country for each word group
-
-
+        res_stats = run_evaluation(item, args, weights)
         return res_stats
 
+    # TEMP - non-perm TODO add based on flags or something?
+    non_sentiment_names_list = ['fear_language','risk_language', 'hedging_language', 'opinion_language',
+                                'crisis_language']
+    sentiment_names_list = ['positive_sentiment_language', 'negative_sentiment_language']
+    aggregate_names = ['agg_all_other_sentiments','agg_other_and_negative','all_language']
+    base_names = non_sentiment_names_list + sentiment_names_list
 
-    def main_process(args, iter_items):
-        '''
-        The meat of the program - evaluates the time series provided to it, saves the result to a properly named file
-            and directory
-        :param args:
-        :param iter_items:
-        :return:
-        '''
+    non_sentiment_groups = save_these_word_groups(search_groups, non_sentiment_names_list)
+    sentiment_groups = save_these_word_groups(search_groups, sentiment_names_list)
+    base_groups = save_these_word_groups(search_groups, base_names)
 
-        # run the eval function in multi process mode
-        mp = Mp(iter_items, multi_run_eval)
-        overall_res = mp.multi_process_files(workers=2,  # do not set workers to be too high, your memory will explode
-                                             chunk_size=1)
+    non_sentiment_items = get_group_items(non_sentiment_groups)
+    sentiment_items = sentiment_groups
+    base_items = get_group_items(base_groups)
 
-        ## export over all resoults to csv
-        df = pd.DataFrame(overall_res, columns=['word', 'sim_words', 'recall', 'prec', 'f2'])
-        save_file_full = os.path.join(args.eval_path,
-                                      'overall_agg_sim_{}_overall_{}_offset_{}_smoothwindow_{}_evaluation.csv'.format(
-                                          args.sims, args.period, args.months_prior, args.window))
-        df.to_csv(save_file_full)
-        print("Saved at:", save_file_full)
+    name_item_dict = {'non_sentiment':}
 
-    # If experimenting
-    class_type_setups = config.class_type_setups
-    eval_type = config.eval_type
-    original_eval_path = args.eval_path
-    original_freq_path = args.frequency_path
+    # run the evals
 
-    # iterate over different country-document classification
-    for setup in class_type_setups:
-        class_type = setup[0]
+    mp = Mp(iter_items, multi_run_eval)
+    overall_res = mp.multi_process_files(workers=2,  # do not set workers to be too high, your memory will explode
+                                         chunk_size=1)
 
-        freq_path = os.path.join(original_freq_path, class_type)  # Moved the TF_DFs manually for speed since 06_0
-        ev_path = os.path.join(original_eval_path, class_type)
+    ## export over all resoults to csv
+    df = pd.DataFrame(overall_res, columns=['word', 'sim_words', 'recall', 'prec', 'f2'])
+    save_file_full = os.path.join(args.eval_path,
+                                  'overall_agg_sim_{}_overall_{}_offset_{}_smoothwindow_{}_evaluation.csv'.format(
+                                      args.sims, args.period, args.months_prior, args.window))
+    df.to_csv(save_file_full)
+    print("Saved at:", save_file_full)
 
-        args.frequency_path = freq_path
-        args.eval_path = ev_path
-
-        # Execute the process setups times
-        main_process(args, iter_items)
