@@ -149,7 +149,9 @@ if __name__ == '__main__':
     # something like this: [['fear'],['worry'],['concern'],['risk'],['threat'],['warn'],['maybe']]
  
     file_path = os.path.join(config.SEARCH_TERMS,args.search_file)
-    search_groups = read_grouped_search_words(file_path)  
+    search_groups = read_grouped_search_words(file_path)
+    print("THE SEARCH GROUPS ARE:", search_groups)
+
     ## it is a dictionary list:
 #       {'fear_language': [['fear']],
 #       'risk_language': [['threat'], ['warn']]}
