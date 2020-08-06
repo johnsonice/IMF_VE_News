@@ -150,7 +150,6 @@ if __name__ == '__main__':
  
     file_path = os.path.join(config.SEARCH_TERMS,args.search_file)
     search_groups = read_grouped_search_words(file_path)
-    print("THE SEARCH GROUPS ARE:", search_groups)
 
     ## it is a dictionary list:
 #       {'fear_language': [['fear']],
@@ -172,7 +171,6 @@ if __name__ == '__main__':
         weights = None
 
     iter_items = list(search_words_sets.items())
-    print("THE ITER ITEMS ARE:", iter_items) #TODO TEMPS
 
     def multi_run_eval(item, args=args, weights=None):
         # Get prec, rec, and fscore for each country for each word group
@@ -194,16 +192,13 @@ if __name__ == '__main__':
         overall_res = mp.multi_process_files(workers=2,  # do not set workers to be too high, your memory will explode
                                              chunk_size=1)
 
-        ## export over all resoults to csv
+        ## export over all results to csv
         df = pd.DataFrame(overall_res, columns=['word', 'sim_words', 'recall', 'prec', 'f2'])
         save_file_full = os.path.join(args.eval_path,
                                       'overall_agg_sim_{}_overall_{}_offset_{}_smoothwindow_{}_evaluation.csv'.format(
                                           args.sims, args.period, args.months_prior, args.window))
-        print(df.head()) #TODO TEMP
-
-        # TODO bring back
-        #df.to_csv(save_file_full)
-        #print("Saved at:", save_file_full)
+        df.to_csv(save_file_full)
+        print("Saved at:", save_file_full)
 
 
 

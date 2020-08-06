@@ -47,6 +47,17 @@ if __name__ == "__main__":
 
         return return_dict
 
+
+    def flatten_search_groups(groups_dict):
+        re_dic = {}
+        for key in groups_dict.keys():
+            this_group = groups_dict[key]
+            flat_group = [x[0] for x in this_group]
+            re_dic[key] = flat_group
+
+        return re_dic
+
+
     def get_group_items(search_groups):
         search_words_sets = dict()
         for k, v in search_groups.items():
@@ -77,22 +88,33 @@ if __name__ == "__main__":
     base_groups = save_these_word_groups(search_groups, base_names)
 
     non_sentiment_items = get_group_items(non_sentiment_groups)
-    sentiment_items = sentiment_groups
+    sentiment_items = flatten_search_groups(sentiment_groups)
+    non_w2v_sent_base = non_sentiment_items.extend(sentiment_items)
     base_items = get_group_items(base_groups)
 
-    name_item_dict = {'non_sentiment':}
 
     # run the evals
 
-    mp = Mp(iter_items, multi_run_eval)
-    overall_res = mp.multi_process_files(workers=2,  # do not set workers to be too high, your memory will explode
+    mp_nonw2v = Mp(non_w2v_sent_base, multi_run_eval)
+    nonw2v_res = mp_nonw2v.multi_process_files(workers=2,  # do not set workers to be too high, your memory will explode
                                          chunk_size=1)
 
-    ## export over all resoults to csv
-    df = pd.DataFrame(overall_res, columns=['word', 'sim_words', 'recall', 'prec', 'f2'])
+    mp_w2v = Mp(non_w2v_sent_base, multi_run_eval)
+    w2v_res = mp_w2v.multi_process_files(workers=2,  # do not set workers to be too high, your memory will explode
+                                         chunk_size=1)
+
+    ## export over all results to csv
+    df = pd.DataFrame(nonw2v_res, columns=['word', 'sim_words', 'recall', 'prec', 'f2'])
     save_file_full = os.path.join(args.eval_path,
-                                  'overall_agg_sim_{}_overall_{}_offset_{}_smoothwindow_{}_evaluation.csv'.format(
-                                      args.sims, args.period, args.months_prior, args.window))
+                                  'group_words_without_w2v_on_sentiment.csv')
     df.to_csv(save_file_full)
+
+    print("Saved at:", save_file_full)
+
+    df = pd.DataFrame(w2v_res, columns=['word', 'sim_words', 'recall', 'prec', 'f2'])
+    save_file_full = os.path.join(args.eval_path,
+                                  'group_words_using_w2v_on_sentiment.csv')
+    df.to_csv(save_file_full)
+
     print("Saved at:", save_file_full)
 
