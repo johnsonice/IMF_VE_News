@@ -193,6 +193,9 @@ if __name__ == "__main__":
     non_w2v_sent_base = non_sentiment_items.extend(sentiment_items)
     base_items = get_group_items(base_groups)
 
+    print("NON W2V items is :", non_w2v_sent_base)
+
+    print("BASE ITEMS IS :", base_items)    
 
     # run the evals
 
