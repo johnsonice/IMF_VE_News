@@ -202,11 +202,11 @@ if __name__ == "__main__":
 
     # run the evals
 
-    mp_nonw2v = Mp(non_w2v_sent_base, multi_run_eval)
+    mp_nonw2v = Mp(non_sentiment_items, multi_run_eval)
     nonw2v_res = mp_nonw2v.multi_process_files(workers=2,  # do not set workers to be too high, your memory will explode
                                          chunk_size=1)
 
-    mp_w2v = Mp(non_w2v_sent_base, multi_run_eval)
+    mp_w2v = Mp(base_items, multi_run_eval)
     w2v_res = mp_w2v.multi_process_files(workers=2,  # do not set workers to be too high, your memory will explode
                                          chunk_size=1)
 
