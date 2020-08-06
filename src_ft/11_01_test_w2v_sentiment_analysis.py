@@ -130,7 +130,6 @@ if __name__ == "__main__":
     parser.add_argument('-z', '--z_thresh', action='store', dest='z_thresh',type=int, default=config.z_thresh)
     parser.add_argument('-gsf', '--search_file', action='store', dest='search_file',default=config.GROUPED_SEARCH_FILE)
     args = parser.parse_args()
-    groups = read_grouped_search_words(args.search_file)
 
     args.verbose = True  # Todo modularize
     args.export = False  # TODO modularize
