@@ -159,7 +159,7 @@ if __name__ == "__main__":
             flat_group = [x[0] for x in this_group]
             re_dic[key] = flat_group
 
-        return re_dic
+        return list(re_dic.items())
 
 
     def get_group_items(search_groups):
@@ -204,7 +204,7 @@ if __name__ == "__main__":
 
     mp_nonw2v = Mp(non_sentiment_items, multi_run_eval)
     nonw2v_res = mp_nonw2v.multi_process_files(workers=2,  # do not set workers to be too high, your memory will explode
-                                         chunk_size=1)
+                                               chunk_size=1)
 
     mp_w2v = Mp(base_items, multi_run_eval)
     w2v_res = mp_w2v.multi_process_files(workers=2,  # do not set workers to be too high, your memory will explode
