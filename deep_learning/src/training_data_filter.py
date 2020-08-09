@@ -50,10 +50,14 @@ def aggregate_emb(country_df):
 #%%
 if __name__ == '__main__':
     
-    read_data=False
-    filtered_data_path = os.path.join(config.CRISIS_DATES,'filtered_data.pkl'.format())
-    training_data_path = os.path.join(config.CRISIS_DATES,'train_data.pkl'.format())
+    read_data=True
+    filtered_data_path = os.path.join(config.CRISIS_DATES,'filtered_data.pkl')
+
     crisis_date_path = os.path.join(config.CRISIS_DATES,'criris_dates.pkl')
+    kr_crisis_date_path = os.path.join(config.CRISIS_DATES,'criris_dates_kr.pkl')
+    
+    training_data_path_rr = os.path.join(config.CRISIS_DATES,'train_data_rr.pkl')
+    training_data_path_kr = os.path.join(config.CRISIS_DATES,'train_data_kr.pkl')
     #%%
     if read_data:
         all_country_df= pd.read_pickle(filtered_data_path)
@@ -72,13 +76,24 @@ if __name__ == '__main__':
             else:
                 logger.warning('{} does not exist'.format(country))
         all_country_df.to_pickle(filtered_data_path)
-    #%%
+
     ##read crisis date
     df_crisis_dates = pd.read_pickle(crisis_date_path)
-    #%%
-    ## merge data with crisis dates
+    df_crisis_dates_kr = pd.read_pickle(kr_crisis_date_path)
+
+    ## merge export training data
     train_df= all_country_df.merge(df_crisis_dates,
                                      how='inner', 
                                      left_on=['month','country'],
                                      right_on=['month','transformed_country_name'])
-    train_df.to_pickle(training_data_path)
+    train_df.to_pickle(training_data_path_rr)
+#%%
+    ## 
+    train_df= all_country_df.merge(df_crisis_dates_kr,
+                                     how='inner', 
+                                     left_on=['month','country'],
+                                     right_on=['month','country_name'])
+    ## export data
+    train_df.to_pickle(training_data_path_kr)
+    #train_df.drop(['quarter_y','transformed_country_name'],axis=1,inplace=True)
+

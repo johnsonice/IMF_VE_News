@@ -21,7 +21,7 @@ def train_model(model,optimizer,loss_fn,n_epochs,train_data_iter,
                 log_interval=100,loss_scale=1,device="cpu",
                 do_eval=False,test_data_iter=None,
                 save_criterion=None,warmup_n_epoch=10,
-                save_model_path=None):
+                save_model_path=None, save_mode = 'full'):
         
     model.train()
     losses = []
@@ -81,8 +81,8 @@ def train_model(model,optimizer,loss_fn,n_epochs,train_data_iter,
                 
                 if train_acc>best_save_criterion:
                     best_save_criterion=train_acc
-    
-                    torch.save(model.state_dict(),save_model_path)
+                    save_model(model,save_model_path,save_mode=save_mode)
+                    #torch.save(model.state_dict(),save_model_path)
                     logger.info('best model saved in {}'.format(save_model_path))
                     
         elif save_criterion == 'test_acc':
@@ -92,8 +92,8 @@ def train_model(model,optimizer,loss_fn,n_epochs,train_data_iter,
                 
                 if test_acc>best_save_criterion:
                     best_save_criterion=test_acc
-
-                    torch.save(model.state_dict(),save_model_path)   
+                    save_model(model,save_model_path,save_mode=save_mode)
+                    #torch.save(model.state_dict(),save_model_path)   
                     logger.info('best model saved in {}'.format(save_model_path))
                     
         elif save_criterion == 'train_loss':
@@ -103,8 +103,8 @@ def train_model(model,optimizer,loss_fn,n_epochs,train_data_iter,
                 
                 if total_loss<best_save_criterion:
                     best_save_criterion=total_loss
- 
-                    torch.save(model.state_dict(),save_model_path)    
+                    save_model(model,save_model_path,save_mode=save_mode)
+                    #torch.save(model.state_dict(),save_model_path)    
                     logger.info('best model saved in {}'.format(save_model_path))
                     
         
@@ -114,7 +114,23 @@ def train_model(model,optimizer,loss_fn,n_epochs,train_data_iter,
         return model, best_save_criterion,return_metric_df
     else:
         return model, best_save_criterion
+
+
+def save_model(model,save_model_path,save_mode='full'):
+    '''
+    save model mode  = [full, state_dict, checkpoint] ## for convience, we default to full 
+    check https://pytorch.org/tutorials/beginner/saving_loading_models.html?hilight=load
+    '''
+    if save_mode == 'full':
+        torch.save(model,save_model_path)
+    elif save_mode == 'state_dict':
+        torch.save(model.state_dict(),save_model_path) 
+    elif save_mode == 'checkpoint':
+        raise Exception('not tyet implemented')
     
+    return None
+        
+
 def eval_model(model,test_data_iter,loss_fn=None,device='cpu'):
     
     model.eval()

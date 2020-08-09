@@ -7,7 +7,7 @@ Created on Sun Jul 26 12:04:21 2020
 """
 
 ## train simple model 
-import os,sys
+import os,sys,json
 sys.path.insert(0,'../libs')
 from model_baseline import Simple_nn_model,Dynamic_simple_sequencial_model
 from train_utils import train_model
@@ -32,6 +32,12 @@ def create_map(df,label_column):
     
     return label2id, id2label
 
+def save_label_map(label2id,map_path):
+    with open(map_path,'w') as fp:
+        json.dump(label2id,fp)
+    
+    return None
+    
 def prepare_torch_training_data(df,x_label,y_label,ratio=0.3):
     """
     prepare data into torch dataset for training
@@ -54,9 +60,14 @@ def prepare_torch_training_data(df,x_label,y_label,ratio=0.3):
 #%%
 if __name__ == '__main__':
 
+    crisis_version = 'kr' #or 'rr'
+    label_map_path = os.path.join(config.TRAINED_DEEP_MODEL,
+                                  'simple_nn_model',
+                                  'label_map.json')
     ## read training data 
-    training_data_path = os.path.join(config.CRISIS_DATES,'train_data.pkl'.format())
+    training_data_path = os.path.join(config.CRISIS_DATES,'train_data_{}.pkl'.format(crisis_version))
     df = pd.read_pickle(training_data_path)
+    #%%
     dummies = df[['crisis_pre','crisis_tranqull','crisisdate']]
     df['label'] = pd.Series(dummies.columns[np.where(dummies!=0)[1]])
     ## create label to description map 
@@ -71,8 +82,8 @@ if __name__ == '__main__':
     hidden_size = [256,32]  ## curreently saved model weights  dropout_p = 0.1
     #hidden_size = [384,128,32]
     num_classes = 3
-    learning_rate = 1e-3
-    n_epochs = 30
+    learning_rate = 2e-4
+    n_epochs = 10
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = Simple_nn_model(input_size,hidden_size,num_classes,dropout_p=0.3,batchnorm=True,layernorm=True)
@@ -84,11 +95,12 @@ if __name__ == '__main__':
     
     model,_,return_metric_df = train_model(model,optimizer,criterion,n_epochs,train_data_iter,
                             do_eval=True, test_data_iter= test_data_iter,
-                            save_criterion=None,warmup_n_epoch=0,  #'train_acc'
+                            save_criterion='test_acc',warmup_n_epoch=5,  #'train_acc',None
                             save_model_path=os.path.join(config.TRAINED_DEEP_MODEL,
                                                          'simple_nn_model',
-                                                         'weights_simple.pt'))
-#    
+                                                         'weights_simple'))
+    save_label_map(id2label,label_map_path) 
+#    #%%
     return_metric_df[['train_loss','test_loss']].plot(title='Training Metric')
 #    #%%
 #    _,_,acc = eval_model(model,test_data_iter)

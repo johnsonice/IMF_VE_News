@@ -43,8 +43,8 @@ def download_current_files():
     ###############################################################################
     ## if you want to change some input on the fly, you can do it here 
     ## note we can only go back for 3 month 
-#    api_args.date_since = '2019-03-01'
-#    api_args.data_dir = os.path.join(config.JSON_RAW,"{}".format('2019-03-05'))
+#    api_args.date_since = '2020-07-01'
+#    api_args.data_dir = os.path.join(config.JSON_RAW,"{}".format('2020-07-08'))
     ###############################################################################
     
     print(api_args)
@@ -57,7 +57,7 @@ def process_raw_data():
     current_month = get_current_month()
     ###############################################################################
     ##### if you changed download folder name, you need to change here too 
-#    current_month = '2019-03-05'
+#    current_month = '2020-07-08'
 #    current_month = '2019_0408'
     ##############################################################################
     
@@ -86,7 +86,7 @@ def generate_meta_file(keep_current=True):
     ##current_month = dt.datetime.strftime(dt.datetime.today(),"%Y-%m")
     ##current_month = '2019-04' # you can change here if you don't just want current month
 #    keep_current = False  ## set to false if you don't wnat to do any filtering
-#    df_meta = df_meta[df_meta['month']>= '2019-04'] ## or put in a specific month e.g: '2019-04'
+#    df_meta = df_meta[df_meta['month']>= '2020-07'] ## or put in a specific month e.g: '2019-04'
     #################################################################################################
     
     if keep_current:
@@ -168,7 +168,9 @@ if __name__ == "__main__":
 
     download_current_files()
     process_raw_data()
+    #%%
     generate_meta_file()
+    #%%
     generate_country_bow()
     generate_country_time_series()
     merge_with_historical()

@@ -22,14 +22,16 @@ def convert_date(d):
 
     return date_obj
 
-def transform_criris_data(crisis_df):
+def transform_criris_data(crisis_df,convert_date=None,resample=True):
     """
     wide format of crisi date to long format
     """
-    crisis_df['Date'] = crisis_df['Date'].apply(convert_date)
+    if convert_date is not None:
+        crisis_df['Date'] = crisis_df['Date'].apply(convert_date)
     crisis_df= crisis_df.set_index(['Date'])
     crisis_df.columns = ["crisisdate_"+c for c in crisis_df.columns]
-    crisis_df= crisis_df.resample('m').pad() # https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.resample.html
+    if resample == True:
+        crisis_df= crisis_df.resample('m').pad() # https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.resample.html
     crisis_df['month'] = crisis_df.index.to_period('M')
     crisis_df['quarter'] = crisis_df.index.to_period('Q')
     crisis_df = pd.wide_to_long(crisis_df,stubnames='crisisdate', i = ['month', 'quarter'],j='country_name' ,sep='_', suffix='\w+')
@@ -38,21 +40,21 @@ def transform_criris_data(crisis_df):
     
     return crisis_df
 
-def generate_pre_during_post_crisis_dates(crisis_df,shift_periods=12):
+def generate_pre_during_post_crisis_dates(crisis_df,shift_periods=12,pid='transformed_country_name'):
     """
     generate pre crisis period and post crisis period 
     """
     
     ##reate label for 1:n years ahead of crisis starts
-    df = df_final
-    df['crisis_pre1'] = df.groupby('transformed_country_name')['crisisdate'].shift(-1)
+    df = crisis_df
+    df['crisis_pre1'] = df.groupby(pid)['crisisdate'].shift(-1)
     df['crisis_pre1'] = df['crisis_pre1'] - df['crisisdate']
     df['crisis_pre1'].replace(-1,0,inplace=True)
     df['crisis_pre1'].replace(np.nan,0,inplace=True)
     df['crisis_pre'] = df['crisis_pre1']
 
     for i in range(2,shift_periods+1):
-        df['crisis_pre{}'.format(i)] = df.groupby('transformed_country_name')['crisis_pre1'].shift(-(i-1))
+        df['crisis_pre{}'.format(i)] = df.groupby(pid)['crisis_pre1'].shift(-(i-1))
         df['crisis_pre{}'.format(i)].replace(np.nan,0,inplace=True)
         df['crisis_pre'] = df['crisis_pre'] + df['crisis_pre{}'.format(i)]
         df.drop(['crisis_pre{}'.format(i)], axis=1,inplace=True)
@@ -69,7 +71,7 @@ if __name__ == "__main__":
     ## get and tansform crisis date
     crisis_file = os.path.join(config.CRISIS_DATES,'crisis_dates.xlsx')
     df = pd.read_excel(crisis_file,sheet_name='rr_crisis')
-    df = transform_criris_data(df)
+    df = transform_criris_data(df,convert_date)
     
     ## get country map to ft countries
     country_map = pd.read_excel(crisis_file,sheet_name='country_name_map')
