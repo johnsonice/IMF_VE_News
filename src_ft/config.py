@@ -90,6 +90,7 @@ if WEIGHTED:
     EVAL = os.path.join(PROCESSING_FOLDER, 'eval_weighted')
 if experimenting:
     EVAL = os.path.join(NEW_PROCESSING_FOLDER, 'eval')
+    country_classification_comparison = os.path.join(EVAL, 'classification_comparison')
     if WEIGHTED:
         EVAL = os.path.join(NEW_PROCESSING_FOLDER, 'eval_weighted')
 EVAL_WG = os.path.join(EVAL, 'word_groups')
@@ -108,6 +109,7 @@ topiccing_eval_levels_ts = os.path.join(topiccing_eval, 'topic_levels_ts')
 topiccing_eval_ts = os.path.join(topiccing_eval, 'eval_ts')
 topiccing_eval_wg = os.path.join(topiccing_eval, 'eval_wg')
 topiccing_aug_meta = os.path.join(topiccing_folder, "special_aug")
+topiccing_eval_comparison = os.path.join(topiccing_eval_wg, 'topiccing_comparison')
 if experimenting and experiment_mode == "topiccing_discrimination":
     #document_topic_min_levels = [("top", 1), ("top", 2), .5, .25, .1, .05, ("top", 10), ("top", 20), .02, .01]
     #topic_f2_thresholds = [('top', 1), ('top', 5), ('top', 10), .5, .4, .3]
@@ -210,9 +212,10 @@ if __name__ == "__main__":
 
     folders = [RAW_DATA_PATH, PROCESSING_FOLDER, NEW_PROCESSING_FOLDER, SEARCH_TERMS,
                DOC_META, AUG_DOC_META, JSON_LEMMA, JSON_LEMMA_SMALL, MODELS, NGRAMS, TOPIC_MODELS,
-               VS_MODELS, BOW_TFIDF_DOCS, FREQUENCY, EVAL, EVAL_WG, EVAL_TS, EXP_SEARCH_TERMS]
+               VS_MODELS, BOW_TFIDF_DOCS, FREQUENCY, EVAL, EVAL_WG, EVAL_TS]
     topiccing_folders = [topiccing_folder, topiccing_meta, topiccing_time_series, topiccing_frequency, topiccing_eval,
-                         topiccing_eval_ts, topiccing_eval_wg, topiccing_eval_levels_ts, topiccing_aug_meta]
+                         topiccing_eval_ts, topiccing_eval_wg, topiccing_eval_levels_ts, topiccing_aug_meta,
+                         topiccing_eval_comparison]
     weights = [DOC_META_FILE, PHRASER, W2V]
 
     # Create basic folders
@@ -226,6 +229,11 @@ if __name__ == "__main__":
 
     # Create experimental folders
     if experimenting:
+
+        experimental_folders = [EXP_SEARCH_TERMS, EXP_SEARCH_EVAL, country_classification_comparison]
+
+        for f in experimental_folders:
+            maybe_create(f)
 
         # Create subfolders for country classification evaluation
         for setup in class_type_setups:
