@@ -58,7 +58,34 @@ class Inference_model(object):
     def predict_from_text(self,inputs):
         
         return None
+
+def get_precision(tp,fp):
+    try:
+        return tp/(tp+fp)
+    except ZeroDivisionError:
+        return np.nan
+
+def get_recall(tp,fn):
+    try:
+        return tp/(tp+fn)
+    except ZeroDivisionError:
+        return np.nan
     
+def get_fscore(tp,fp,fn,beta):
+    try:
+        return ((1+beta**2)*tp)/((1+beta**2)*tp + (beta**2*fn)+fp)
+    except ZeroDivisionError:
+        return np.nan
+    
+def get_eval_matrics_one_country():
+    """
+    get evaluation metrics by couuuntry
+    input is a pandas df with time;crisis
+    """
+    
+    
+    return None
+
     #%%
     
 if __name__ == '__main__':
@@ -88,3 +115,20 @@ if __name__ == '__main__':
 #%%
     df['predict_label'] = res_labels
     df['predict_name'] = res_names
+
+#%%
+    ## recode crisisdates to crisis pre_dates too
+    df.predict_name = df.predict_name.replace('crisisdate','crisis_pre') ## here we do not ditinguish crisis and precrisis 
+    #%%
+    df['correct']  = df['predict_name'] == df['label']
+    tp = df['correct'][df.crisis_pre == 1].sum()
+    fp = len(df['correct'][df.crisis_tranqull == 1]) - df['correct'][df.crisis_tranqull == 1].sum()
+    df['value_group'] = (df.groupby('country_name').crisis_pre.diff(1)!=0).astype('int').cumsum() ## by country, code each precrisis period
+    pre_crisis_signal_counts = df[df.crisis_pre==1].groupby('value_group').correct.sum()
+    fn = len(pre_crisis_signal_counts) - pre_crisis_signal_counts.astype(bool).sum()
+    
+    precision = get_precision(tp,fp)
+    recall = get_recall(tp,fn)
+    f2 = get_fscore(tp,fp,fn,beta=2)
+    
+    print(precision,recall,f2)
