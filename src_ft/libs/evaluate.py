@@ -61,14 +61,14 @@ def evaluate(word_list, country, frequency_path, method='zscore',
         starts = list(pd.PeriodIndex(ll_crisis_points[country]['starts'], freq=fq))
         ends = list(pd.PeriodIndex(ll_crisis_points[country]['peaks'], freq=fq))
 
-    preds  = get_preds_from_pd(ag_freq,country,method, crisis_defs,period, 
-                             window, direction, months_prior, fbeta,
-                             weights,z_thresh)
+    preds = get_preds_from_pd(ag_freq, country, method, crisis_defs, period,
+                              window, direction, months_prior, fbeta,
+                              weights, z_thresh)
     if preds is None:
         return np.nan, np.nan, np.nan, np.nan, np.nan, np.nan  # return NAN if no mentions of topic words in country data
     
     # recall, precision, fscore, len(tp), len(fp), len(fn)
-    return get_eval_stats(fq,starts,ends,preds,period,months_prior,fbeta) 
+    return get_eval_stats(fq, starts, ends, preds, period, months_prior, fbeta)
 
 
 def get_preds_from_pd(ag_freq,country,method='zscore', crisis_defs='kr',period='month', 

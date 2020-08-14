@@ -86,7 +86,7 @@ def aggregate_freq(word_list,country, period='quarter', stemmed=False,frequency_
 
 
 def weight_freq_topic(country, topics_list, period='quarter', frequency_path='../data/frequency',
-                   weighted=False):
+                      weighted=False):
     assert isinstance(topics_list, list), 'Must pass a list to aggregate_freq'
     if weighted is None:
         weights = [1] * len(word_list)
