@@ -1,5 +1,6 @@
 import sys
-sys.path.insert(0,'./libs')
+sys.path.insert(0,'../src_ft/libs')
+sys.path.insert(0,'../src_ft')
 sys.path.insert(0,'..')
 from plot_utils import plot_frequency
 
