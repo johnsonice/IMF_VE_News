@@ -113,8 +113,10 @@ topiccing_eval_comparison = os.path.join(topiccing_eval_wg, 'topiccing_compariso
 if experimenting and experiment_mode == "topiccing_discrimination":
     #document_topic_min_levels = [("top", 1), ("top", 2), .5, .25, .1, .05, ("top", 10), ("top", 20), .02, .01]
     #topic_f2_thresholds = [('top', 1), ('top', 5), ('top', 10), .5, .4, .3]
-    topic_f2_thresholds = [('top', 1), ('top', 10), .4, .3]
-    document_topic_min_levels = [.25, .05, ("top", 10), ("top", 20), .01]
+    #topic_f2_thresholds = [('top', 1), ('top', 10), .4, .3]
+    topic_f2_thresholds = [('top', 80), ('top', 90)]  # Basically "Not bottom 20, not bottm 10"
+    #document_topic_min_levels = [.25, .05, ("top", 10), ("top", 20), .01]
+    document_topic_min_levels = [.05, ("top", 10), ("top", 20)]
 
 
 ## global file path ##

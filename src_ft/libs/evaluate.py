@@ -45,7 +45,7 @@ def evaluate(word_list, country, frequency_path, method='zscore',
     assert fq in ('q', 'm')  ## make sure period is set to eight quarter or month
     
     # Setup
-    ag_freq = aggregate_freq(word_list, country, period, stemmed,frequency_path,weights=weights)        ## sum frequency for specified words - it is pd series with time as index
+    ag_freq = aggregate_freq(word_list, country, period, stemmed, frequency_path, weights=weights)        ## sum frequency for specified words - it is pd series with time as index
     
     if type(ag_freq) != pd.core.series.Series:
         return np.nan, np.nan, np.nan, np.nan, np.nan, np.nan

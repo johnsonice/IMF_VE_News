@@ -110,6 +110,38 @@ def run_evaluation(item,args,weights=None): # TODO clean up naming practice - wt
     #print('evaluated words: {}'.format(words))
 
 
+def save_these_word_groups(all_groups, group_names):
+    return_dict = {}
+    for name in group_names:
+        return_dict[name] = all_groups[name]
+
+    return return_dict
+
+
+def flatten_search_groups(groups_dict):
+    re_dic = {}
+    for key in groups_dict.keys():
+        this_group = groups_dict[key]
+        flat_group = [x[0] for x in this_group]
+        re_dic[key] = flat_group
+
+    return list(re_dic.items())
+
+
+def get_group_items(search_groups):
+    search_words_sets = dict()
+    for k, v in search_groups.items():
+        if args.sims:
+            search_words_sets[k] = list(get_sim_words_set(args, search_groups[k]))  ## turn set to list
+        else:
+            search_words_sets[k] = [t for tl in v for t in tl]  ## flattern the list of list
+    weights = None
+
+    iter_items = list(search_words_sets.items())
+
+    return iter_items
+
+
 # TODO kick all the stuff out of above main and import it from 07_02, or move out of that one and create a utils file
 if __name__ == "__main__":
 
@@ -143,37 +175,6 @@ if __name__ == "__main__":
     exp_files_directory = config.EXP_SEARCH_TERMS
 
     search_groups = read_grouped_search_words(group_search_file)
-
-    def save_these_word_groups(all_groups, group_names):
-        return_dict = {}
-        for name in group_names:
-            return_dict[name] = all_groups[name]
-
-        return return_dict
-
-
-    def flatten_search_groups(groups_dict):
-        re_dic = {}
-        for key in groups_dict.keys():
-            this_group = groups_dict[key]
-            flat_group = [x[0] for x in this_group]
-            re_dic[key] = flat_group
-
-        return list(re_dic.items())
-
-
-    def get_group_items(search_groups):
-        search_words_sets = dict()
-        for k, v in search_groups.items():
-            if args.sims:
-                search_words_sets[k] = list(get_sim_words_set(args, search_groups[k]))  ## turn set to list
-            else:
-                search_words_sets[k] = [t for tl in v for t in tl]  ## flattern the list of list
-        weights = None
-
-        iter_items = list(search_words_sets.items())
-
-        return iter_items
 
     def multi_run_eval(item, args=args, weights=None):
         # Get prec, rec, and fscore for each country for each word group

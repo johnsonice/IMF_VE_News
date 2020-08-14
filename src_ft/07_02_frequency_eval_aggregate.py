@@ -12,7 +12,7 @@ import sys
 sys.path.insert(0, './libs')
 import argparse
 from gensim.models.keyedvectors import KeyedVectors
-from evaluate import evaluate, get_recall, get_precision, get_fscore ,get_input_words_weights,get_country_stats
+from evaluate import evaluate, get_recall, get_precision, get_fscore, get_input_words_weights, get_country_stats
 import pandas as pd
 import os
 from mp_utils import Mp

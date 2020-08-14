@@ -6,8 +6,6 @@ from matplotlib.colors import ListedColormap
 import frequency_utils as fu
 
 
-
-
 def crisis_plot(data, country=None, roll_avg=True, roll_window=20):
     """
     For any pandas time series, plot it and add annotations for crisis points given the country.
