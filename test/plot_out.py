@@ -189,7 +189,7 @@ if __name__ == '__main__':
         "/data/News_data_raw/FT_WD_research/topiccing/frequency/Min1_AllCountry/0.4/top_20/j5_countries",
     ]
 
-    ex_pull = directories_to_pull_from[0]
+    ex_pull = directories_to_pull_from[4]
     data_path_csv = os.path.join(ex_pull, '{}_{}_word_freqs.csv'.format(countries[0], period))
     data = pd.read_csv(data_path_csv, index_col=0)
     word_group = iter_items[0][0]
@@ -197,9 +197,10 @@ if __name__ == '__main__':
     ex_graph = plot_frequency(data, words=word_group, country=countries[0])
 
     ex_write_out_fold = '/home/apsurek/IMF_VE_News/test'
-    out_file = os.path.join(ex_write_out_fold, "sample_argentina_graph.jpg")
+    out_file = os.path.join(ex_write_out_fold, "sample_argentina_0.3_top_10_graph.jpg")
 
     ex_graph.savefig(out_file)
     print('Saved figure at', out_file)
+
 
 
