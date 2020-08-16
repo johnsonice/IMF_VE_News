@@ -62,7 +62,7 @@ if experimenting:
     AUG_DOC_META = os.path.join(NEW_PROCESSING_FOLDER, 'doc_meta')
     # experiment_mode = "country_classification"
     experiment_mode = "topiccing_discrimination"
-    just_five = True
+    just_five = False ## HERE
     # Only look at a sub-sample of countries
     if just_five:
         countries = countries_just_five

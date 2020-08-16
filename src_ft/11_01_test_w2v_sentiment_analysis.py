@@ -182,10 +182,10 @@ if __name__ == "__main__":
         return res_stats
 
     # TEMP - non-perm TODO add based on flags or something?
-    non_sentiment_names_list = ['fear_language','risk_language', 'hedging_language', 'opinion_language',
+    non_sentiment_names_list = ['fear_language', 'risk_language', 'hedging_language', 'opinion_language',
                                 'crisis_language']
     sentiment_names_list = ['positive_sentiment_language', 'negative_sentiment_language']
-    aggregate_names = ['agg_all_other_sentiments','agg_other_and_negative','all_language']
+    aggregate_names = ['agg_all_other_sentiments', 'agg_other_and_negative','all_language']
     base_names = non_sentiment_names_list + sentiment_names_list
 
     non_sentiment_groups = save_these_word_groups(search_groups, non_sentiment_names_list)

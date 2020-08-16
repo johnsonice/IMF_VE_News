@@ -202,5 +202,16 @@ if __name__ == '__main__':
     ex_graph.savefig(out_file)
     print('Saved figure at', out_file)
 
+    word_group = iter_items[0][0]
+
+    ex_graph = plot_frequency(data, words=word_group, country=countries[0])
+
+    ex_write_out_fold = '/home/apsurek/IMF_VE_News/test'
+    out_file = os.path.join(ex_write_out_fold, "sample_argentina_0.3_top_10_graph.jpg")
+
+    ex_graph.savefig(out_file)
+    print('Saved figure at', out_file)
+
+
 
 
