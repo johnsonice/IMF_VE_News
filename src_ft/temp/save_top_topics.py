@@ -23,9 +23,9 @@ topics = range(100)
 pd_dict = {}
 for top in topics:
     these_topic_word = loaded_model.show_topic(top, topn=30)
-    as_list = [x[1] for x in these_topic_word]
+    as_list = [x[0] for x in these_topic_word]
     pd_dict.update({top: as_list})
 
 df = pd.DataFrame(pd_dict)
-df.to_csv('/home/apsurek/IMF_VE_News/csv_out/lda_100_topic_words')
+df.to_csv('/home/apsurek/IMF_VE_News/csv_out/lda_100_topic_words.csv')
 print('Saved df')
