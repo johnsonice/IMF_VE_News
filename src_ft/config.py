@@ -62,7 +62,7 @@ if experimenting:
     AUG_DOC_META = os.path.join(NEW_PROCESSING_FOLDER, 'doc_meta')
     # experiment_mode = "country_classification"
     experiment_mode = "topiccing_discrimination"
-    just_five = False ## HERE
+    just_five = True ## HERE
     # Only look at a sub-sample of countries
     if just_five:
         countries = countries_just_five
@@ -116,7 +116,7 @@ if experimenting and experiment_mode == "topiccing_discrimination":
     #topic_f2_thresholds = [('top', 1), ('top', 10), .4, .3]
     topic_f2_thresholds = [('top', 80), ('top', 90)]  # Basically "Not bottom 20, not bottm 10"
     #document_topic_min_levels = [.25, .05, ("top", 10), ("top", 20), .01]
-    document_topic_min_levels = [.05, ("top", 10), ("top", 20)]
+    document_topic_min_levels = [.05, ("top", 10), ("top", 20), .01]
 
 
 ## global file path ##
