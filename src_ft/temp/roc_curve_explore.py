@@ -22,7 +22,7 @@ for thresh_value in thresh_values:
     new_folder = os.path.join(base_fold, str(thresh_value))
     config.maybe_create(new_folder)
     thresh_files.append(new_folder)
-    Popen('python 07_02_frequency_eval_aggregate.py -z {} -ep {} -c {}'.format(thresh_value, new_folder, countries))
+    Popen('python ../07_02_frequency_eval_aggregate.py -z {} -ep {} -c {}'.format(thresh_value, new_folder, countries))
 
 summ_dict = {}
 summ_df = pd.DataFrame()
