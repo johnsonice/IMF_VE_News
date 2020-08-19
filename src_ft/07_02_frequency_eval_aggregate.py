@@ -138,7 +138,7 @@ if __name__ == '__main__':
     parser.add_argument('-w', '--window', action='store', dest='window',default=config.smooth_window_size)
     parser.add_argument('-eed', '--eval_end_date', action='store', dest='eval_end_date',default=config.eval_end_date)
     parser.add_argument('-wed', '--weighted', action='store_true', dest='weighted',default=config.WEIGHTED)
-    parser.add_argument('-z', '--z_thresh', action='store', dest='z_thresh',type=int, default=config.z_thresh)
+    parser.add_argument('-z', '--z_thresh', action='store', dest='z_thresh',type=float, default=config.z_thresh)
     parser.add_argument('-gsf', '--search_file', action='store', dest='search_file',default=config.GROUPED_SEARCH_FILE)
     args = parser.parse_args()
 

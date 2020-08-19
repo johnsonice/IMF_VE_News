@@ -1,0 +1,1 @@
+Passed freq path was test_freq_info

@@ -60,8 +60,8 @@ experimenting = True
 NEW_PROCESSING_FOLDER = '/data/News_data_raw/FT_WD_research' # experi
 if experimenting:
     AUG_DOC_META = os.path.join(NEW_PROCESSING_FOLDER, 'doc_meta')
-    # experiment_mode = "country_classification"
-    experiment_mode = "topiccing_discrimination"
+    experiment_mode = "country_classification"
+    #experiment_mode = "topiccing_discrimination"
     just_five = True ## HERE
     # Only look at a sub-sample of countries
     if just_five:
