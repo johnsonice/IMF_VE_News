@@ -11,6 +11,7 @@ import os,sys,json
 sys.path.insert(0,'../libs')
 from model_baseline import Simple_nn_model,Dynamic_simple_sequencial_model
 from train_utils import train_model
+from data_sampling_utils import split_by_country, create_map,save_label_map
 import config
 import torch 
 import torch.nn as nn
@@ -23,20 +24,20 @@ logging.basicConfig(level=logging.INFO)
 logger=logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-def create_map(df,label_column):
-    label2id = {}
-    for idx,key in enumerate(df[label_column].unique()):
-        label2id[key] = idx
-        
-    id2label = {i:key for key,i in label2id.items()}
-    
-    return label2id, id2label
-
-def save_label_map(label2id,map_path):
-    with open(map_path,'w') as fp:
-        json.dump(label2id,fp)
-    
-    return None
+#def create_map(df,label_column):
+#    label2id = {}
+#    for idx,key in enumerate(df[label_column].unique()):
+#        label2id[key] = idx
+#        
+#    id2label = {i:key for key,i in label2id.items()}
+#    
+#    return label2id, id2label
+#
+#def save_label_map(label2id,map_path):
+#    with open(map_path,'w') as fp:
+#        json.dump(label2id,fp)
+#    
+#    return None
     
 def prepare_torch_training_data(df,x_label,y_label,ratio=0.3):
     """
