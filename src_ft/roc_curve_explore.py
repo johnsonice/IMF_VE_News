@@ -16,6 +16,7 @@ countries = config.countries_just_five
 #countries = ['argentina']  # TEMP
 search_terms_file = 'grouped_search_words_final.csv'
 sdf = pd.read_csv(os.path.join(config.SEARCH_TERMS, search_terms_file))
+print("SDF\n", sdf)
 
 word_groups = list(sdf.index)
 #word_groups = ['all_language']  # TEMP
