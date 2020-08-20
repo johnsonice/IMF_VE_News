@@ -36,7 +36,8 @@ for thresh_value in thresh_values:
         else:
             flat_call_list.append(item)
 
-    Popen(flat_call_list)
+    child = Popen(flat_call_list)
+    child.wait()
 
 summ_dict = {}
 summ_df = pd.DataFrame()
