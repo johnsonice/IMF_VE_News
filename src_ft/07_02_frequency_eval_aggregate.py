@@ -126,7 +126,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     #parser.add_argument('-t', '--targets', action='store', dest='targets', default=config.targets)
     parser.add_argument('-f', '--frequency_path', action='store', dest='frequency_path', default=config.FREQUENCY)
-    parser.add_argument('-c', '--countries', action='store', dest='countries', type=list, default=config.countries)
+    parser.add_argument('-c', '--countries', nargs='+', action='store', dest='countries', type=str,
+                        default=config.countries)
     parser.add_argument('-wv', '--wv_path', action='store', dest='wv_path', default=config.W2V)
     parser.add_argument('-ep', '--eval_path', action='store', dest='eval_path', default=config.EVAL_WG)
     parser.add_argument('-md', '--method', action='store', dest='method', default='zscore')
