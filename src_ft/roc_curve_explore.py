@@ -10,20 +10,22 @@ import time
 base_fold = '/data/News_data_raw/FT_WD_research/threshold/'
 config.maybe_create(base_fold)
 class_type = 'Min1_AllCountry'
-# countries = config.countries
-countries = ['argentina']  # TEMP
-word_groups = ['all_language']  # TEMP
-search_terms = 'grouped_search_words_final.csv'
+countries = config.countries
+# countries = ['argentina']  # TEMP
+search_terms_file = 'grouped_search_words_final.csv'
+sdf = pd.read_csv(os.path.join(config.SEARCH_TERMS, search_terms_file))
+
+word_groups = list(sdf.index)
+#word_groups = ['all_language']  # TEMP
+
 top_n = 15
 
-thresh_values = [0, 1.645, 1.96, 2.576, 99]
-thresh_files = []
+thresh_values = [0, 1.282, 1.44, 1.645, 1.96, 2.576, 99]  # Based on commonly-used z-scores
 for thresh_value in thresh_values:
     new_folder = os.path.join(base_fold, str(thresh_value))
     config.maybe_create(new_folder)
-    thresh_files.append(new_folder)
     Popen(['python', '07_02_frequency_eval_aggregate.py', '-z', '{}'.format(thresh_value), '-ep',
-           '{}'.format(new_folder), '-c', '{}'.format("".join(countries)), '-gsf', '{}'.format(search_terms), '-tn',
+           '{}'.format(new_folder), '-c', '{}'.format("".join(countries)), '-gsf', '{}'.format(search_terms_file), '-tn',
            '{}'.format(top_n)])
 
 summ_dict = {}

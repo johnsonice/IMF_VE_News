@@ -135,7 +135,7 @@ def load_search_words(folder, path):
         df = pd.read_csv(file_path)
         search_groups = df.to_dict()
         words_list = list()
-        for k,v in search_groups.items():
+        for k, v in search_groups.items():
             temp_list = [i for i in list(v.values()) if not pd.isna(i)]
             #temp_list = [wg.split('&') for wg in temp_list]   ## split & for wv search 
             words_list.extend(temp_list)
@@ -209,7 +209,7 @@ def maybe_create(f):
 
 if __name__ == "__main__":
     """
-    Create all of the directories and subdriectories required to execute the codebase
+    Create all of the directories and subdirectories required to execute the codebase
     """
 
     folders = [RAW_DATA_PATH, PROCESSING_FOLDER, NEW_PROCESSING_FOLDER, SEARCH_TERMS,

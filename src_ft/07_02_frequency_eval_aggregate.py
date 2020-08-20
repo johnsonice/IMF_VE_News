@@ -114,15 +114,14 @@ def run_evaluation(item,args,weights=None): # TODO clean up naming practice - wt
     if args.verbose:
         print('\n\n{}:\nevaluated words: {}\n\trecall: {}, precision: {}, f-score: {}'.format(k,words,aggregate_recall, aggregate_prec, aggregate_f2))
     if args.weighted: 
-        return k,list(zip(words,weights)),aggregate_recall, aggregate_prec, aggregate_f2
+        return k, list(zip(words, weights)), aggregate_recall, aggregate_prec, aggregate_f2
     else:
-        return k,words,aggregate_recall, aggregate_prec, aggregate_f2
+        return k, words, aggregate_recall, aggregate_prec, aggregate_f2
     #print('evaluated words: {}'.format(words))
 
 
 if __name__ == '__main__':
-    
-    
+
     parser = argparse.ArgumentParser()
     #parser.add_argument('-t', '--targets', action='store', dest='targets', default=config.targets)
     parser.add_argument('-f', '--frequency_path', action='store', dest='frequency_path', default=config.FREQUENCY)
@@ -133,27 +132,27 @@ if __name__ == '__main__':
     parser.add_argument('-md', '--method', action='store', dest='method', default='zscore')
     parser.add_argument('-cd', '--crisis_defs', action='store', dest='crisis_defs', default=config.crisis_defs)
     parser.add_argument('-sims', '--sims', action='store', dest='sims', default=config.SIM)
-    parser.add_argument('-tn', '--topn', action='store', dest='topn',type=int, default=config.topn)    
+    parser.add_argument('-tn', '--topn', action='store', dest='topn',type=int, default=config.topn)
     parser.add_argument('-p', '--period', action='store', dest='period', default=config.COUNTRY_FREQ_PERIOD)
     parser.add_argument('-mp', '--months_prior', action='store', dest='months_prior', default=config.months_prior)
     parser.add_argument('-w', '--window', action='store', dest='window',default=config.smooth_window_size)
-    parser.add_argument('-eed', '--eval_end_date', action='store', dest='eval_end_date',default=config.eval_end_date)
-    parser.add_argument('-wed', '--weighted', action='store_true', dest='weighted',default=config.WEIGHTED)
-    parser.add_argument('-z', '--z_thresh', action='store', dest='z_thresh',type=float, default=config.z_thresh)
-    parser.add_argument('-gsf', '--search_file', action='store', dest='search_file',default=config.GROUPED_SEARCH_FILE)
+    parser.add_argument('-eed', '--eval_end_date', action='store', dest='eval_end_date', default=config.eval_end_date)
+    parser.add_argument('-wed', '--weighted', action='store_true', dest='weighted', default=config.WEIGHTED)
+    parser.add_argument('-z', '--z_thresh', action='store', dest='z_thresh', type=float, default=config.z_thresh)
+    parser.add_argument('-gsf', '--search_file', action='store', dest='search_file', default=config.GROUPED_SEARCH_FILE)
     args = parser.parse_args()
 
     args.verbose = True  # Todo modularize
     args.export = True  # TODO modularize
 
-    debug = True
+    debug = False
     if debug:
         print("The Operating arguments are:\n", args.__dict__, sep="")
 
     # Parse input word groups, word_gropus is a list of list:
     # something like this: [['fear'],['worry'],['concern'],['risk'],['threat'],['warn'],['maybe']]
  
-    file_path = os.path.join(config.SEARCH_TERMS,args.search_file)
+    file_path = os.path.join(config.SEARCH_TERMS, args.search_file)
     search_groups = read_grouped_search_words(file_path)
 
     ## it is a dictionary list:
