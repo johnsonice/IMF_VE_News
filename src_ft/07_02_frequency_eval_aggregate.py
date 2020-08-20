@@ -145,6 +145,10 @@ if __name__ == '__main__':
     args.verbose = True  # Todo modularize
     args.export = True  # TODO modularize
 
+    debug = True
+    if debug:
+        print("The Operating arguments are:\n", args.__dict__, sep="")
+
     # Parse input word groups, word_gropus is a list of list:
     # something like this: [['fear'],['worry'],['concern'],['risk'],['threat'],['warn'],['maybe']]
  
