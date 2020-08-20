@@ -58,6 +58,8 @@ for word_group in word_groups:
                                                                                     'sensitivity': sensitivity})
         except IOError:
             time.sleep(30)
+            print("Waiting up on 07_02")
+            waiting = True
 
     save_file = os.path.join(base_fold, 'cross_threshold_comparison_{}.csv'.format(word_group))
     word_group_df.to_csv(save_file)
