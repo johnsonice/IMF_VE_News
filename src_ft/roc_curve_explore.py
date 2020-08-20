@@ -48,9 +48,10 @@ tps = []
 fps = []
 fns = []
 sensitivities = []
+print('WORD GROUPS',word_groups)
 
 for word_group in word_groups:
-    print('WORD GROUPS',word_group)
+
     df_index = pd.MultiIndex.from_product([thresh_values, countries], names=['threshold', 'country'])
     word_group_df = pd.DataFrame(index=df_index, columns=['fscore', 'tp', 'fp', 'fn', 'sensitivity'])
     waiting = True
