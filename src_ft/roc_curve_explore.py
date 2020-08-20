@@ -26,7 +26,7 @@ for thresh_value in thresh_values:
     new_folder = os.path.join(base_fold, str(thresh_value))
     config.maybe_create(new_folder)
     Popen(['python', '07_02_frequency_eval_aggregate.py', '-z', '{}'.format(thresh_value), '-ep',
-           '{}'.format(new_folder), '-c', countries, '-gsf', '{}'.format(search_terms_file),
+           '{}'.format(new_folder), '-c', '{}'.format(countries), '-gsf', '{}'.format(search_terms_file),
            '-tn', '{}'.format(top_n)])
 
 summ_dict = {}
