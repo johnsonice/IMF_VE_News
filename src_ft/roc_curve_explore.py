@@ -1,8 +1,7 @@
 import os
 import pandas as pd
 import sys
-sys.path.insert(0,'../libs')
-sys.path.insert(0,'..')
+sys.path.insert(0, './libs')
 import config
 from subprocess import Popen  # Allows to run other python files
 import time
@@ -21,7 +20,7 @@ for thresh_value in thresh_values:
     new_folder = os.path.join(base_fold, str(thresh_value))
     config.maybe_create(new_folder)
     thresh_files.append(new_folder)
-    Popen(['python', '../07_02_frequency_eval_aggregate.py', '-z', '{}'.format(thresh_value), '-ep',
+    Popen(['python', '07_02_frequency_eval_aggregate.py', '-z', '{}'.format(thresh_value), '-ep',
            '{}'.format(new_folder), '-c', '{}'.format(countries)])
 
 summ_dict = {}
