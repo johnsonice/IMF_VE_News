@@ -11,8 +11,9 @@ import time
 base_fold = '/data/News_data_raw/FT_WD_research/threshold/'
 config.maybe_create(base_fold)
 class_type = 'Min1_AllCountry'
-countries = config.countries
-# countries = ['argentina']  # TEMP
+#countries = config.countries
+countries = config.countries_just_five
+#countries = ['argentina']  # TEMP
 search_terms_file = 'grouped_search_words_final.csv'
 sdf = pd.read_csv(os.path.join(config.SEARCH_TERMS, search_terms_file))
 
@@ -34,7 +35,7 @@ for thresh_value in thresh_values:
             flat_call_list.extend([x for x in item])
         else:
             flat_call_list.append(item)
-            
+
     Popen(flat_call_list)
 
 summ_dict = {}
