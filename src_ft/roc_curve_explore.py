@@ -6,6 +6,7 @@ import config
 from subprocess import Popen  # Allows to run other python files
 import time
 
+
 # set up
 base_fold = '/data/News_data_raw/FT_WD_research/threshold/'
 config.maybe_create(base_fold)
@@ -25,8 +26,8 @@ for thresh_value in thresh_values:
     new_folder = os.path.join(base_fold, str(thresh_value))
     config.maybe_create(new_folder)
     Popen(['python', '07_02_frequency_eval_aggregate.py', '-z', '{}'.format(thresh_value), '-ep',
-           '{}'.format(new_folder), '-c', '{}'.format("".join(countries)), '-gsf', '{}'.format(search_terms_file), '-tn',
-           '{}'.format(top_n)])
+           '{}'.format(new_folder), '-c', '{}'.format(" ".join(countries)), '-gsf', '{}'.format(search_terms_file),
+           '-tn', '{}'.format(top_n)])
 
 summ_dict = {}
 summ_df = pd.DataFrame()
@@ -65,6 +66,7 @@ for word_group in word_groups:
 
     save_file = os.path.join(base_fold, 'cross_threshold_comparison_{}.csv'.format(word_group))
     word_group_df.to_csv(save_file)
+    
 
 
 
