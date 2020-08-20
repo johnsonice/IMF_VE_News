@@ -28,7 +28,7 @@ for thresh_value in thresh_values:
     messy_call_list = ['python', '07_02_frequency_eval_aggregate.py', '-z', '{}'.format(thresh_value), '-ep',
            '{}'.format(new_folder), '-c', countries, '-gsf', '{}'.format(search_terms_file),
            '-tn', '{}'.format(top_n)]
-    flat_call_list = [y for x in messy_call_list for y in x]
+    flat_call_list = [y for x in messy_call_list for y in x if isinstance(x, list)]
     Popen(flat_call_list)
 
 summ_dict = {}
