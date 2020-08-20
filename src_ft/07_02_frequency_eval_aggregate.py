@@ -145,7 +145,7 @@ if __name__ == '__main__':
     args.verbose = True  # Todo modularize
     args.export = True  # TODO modularize
 
-    debug = False
+    debug = True
     if debug:
         print("The Operating arguments are:\n", args.__dict__, sep="")
 
