@@ -40,7 +40,7 @@ if __name__ == "__main__":
     
     ## oneline training loop -- deal with large data size that can't fit into memory
     for batch_number, batch in enumerate(batched_files):
-        print("Loading {}/{} batches, number of files: {}".format(i, len(batched_files), len(batch)))
+        print("Loading {}/{} batches, number of files: {}".format(batch_number, len(batched_files), len(batch)))
         streamer.input_files = batch
         sentences = streamer.multi_process_files()
         if batch_number == 0:
