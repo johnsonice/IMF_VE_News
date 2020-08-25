@@ -19,12 +19,12 @@ if __name__ == "__main__":
     # TODO Modularize w/argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-min', '--min_count', action='store', dest='min_count', default=50)
-    parser.add_argument('-sz', '--size', action='store', dest='size', default=200)
-    parser.add_argument('-wd', '--window', action='store', dest='window', default=5)
-    parser.add_argument('-sd', '--random_seed', action='store', dest='random_seed', default=10)
+    parser.add_argument('-min', '--min_count', action='store', type=int, dest='min_count', default=50)
+    parser.add_argument('-sz', '--size', action='store', type=int, dest='size', default=200)
+    parser.add_argument('-wd', '--window', action='store', type=int, dest='window', default=5)
+    parser.add_argument('-sd', '--random_seed', action='store', type=int, dest='random_seed', default=10)
     parser.add_argument('-skg', '--skipgram', action='store_true', dest='skipgram', default=False)
-    parser.add_argument('-spz', '--sample_size', action='store', dest='sample_size', default=None)
+    parser.add_argument('-spz', '--sample_size', action='store', type=int, dest='sample_size', default=0)
     parser.add_argument('-out', '--out_directory', default=config.VS_MODELS)
     args = parser.parse_args()
 
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     all_input_files = copy.deepcopy(streamer.input_files)
     random.shuffle(all_input_files)
 
-    if args.sample_size is not None:
+    if args.sample_size != 0:
         all_input_files = all_input_files[:args.sample_size]
         print('Sampled length:', len(all_input_files))
 
