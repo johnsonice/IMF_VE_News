@@ -53,11 +53,11 @@ def ngram_phraser(n, corpus, scoring, thresh, min_count, common_terms, language=
     assert n >= 2
 
     # use sent_stream generator to feed data to the phraser
-    streamer = SentStreamer(corpus, language=language,stopwords=[], verbose=verbose)
+    streamer = SentStreamer(corpus, language=language, stopwords=[], verbose=verbose)
     print(len(streamer.input_files))
     all_input_files = copy.deepcopy(streamer.input_files)
     random.shuffle(all_input_files)
-    batched_files = list(chunks(all_input_files,config.SAMPLE_LIMIT))
+    batched_files = list(chunks(all_input_files, config.SAMPLE_LIMIT))
     
 #    if len(streamer.input_files) > config.SAMPLE_LIMIT:
 #        streamer.input_files = streamer.input_files[-config.SAMPLE_LIMIT:]
@@ -71,7 +71,7 @@ def ngram_phraser(n, corpus, scoring, thresh, min_count, common_terms, language=
     else:
         prev_phraser = ngram_phraser(n - 1, corpus, scoring, thresh, min_count, common_terms, language=language)
         print('Working on {}grams...'.format(n))
-        batched_files
+
         phrase_model = train_phrase_model(batched_files,streamer,scoring, thresh=thresh + thresh * 0.5, min_count=min_count, 
                                           common_terms=common_terms,prev_phraser=prev_phraser)
 #        gensim.models.Phrases(prev_phraser[streamer.multi_process_files()], scoring=scoring, min_count=min_count,
@@ -81,24 +81,25 @@ def ngram_phraser(n, corpus, scoring, thresh, min_count, common_terms, language=
     return gensim.models.phrases.Phraser(phrase_model)
 
 class args_class(object):
-    def __init__(self, in_dir,out_dir,scoring='default',thresh = 10, min_count=40, common_terms=(),n_rank=2,lang='en',verbose=True):
+    def __init__(self, in_dir, out_dir, scoring='default', thresh=10, min_count=40, common_terms=(), n_rank=2,
+                 lang='en', verbose=True):
         self.in_dir = in_dir
         self.out_dir = out_dir
-        self.scoring= scoring
-        self.thresh= thresh
-        self.min_count= min_count
+        self.scoring = scoring
+        self.thresh = thresh
+        self.min_count = min_count
         self.common_terms = common_terms
-        self.n_rank=n_rank
-        self.lang=lang
+        self.n_rank = n_rank
+        self.lang = lang
         self.verbose = verbose
-        
+
 #%%
 if __name__ == '__main__':
-    args = args_class(in_dir=config.JSON_LEMMA,out_dir=config.NGRAMS,verbose=True)
+    args = args_class(in_dir=config.JSON_LEMMA, out_dir=config.NGRAMS, verbose=True)
  
     # construct model
     ngrams = ngram_phraser(args.n_rank, args.in_dir, args.scoring, args.thresh, args.min_count, 
-                           args.common_terms, args.lang,verbose=args.verbose)
+                           args.common_terms, args.lang, verbose=args.verbose)
 
     # save ngram model
 #    stop_flag = '_NOSTOP' if not args.common_terms else ''
