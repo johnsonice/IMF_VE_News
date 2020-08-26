@@ -22,3 +22,7 @@ for window_size in window_sizes:
     call_list.append('-skg')
     child = Popen(call_list)
     child.wait()
+
+
+for window_size in window_sizes:
+

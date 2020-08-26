@@ -49,7 +49,7 @@ tps = []
 fps = []
 fns = []
 sensitivities = []
-print('WORD GROUPS',word_groups)
+print('WORD GROUPS', word_groups)
 
 for word_group in word_groups:
 

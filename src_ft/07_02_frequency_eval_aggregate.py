@@ -35,7 +35,7 @@ def read_grouped_search_words(file_path):
     return search_groups
 
 
-def get_sim_words_set(args,word_group):
+def get_sim_words_set(args, word_group):
     """
     Return the top n most similar words based on the word2vec model
 
@@ -44,7 +44,7 @@ def get_sim_words_set(args,word_group):
     :return: A 'set' of words associated with any of the passed words
     """
 
-    assert isinstance(word_group,list)  # Must pass a list
+    assert isinstance(word_group, list)  # Must pass a list
 
     # Iterate over list
     sim_word_group = list()
