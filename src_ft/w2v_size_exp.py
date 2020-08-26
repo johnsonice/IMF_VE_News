@@ -32,14 +32,14 @@ results_folder = '/data/News_data_raw/FT_WD_research/models/vsms_test/results'
 config.maybe_create(results_folder)
 for window_size in window_sizes:
     calls = []
-    cbow_model = "/word_vecs_{}_{}_{}".format(window_size, min_count, size)
+    cbow_model = "/data/News_data_raw/FT_WD_research/models/vsms_test/word_vecs_{}_{}_{}".format(window_size, min_count, size)
     cbow_fold = os.path.join(results_folder, str(window_size)+'_cbow')
     config.maybe_create(cbow_fold)
     cbow_call = ['python', '07_02_frequency_eval_aggregate.py', '-ep', '{}'.format(cbow_fold),
                  '-gsf', '{}'.format(search_terms_file), '-tn', '{}'.format(top_n), '-wv', cbow_model]
     calls.append(cbow_call)
 
-    skg_model = "/word_vecs_{}_{}_{}_{}".format(window_size, min_count, size, 'skipgram')
+    skg_model = "/data/News_data_raw/FT_WD_research/models/vsms_test/word_vecs_{}_{}_{}_{}".format(window_size, min_count, size, 'skipgram')
     skg_fold = os.path.join(results_folder, str(window_size)+'_skipgram')
     config.maybe_create(skg_fold)
     skg_call = ['python', '07_02_frequency_eval_aggregate.py', '-ep', '{}'.format(skg_fold),
