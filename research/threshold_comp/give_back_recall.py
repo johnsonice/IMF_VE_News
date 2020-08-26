@@ -20,23 +20,13 @@ def get_precision(tp, fp):
 files = [f for f in os.listdir('.') if os.path.isfile(f)]
 files.remove('give_back_recall.py')
 
-
-# Fix float imprecision drift
-for f in files:
-    print(f)
-    load_df = pd.read_csv(f)
-    for ind in load_df.index:
-        loc_thresh = load_df.loc[ind, 'threshold']
-        rd_thresh = round(loc_thresh, 3)
-        load_df.loc[ind, 'threshold'] = rd_thresh
-    os.remove(f)
-    load_df.to_csv(f, index=False)
-
 # Give back recalls, 1-sens, prec
-thresholds = [0, 1.282, 1.44, 1.645, 1.96, 2.576, 99]
+thresholds = [0.0, 1.282, 1.44, 1.645, 1.96, 2.576, 99.0]
+thresholds = [str(x) for x in thresholds]
 countries = ['argentina', 'bolivia', 'brazil', 'chile', 'colombia']
 for f in files:
-    load_df = pd.read_csv(f, index_col=['threshold', 'country'])
+    load_df = pd.read_csv(f, dtype={'threshold': str})
+    load_df = load_df.set_index(['threshold', 'country'])
     #print(load_df)
 
     load_df['recall'] = np.nan
