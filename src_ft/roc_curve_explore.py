@@ -24,23 +24,22 @@ word_groups = list(sdf.keys())
 top_n = 15
 
 thresh_values = [0, 1.282, 1.44, 1.645, 1.96, 2.576, 99]  # Based on commonly-used z-scores
-# TEMP
-if False:
-    for thresh_value in thresh_values:
-        new_folder = os.path.join(base_fold, str(thresh_value))
-        config.maybe_create(new_folder)
-        messy_call_list = ['python', '07_02_frequency_eval_aggregate.py', '-z', '{}'.format(thresh_value), '-ep',
-               '{}'.format(new_folder), '-c', countries, '-gsf', '{}'.format(search_terms_file),
-               '-tn', '{}'.format(top_n)]
-        flat_call_list = []
-        for item in messy_call_list:
-            if isinstance(item, list):
-                flat_call_list.extend([x for x in item])
-            else:
-                flat_call_list.append(item)
 
-        child = Popen(flat_call_list)
-        child.wait()
+for thresh_value in thresh_values:
+    new_folder = os.path.join(base_fold, str(thresh_value))
+    config.maybe_create(new_folder)
+    messy_call_list = ['python', '07_02_frequency_eval_aggregate.py', '-z', '{}'.format(thresh_value), '-ep',
+           '{}'.format(new_folder), '-c', countries, '-gsf', '{}'.format(search_terms_file),
+           '-tn', '{}'.format(top_n)]
+    flat_call_list = []
+    for item in messy_call_list:
+        if isinstance(item, list):
+            flat_call_list.extend([x for x in item])
+        else:
+            flat_call_list.append(item)
+
+    child = Popen(flat_call_list)
+    child.wait()
 
 summ_dict = {}
 summ_df = pd.DataFrame()
@@ -69,10 +68,14 @@ for word_group in word_groups:
                         country_slice = read_df.loc[country]
                         tp = country_slice['tp']
                         fn = country_slice['fn']
+                        prec = country_slice['recall']
+                        recall = country_slice['prec']
                         sensitivity = tp/(tp+fn)
-                        word_group_df.loc[(thresh_value, country)] = pd.Series({'fscore': country_slice['fscore'], 'tp': tp,
-                                                                                'fp': country_slice['fp'], 'fn': fn,
-                                                                                'sensitivity': sensitivity})
+                        word_group_df.loc[(thresh_value, country)] = pd.Series({'fscore': country_slice['fscore'],
+                                                                                'tp': tp, 'fp': country_slice['fp'],
+                                                                                'fn': fn, 'sensitivity': sensitivity,
+                                                                                'one_minus_sens': 1 - sensitivity,
+                                                                                'precision': prec, 'recall': recall})
 
     save_file = os.path.join(base_fold, 'cross_threshold_comparison_{}.csv'.format(word_group))
     word_group_df.to_csv(save_file)
