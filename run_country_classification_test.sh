@@ -16,4 +16,4 @@ python 06_1_export_keywords_timeseries.py
 python 07_02_frequency_eval_aggregate.py -gsf grouped_search_words_final.csv -tn 15
 
 # Create a comparison table to assess best county identification scheme
-python compare_classification_to_csv.py
+python 07_05_compare_classification_to_csv.py

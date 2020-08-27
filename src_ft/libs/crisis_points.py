@@ -282,6 +282,7 @@ country_dict_all = {
     'luxembourg': ['luxembourg'],
     'portugal': ['portugal'],
     'romania': ['romania'],
+    'estonia': ['estonia']
 }
 
 #countries_lo_duca = list(crisis_points_lo_duca.keys()) TEMP
