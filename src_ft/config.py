@@ -52,7 +52,8 @@ JSON_LEMMA = os.path.join(PROCESSING_FOLDER, 'json_lemma')
 JSON_LEMMA_SMALL = os.path.join(PROCESSING_FOLDER, 'json_lemma_small')
 
 ## file specific inputs ##
-countries = list(country_dict.keys())
+#countries = list(country_dict.keys())
+countries = list(crisis_points.keys())
 countries_just_five = countries[:5]
 
 ## Experimental configuration ##
@@ -62,7 +63,7 @@ if experimenting:
     AUG_DOC_META = os.path.join(NEW_PROCESSING_FOLDER, 'doc_meta')
     experiment_mode = "country_classification"
     #experiment_mode = "topiccing_discrimination"
-    just_five = True ## HERE
+    just_five = False ## HERE
     # Only look at a sub-sample of countries
     if just_five:
         countries = countries_just_five
@@ -192,7 +193,8 @@ class_type_setups = [
 
 '''
 class_type_setups = [
-    ['Min1_AllCountry', 1, None, None, None, None], #Tmp
+    #['Min1_AllCountry', 1, None, None, None, None], #Tmp
+    ['Min1_LoDuca', 1, None, None, None, None], #Tmp
 ]
 
 eval_type = 'grouped_words' #TEMP

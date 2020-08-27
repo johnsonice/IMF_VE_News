@@ -1,7 +1,7 @@
 from load_ll_crisis_util import get_ll_crisis_points
 
 
-crisis_points = {
+crisis_points_TEMP_Z_D = {
     'argentina': {
         'starts': ['1980-03', '1985-05', '1994-12', '2001-12'],
         'peaks': ['1982-07', '1989-06', '1995-03', '2001-12'],
@@ -103,13 +103,126 @@ crisis_points = {
         'bop': ['1994-05']
     },
 }
-
+crisis_points = { #TEMP TEMP
+    'austria': {
+        'starts': ['2007-12', ],
+        'peaks': ['2016-04', '1985-06'],
+    },
+    'belgium': {
+        'starts': ['2007-11'],
+        'peaks': ['2012-12'],
+    },
+    'bulgaria': {
+        'starts': ['1996-05'],
+        'peaks': ['1997-07'],
+    },
+    'cyprus': {
+        'starts': ['2000-01', '2011-06'],
+        'peaks': ['2001-03', '2016-03'],
+    },
+    'czechia': {
+        'starts': ['1997-05'],
+        'peaks': ['2000-06'],
+    },
+    'germany': {
+        'starts': ['1974-06', '2001-01', '2007-08'],
+        'peaks': ['1974-11', '2003-11', '2013-06'],
+    },
+    'denmark': {
+        'starts': ['1987-03', '2008-01'],
+        'peaks': ['1995-01', '2013-12'],
+    },
+    'estonia': {
+        'starts': ['1992-11', '1994-08', '1998-06'],
+        'peaks': ['1993-03', '1994-09', '1998-10'],
+    },
+    'spain': {
+        'starts': ['1978-01', '2009-03'],
+        'peaks': ['1985-09', '2013-12'],
+    },
+    'finland': {
+        'starts': ['1991-09'],
+        'peaks': ['1996-12'],
+    },
+    'france': {
+        'starts': ['1991-06', '2008-04'],
+        'peaks': ['1995-03', '2009-11'],
+    },
+    'greece': {
+        'starts': ['2010-05'],
+        'peaks': ['9999-12'], # ?? marked as 'ongoing'
+    },
+    'croatia': {
+        'starts': ['1998-04', '2007-09'],
+        'peaks': ['2000-01', '2012-06'],
+    },
+    'hungary': {
+        'starts': ['1991-01', '2008-09'],
+        'peaks': ['1995-12', '2010-08'],
+    },
+    'ireland': {
+        'starts': ['2008-09'],
+        'peaks': ['2013-12'],
+    },
+    'italy': {
+        'starts': ['1991-09', '2011-08'],
+        'peaks': ['1997-12', '2013-12'],
+    },
+    'lithuania': {
+        'starts': ['1995-01', '2008-12'],
+        'peaks': ['1996-12', '2009-11'],
+    },
+    'luxembourg': {
+        'starts': ['2008-01'],
+        'peaks': ['2010-10'],
+    },
+    'latvia': {
+        'starts': ['1995-05', '2008-11'],
+        'peaks': ['1996-06', '2010-08'],
+    },
+    'netherlands': {
+        'starts': ['2008-01'],
+        'peaks': ['2013-02'],
+    },
+    'norway': {
+        'starts': ['1988-09', '2008-09'],
+        'peaks': ['1993-11', '2009-10'],
+    },
+    'poland': {
+        'starts': ['1981-03', '1992-01'],
+        'peaks': ['1994-10', '1994-12'],
+    },
+    'portugal': {
+        'starts': ['1983-02', '2008-10'],
+        'peaks': ['1985-03', '2015-12'],
+    },
+    'romania': {
+        'starts': ['1981-11', '1996-01', '2007-11'],
+        'peaks': ['1989-12', '2000-12', '2010-08'],
+    },
+    'sweden': {
+        'starts': ['1991-01', '2008-09'],
+        'peaks': ['1997-06', '2010-10'],
+    },
+    'slovenia': {
+        'starts': ['1991-06', '2009-12'],
+        'peaks': ['1994-07', '2014-12'],
+    },
+    'united-kingdom': {
+        'starts': ['1973-11', '1991-07', '2007-08'],
+        'peaks': ['1975-12', '1994-04', '2010-01'],
+    }
+}
 country_dict_all = {
     'argentina': ['argentina'],
+    'austria': ['austria'],
     'bolivia': ['bolivia'],
     'brazil': ['brazil'],
     'chile': ['chile'],
     'colombia': ['colombia'],
+    'croatia': ['croatia'],
+    'cyprus': ['cyprus'],
+    'czechia': ['czechia', 'prague', 'czech', 'czech-republic'],
     'denmark': ['denmark'],
     'finland': ['finland'],
     'indonesia': ['indonesia'],
@@ -120,6 +233,7 @@ country_dict_all = {
     'norway': ['norway'],
     'peru': ['peru'],
     'philippines': ['philippines'],
+    'slovenia': ['slovenia'],
     'spain': ['spain'],
     'sweden': ['sweden'],
     'thailand': ['thailand'],
@@ -164,7 +278,14 @@ country_dict_all = {
     'vietnam': ['Vietnam','Vietnamese ','Hanoi','Viet Nam'],
     'zambia': ['Zambia','Lusaka'],
     'zimbabwe': ['Zimbabwe','Zimbabwean','Harrare'],
+    'lithuania': ['lithuania'],
+    'luxembourg': ['luxembourg'],
+    'portugal': ['portugal'],
+    'romania': ['romania'],
 }
+
+#countries_lo_duca = list(crisis_points_lo_duca.keys()) TEMP
+
 
 country_dict_original = {
     'argentina': ['argentina'],
