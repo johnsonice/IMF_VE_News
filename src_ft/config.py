@@ -34,9 +34,10 @@ months_prior = 24       # same here, put as months
 #months_prior = 12 
 z_thresh = 2.1            # how many standard deviations away we think that is a spike 
 topn = 15
-eval_end_date = {'q': '2001Q4',
-                 'm': '2001-12'}  # or None
-
+'''eval_end_date = {'q': '2001Q4',
+                 'm': '2001-12'}  # or None'''
+eval_end_date = {'q': '2014Q2',
+                 'm': '2014-06'}  # or None
 
 ########################
 ## Global folder path ##
