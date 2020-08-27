@@ -57,7 +57,7 @@ countries = list(crisis_points.keys())
 countries_just_five = countries[:5]
 
 ## Experimental configuration ##
-experimenting = False
+experimenting = True
 NEW_PROCESSING_FOLDER = '/data/News_data_raw/FT_WD_research' # experi
 if experimenting:
     AUG_DOC_META = os.path.join(NEW_PROCESSING_FOLDER, 'doc_meta')
