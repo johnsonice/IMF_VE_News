@@ -310,7 +310,11 @@ country_dict_original = {
     'venezuela': ['venezuela'], ## these is the original list
 }
 
-country_dict = country_dict_original
+country_dict = country_dict_all
+country_dict_lo_duca = {}
+for key_c in list(crisis_points.keys()): ## TEMP
+    country_dict_lo_duca.update({key_c: country_dict_all[key_c]})
+country_dict = country_dict_lo_duca
 
 import os 
 cd = os.path.dirname(os.path.abspath(__file__))
