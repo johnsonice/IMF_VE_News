@@ -1,7 +1,7 @@
 from load_ll_crisis_util import get_ll_crisis_points
 
 
-crisis_points_TEMP_Z_D = {
+crisis_points_TEMP_KnR = {
     'argentina': {
         'starts': ['1980-03', '1985-05', '1994-12', '2001-12'],
         'peaks': ['1982-07', '1989-06', '1995-03', '2001-12'],
@@ -103,7 +103,7 @@ crisis_points_TEMP_Z_D = {
         'bop': ['1994-05']
     },
 }
-crisis_points = { #TEMP TEMP
+crisis_points_LoDuca = { #TEMP TEMP
     'austria': {
         'starts': ['2007-12', ],
         'peaks': ['2016-04', '1985-06'],
@@ -282,7 +282,8 @@ country_dict_all = {
     'luxembourg': ['luxembourg'],
     'portugal': ['portugal'],
     'romania': ['romania'],
-    'estonia': ['estonia']
+    'estonia': ['estonia'],
+    'switzerland': ['switzerland']
 }
 
 #countries_lo_duca = list(crisis_points_lo_duca.keys()) TEMP
@@ -311,15 +312,119 @@ country_dict_original = {
     'venezuela': ['venezuela'], ## these is the original list
 }
 
+crisis_points_RomerNRomer = {
+    'australia': {
+        'starts': ['2008-01'],
+        'peaks': ['2009-06'],
+    },
+    'austria': {
+        'starts': ['2008-07'],
+        'peaks': ['2012-12'],
+    },
+    'belgium': {
+        'starts': ['2008-07', '2011-07'],
+        'peaks': ['2009-12', '2011-12'],
+    },
+    'canada': {
+        'starts': ['2007-07'],
+        'peaks': ['2009-12'],
+    },
+    'denmark': {
+        'starts': ['2008-01', '2011-07'],
+        'peaks': ['2010-06', '2012-06'],
+    },
+    'finland': {
+        'starts': ['1991-01', '2008-07'],
+        'peaks': ['1994-06', '2009-12'],
+    },
+    'france': {
+        'starts': ['1991-07', '1995-01', '2007-07'],
+        'peaks': ['1991-12', '1997-06', '2012-12'],
+    },
+    'germany': {
+        'starts': ['1974-07', '2003-01', '2007-07'],
+        'peaks': ['1974-12', '2003-06', '2012-12'],
+    },
+    'greece': {
+        'starts': ['2008-07'],
+        'peaks': ['2012-12'],
+    },
+    'iceland': {
+        'starts': ['2006-07'],
+        'peaks': ['2012-06'],
+    },
+    'ireland': {
+        'starts': ['2007-07', '2008-07'],
+        'peaks': ['2007-12', '2012-12'],
+    },
+    'italy': {
+        'starts': ['1997-07', '2008-07'],
+        'peaks': ['2005-06', '2010-06'],
+    },
+    'japan': {
+        'starts': ['1990-01', '2007-07'],
+        'peaks': ['1997-06', '2012-12'],
+    },
+    'luxembourg': {
+        'starts': ['2008-01', '2011-07'],
+        'peaks': ['2010-06', '2011-12'],
+    },
+    'netherlands': {
+        'starts': ['2008-01', '2011-07'],
+        'peaks': ['2009-12', '2012-12'],
+    },
+    'new-zealand': {
+        'starts': ['2007-07', '2011-07'],
+        'peaks': ['2010-12', '2012-06'],
+    },
+    'norway': {
+        'starts': ['1991-07', '2007-07'],
+        'peaks': ['1994-06', '2009-12'],
+    },
+    'portugal': {
+        'starts': ['2008-01'],
+        'peaks': ['2012-12'],
+    },
+    'spain': {
+        'starts': ['2008-01'],
+        'peaks': ['2012-12'],
+    },
+    'sweden': {
+        'starts': ['1992-07', '2008-01'],
+        'peaks': ['1993-06', '2010-12'],
+    },
+    'switzerland': {
+        'starts': ['2007-07', '2012-01'],
+        'peaks': ['2009-06', '2012-06'],
+    },
+    'turkey': {
+        'starts': ['2001-01', '2008-07'],
+        'peaks': ['2003-06', '2009-12'],
+    },
+    'united-kingdom': {
+        'starts': ['2001-01', '2007-07'],
+        'peaks': ['2003-06', '2012-12'],
+    },
+    'united-states': {
+        'starts': ['1986-01', '1990-01', '1998-07', '2007-01', '2011-07'],
+        'peaks': ['1986-06', '1992-06', '1998-12', '2010-12', '2012-12'],
+    },
+}
+
 country_dict = country_dict_all
 country_dict_lo_duca = {}
-for key_c in list(crisis_points.keys()): ## TEMP
+for key_c in list(crisis_points_LoDuca.keys()): ## TEMP
     country_dict_lo_duca.update({key_c: country_dict_all[key_c]})
-country_dict = country_dict_lo_duca
+country_dic_RomernRomer = {}
+for key_c in list(crisis_points_RomerNRomer.keys()):  ## TEMP
+    country_dic_RomernRomer.update({key_c: country_dict_all[key_c]})
+
+country_dict = country_dic_RomernRomer
+crisis_points = crisis_points_RomerNRomer
 
 import os 
 cd = os.path.dirname(os.path.abspath(__file__))
-ll_crisis_points=get_ll_crisis_points(os.path.join(cd ,'ll_crisis_dates.xlsx'),'import',list(country_dict.keys()))
+ll_crisis_points = get_ll_crisis_points(os.path.join(cd, 'll_crisis_dates.xlsx'), 'import', list(country_dict.keys()))
 
 
 #%%

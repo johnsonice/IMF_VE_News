@@ -96,6 +96,7 @@ for e_type in eval_types:
     except IOError:
         pass
 
+    combined_df.set_index('classification_type')
     combined_df.to_csv(out_file, index=False)
     print("Saved dataframe in file {}".format(out_file))
 
