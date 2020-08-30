@@ -36,8 +36,10 @@ z_thresh = 2.1            # how many standard deviations away we think that is a
 topn = 15
 '''eval_end_date = {'q': '2001Q4',
                  'm': '2001-12'}  # or None'''
-eval_end_date = {'q': '2014Q2',
-                 'm': '2014-06'}  # or None
+'''eval_end_date = {'q': '2014Q2',
+                 'm': '2014-06'}  # or None'''
+eval_end_date = {'q': '2014Q4',
+                 'm': '2014-12'}  # or None
 
 ########################
 ## Global folder path ##
@@ -196,7 +198,8 @@ class_type_setups = [
 class_type_setups = [
     #['Min1_AllCountry', 1, None, None, None, None], #Tmp
     #['Min1_LoDuca', 1, None, None, None, None], #Tmp
-    ['Min1_RomerRomer', 1, None, None, None, None], #Tmp
+    #['Min1_RomerRomer', 1, None, None, None, None], #Tmp
+    ['Min1_ReinhartRogoffAll', 1, None, None, None, None], #Tmp
 ]
 
 eval_type = 'grouped_words' #TEMP

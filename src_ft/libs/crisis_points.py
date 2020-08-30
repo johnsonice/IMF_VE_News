@@ -411,16 +411,114 @@ crisis_points_RomerNRomer = {
     },
 }
 
-country_dict = country_dict_all
+crisis_points_Reinhart_Rogoff_All = {
+    'australia': {
+        'starts': ['1989-01'],
+        'peaks': ['1992-12'],
+    },
+    'austria': {
+        'starts': ['2008-07'],
+        'peaks': ['2011-12'],
+    },
+    'belgium': {
+        'starts': ['2008-07'],
+        'peaks': ['2014-12'],
+    },
+    'canada': {
+        'starts': ['1983-01'],
+        'peaks': ['1985-12'],
+    },
+    'denmark': {
+        'starts': ['1971-01', '2008-07'],
+        'peaks': ['1992-12', '2014-12'],
+    },
+    'finland': {
+        'starts': ['1991-07'],
+        'peaks': ['1994-12'],
+    },
+    'france': {
+        'starts': ['1994-01', '2008-07'],
+        'peaks': ['1995-12', '2014-12'],
+    },
+    'germany': {
+        'starts': ['1977-02', '2008-07'],
+        'peaks': ['1979-12', '2010-06'],
+    },
+    'greece': {
+        'starts': ['1991-01', '2008-07'],
+        'peaks': ['1995-12', '2014-12'],
+    },
+    'iceland': {
+        'starts': ['1985-01', '2007-07'],
+        'peaks': ['1986-12', '2014-12'],
+    },
+    'ireland': {
+        'starts': ['2007-07'],
+        'peaks': ['2013-12'],
+    },
+    'italy': {
+        'starts': ['1990-01', '2008-07'],
+        'peaks': ['1995-12', '2014-12'],
+    },
+    'japan': {
+        'starts': ['1992-01'],
+        'peaks': ['2001-12'],
+    },
+    'netherlands': {
+        'starts': ['2008-07'],
+        'peaks': ['2014-12'],
+    },
+    'new-zealand': {
+        'starts': ['1987-01', '2011-07'],
+        'peaks': ['1990-12', '2012-06'],
+    },
+    'norway': {
+        'starts': ['1987-01', '2007-07'],
+        'peaks': ['1992-12', '2009-12'],
+    },
+    'portugal': {
+        'starts': ['2008-07'],
+        'peaks': ['2014-12'],
+    },
+    'spain': {
+        'starts': ['1977-01', '2008-07'],
+        'peaks': ['1985-12', '2014-12'],
+    },
+    'sweden': {
+        'starts': ['1992-07', '2008-07'],
+        'peaks': ['1994-12', '2010-12'],
+    },
+    'switzerland': {
+        'starts': ['2008-07'],
+        'peaks': ['2009-12'],
+    },
+    'turkey': {
+        'starts': ['1982-01', '1991-01', '1994-01', '2000-01'],
+        'peaks': ['1985-12', '1991-06', '1994-06', '2001-12'],
+    },
+    'united-kingdom': {
+        'starts': ['1974-01', '1984-01', '1991-01', '1995-01', '2007-07'],
+        'peaks': ['1976-12', '1984-12', '1991-12', '1995-12', '2014-12'],
+    },
+    'united-states': {
+        'starts': ['1984-01', '2007-07'],
+        'peaks': ['1991-12', '2010-12'],
+    },
+}
+
+#country_dict = country_dict_all
 country_dict_lo_duca = {}
 for key_c in list(crisis_points_LoDuca.keys()): ## TEMP
     country_dict_lo_duca.update({key_c: country_dict_all[key_c]})
 country_dic_RomernRomer = {}
 for key_c in list(crisis_points_RomerNRomer.keys()):  ## TEMP
     country_dic_RomernRomer.update({key_c: country_dict_all[key_c]})
+country_dic_Reinhart_Rogoff_All = {}
+for key_c in list(crisis_points_Reinhart_Rogoff_All.keys()):  ## TEMP
+    country_dic_Reinhart_Rogoff_All.update({key_c: country_dict_all[key_c]})
 
-country_dict = country_dic_RomernRomer
-crisis_points = crisis_points_RomerNRomer
+country_dict = country_dic_Reinhart_Rogoff_All
+crisis_points = crisis_points_Reinhart_Rogoff_All
 
 import os 
 cd = os.path.dirname(os.path.abspath(__file__))
