@@ -41,6 +41,7 @@ def save_label_map(label2id,map_path):
     
     return None
 
+
 def ramdom_split(df,x_label,y_label,ratio=0.3):
     """
     prepare data into torch dataset for training
@@ -55,7 +56,7 @@ def ramdom_split(df,x_label,y_label,ratio=0.3):
     
     return train_data,test_data
 
-def split_by_country(df,x_label,y_label,n_fold=4):
+def split_by_country(df,x_label,y_label,panel_id='country_name',n_fold=4):
     """
     df : with country_name ; and all X and y data
     return: {
@@ -73,12 +74,12 @@ def split_by_country(df,x_label,y_label,n_fold=4):
             }
     """
     res = {}
-    countries = list(df.country_name.unique())
+    countries = list(df[panel_id].unique())
     country_chunks = chunks(countries,n = n_fold)
     for idx,cs in enumerate(country_chunks):
         
-        train = df[df.country_name.isin(cs)]
-        test = df[-df.country_name.isin(cs)]
+        train = df[df[panel_id].isin(cs)]
+        test = df[-df[panel_id].isin(cs)]
         train_X,train_y = train['snip_emb'].tolist(),train['crisisdate'].tolist()
         test_X,test_y = test['snip_emb'].tolist(),test['crisisdate'].tolist()
         res[idx]={}

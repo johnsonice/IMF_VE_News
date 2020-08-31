@@ -31,6 +31,7 @@ def train_model(model,optimizer,loss_fn,n_epochs,train_data_iter,
     return_metric = []
     
     for i in range(n_epochs):
+        #print(i)
         model.train()
         for batch_idx, (X, y) in enumerate(train_data_iter):
             
@@ -38,8 +39,16 @@ def train_model(model,optimizer,loss_fn,n_epochs,train_data_iter,
             inputs = X.to(device)#.float()
             labels = y.to(device)#.float()
             
+            ## when training torch does not accept one sample 
+            if inputs.shape[0] == 1:
+                continue
+            
             optimizer.zero_grad()
-            outputs = model(inputs)
+            try:
+                outputs = model(inputs)
+                #print(inputs.shape)
+            except:
+                print(inputs)
             loss_outputs = loss_fn(outputs,labels)
             loss = loss_outputs[0] if type(loss_outputs) in (tuple, list) else loss_outputs
             losses.append(loss.item())
@@ -107,8 +116,14 @@ def train_model(model,optimizer,loss_fn,n_epochs,train_data_iter,
                     #torch.save(model.state_dict(),save_model_path)    
                     logger.info('best model saved in {}'.format(save_model_path))
                     
-        
         total_loss=0
+        
+    if save_criterion is None:
+        save_model(model,save_model_path,save_mode=save_mode)
+                    #torch.save(model.state_dict(),save_model_path)    
+        logger.info('best model saved in {}'.format(save_model_path))
+    
+    
     if do_eval:
         return_metric_df = pd.DataFrame(return_metric,columns=['batch_num','train_loss','test_loss'])
         return model, best_save_criterion,return_metric_df

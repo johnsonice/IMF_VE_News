@@ -20,6 +20,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from data_sampling_utils import split_by_country, create_map,save_label_map
 import logging
+import pickle
 logging.basicConfig(level=logging.INFO)
 logger=logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -27,10 +28,11 @@ logger.setLevel(logging.INFO)
 #%%
 if __name__ == '__main__':
 
-    crisis_version = 'kr' #or 'rr'
+    crisis_version = 've_q' #or 'rr' or 've_q' or 'kr'
     label_map_path = os.path.join(config.TRAINED_DEEP_MODEL,
                                   'cv_nn_model',
-                                  'label_map.json')
+                                  'label_map_{}.json'.format(crisis_version))
+    cv_data_path = os.path.join(config.CRISIS_DATES,'train_data_cv_{}.pkl'.format(crisis_version))
     ## read training data 
     training_data_path = os.path.join(config.CRISIS_DATES,'train_data_{}.pkl'.format(crisis_version))
     df = pd.read_pickle(training_data_path)
@@ -42,11 +44,13 @@ if __name__ == '__main__':
     df['label_num'] = df['label'].map(label2id)
     #%%
     ## get train test data iter
-    n_fold_data = split_by_country(df,'snip_emb','label_num',n_fold=4)
+    n_fold_data = split_by_country(df,'snip_emb','label_num',panel_id='country_name',n_fold=4)
+    #%%
     ## train data with cross validation
     for i in n_fold_data.keys():
         #i = 0 
-        train_data_iter = torch.utils.data.DataLoader(n_fold_data[i]['train'], batch_size=16,shuffle=True)
+        print('n folder: {}'.format(i))
+        train_data_iter = torch.utils.data.DataLoader(n_fold_data[i]['train'], batch_size=16,shuffle=True,drop_last=True)
         test_data_iter = torch.utils.data.DataLoader(n_fold_data[i]['test'], batch_size=16,shuffle=True)
         
         ## define model prams 
@@ -55,7 +59,7 @@ if __name__ == '__main__':
         #hidden_size = [384,128,32]
         num_classes = 3
         learning_rate = 2e-4
-        n_epochs = 10
+        n_epochs =15
         
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         model = Simple_nn_model(input_size,hidden_size,num_classes,dropout_p=0.3,batchnorm=True,layernorm=True)
@@ -66,14 +70,17 @@ if __name__ == '__main__':
         ## train model 
         model,_,return_metric_df = train_model(model,optimizer,criterion,n_epochs,train_data_iter,
                                 do_eval=True, test_data_iter= test_data_iter,
-                                save_criterion='test_acc',warmup_n_epoch=0,  #'train_acc',None
+                                save_criterion=None,warmup_n_epoch=0,  #'train_acc',None
                                 save_model_path=os.path.join(config.TRAINED_DEEP_MODEL,
                                                              'cv_nn_model',
                                                              'weights_cv_{}'.format(i))) ## save model with cv id
+        
         return_metric_df[['train_loss','test_loss']].plot(title='Training Metric')
-    
+    #%%
     ## save the label map in the end 
     save_label_map(id2label,label_map_path) 
+    with open(cv_data_path,'wb') as f:
+        pickle.dump(n_fold_data,f)
 #    #%%
     
 #    #%%
