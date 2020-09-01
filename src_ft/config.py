@@ -199,7 +199,8 @@ class_type_setups = [
     #['Min1_AllCountry', 1, None, None, None, None], #Tmp
     #['Min1_LoDuca', 1, None, None, None, None], #Tmp
     #['Min1_RomerRomer', 1, None, None, None, None], #Tmp
-    ['Min1_ReinhartRogoffAll', 1, None, None, None, None], #Tmp
+    #['Min1_ReinhartRogoffAll', 1, None, None, None, None], #Tmp
+    ['Min1_Thin', 1, None, None, None, None], #Tmp
 ]
 
 eval_type = 'grouped_words' #TEMP
