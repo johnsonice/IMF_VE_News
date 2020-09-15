@@ -73,7 +73,7 @@ if __name__ == '__main__':
                                 save_criterion=None,warmup_n_epoch=0,  #'train_acc',None
                                 save_model_path=os.path.join(config.TRAINED_DEEP_MODEL,
                                                              'cv_nn_model',
-                                                             'weights_cv_{}'.format(i))) ## save model with cv id
+                                                             'weights_cv_{}_{}'.format(crisis_version,i))) ## save model with cv id
         
         return_metric_df[['train_loss','test_loss']].plot(title='Training Metric')
     #%%

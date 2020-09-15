@@ -32,7 +32,7 @@ logger.setLevel(logging.INFO)
         #%%
     
 if __name__ == '__main__':
-    crisis_version = 'kr'
+    crisis_version = 've_q' #or 'rr' or 've_q' or 'kr'
     training_data_path = os.path.join(config.CRISIS_DATES,
                                       'train_data_{}.pkl'.format(crisis_version))
     cv_data_path = os.path.join(config.CRISIS_DATES,
@@ -48,11 +48,11 @@ if __name__ == '__main__':
     
     label_map_path = os.path.join(config.TRAINED_DEEP_MODEL,
                                   'cv_nn_model',
-                                  'label_map.json')
+                                  'label_map_{}.json'.format(crisis_version))
     
     model_eval_result = os.path.join(config.TRAINED_DEEP_MODEL,
                                   'cv_nn_model',
-                                  'eval.txt')
+                                  'eval_{}.txt'.format(crisis_version))
     
    #%% 
     tps = 0
