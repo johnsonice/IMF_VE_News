@@ -80,8 +80,8 @@ def split_by_country(df,x_label,y_label,panel_id='country_name',n_fold=4):
         
         train = df[df[panel_id].isin(cs)]
         test = df[-df[panel_id].isin(cs)]
-        train_X,train_y = train['snip_emb'].tolist(),train['crisisdate'].tolist()
-        test_X,test_y = test['snip_emb'].tolist(),test['crisisdate'].tolist()
+        train_X,train_y = train['snip_emb'].tolist(),train[y_label].tolist()
+        test_X,test_y = test['snip_emb'].tolist(),test[y_label].tolist()
         res[idx]={}
         res[idx]['countries'] = cs
         res[idx]['train'] = list(zip(train_X,train_y))

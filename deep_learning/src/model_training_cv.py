@@ -27,8 +27,8 @@ logger.setLevel(logging.INFO)
                         
 #%%
 if __name__ == '__main__':
-
-    crisis_version = 've_q' #or 'rr' or 've_q' or 'kr'
+    
+    crisis_version = 'kr_w12' #or 'rr' or 've_q' or 'kr' or 'kr_w3-12'
     label_map_path = os.path.join(config.TRAINED_DEEP_MODEL,
                                   'cv_nn_model',
                                   'label_map_{}.json'.format(crisis_version))

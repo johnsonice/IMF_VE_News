@@ -25,14 +25,18 @@ def convert_date(d):
 
 #%%
 if __name__ == "__main__":    
+    ## specify argument
+    window_size = 3 
+    
     ## get and tansform crisis date
     crisis_file = os.path.join(config.CRISIS_DATES,'crisis_dates.xlsx')
     df = pd.read_excel(crisis_file,sheet_name='kr_crisis')
     df = transform_criris_data(df,convert_date,resample=False)
     ##  
-    crisis_df = generate_pre_during_post_crisis_dates(df,shift_periods=24,pid='country_name')
+    crisis_df = generate_pre_during_post_crisis_dates(df,shift_periods=window_size,pid='country_name')
 #    crisis_df = crisis_df.rename(columns={'crisisdate':'crisisdate_kr',
 #                              'crisis_pre':'criris_pre_kr',
 #                              'crisis_tranqull':'crisis_tranqull_kr'})
     ## export data
-    crisis_df.to_pickle(os.path.join(config.CRISIS_DATES,'criris_dates_kr.pkl'))
+    crisis_df.to_pickle(os.path.join(config.CRISIS_DATES,'criris_dates_kr_w{}.pkl'.format(window_size))) 
+    ## using 6 month window

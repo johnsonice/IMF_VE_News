@@ -81,7 +81,13 @@ def create_load_news_emb(filtered_data_path,read_data=True):
 #%%
 if __name__ == '__main__':
     
+    ## set up global arguments
     read_data=True
+    window_size = 3
+    run_rr = False
+    run_kr = True
+    run_ve_q = False
+    
     crisis_file = os.path.join(config.CRISIS_DATES,'crisis_dates.xlsx')
     country_map = pd.read_excel(crisis_file,'country_code_map')
     ft2ifs_map = dict(zip(country_map.ft_country_name,country_map.ifs_code))    ## create country code map
@@ -91,47 +97,52 @@ if __name__ == '__main__':
     filtered_data_path = os.path.join(config.CRISIS_DATES,'filtered_data.pkl')
 
     crisis_date_path = os.path.join(config.CRISIS_DATES,'criris_dates.pkl')
-    kr_crisis_date_path = os.path.join(config.CRISIS_DATES,'criris_dates_kr.pkl')
+    kr_crisis_date_path = os.path.join(config.CRISIS_DATES,'criris_dates_kr_w{}.pkl'.format(window_size))
     ve_q_crisis_date_path = os.path.join(config.CRISIS_DATES,'criris_dates_ve_q.pkl')
     
     training_data_path_rr = os.path.join(config.CRISIS_DATES,'train_data_rr.pkl')
-    training_data_path_kr = os.path.join(config.CRISIS_DATES,'train_data_kr.pkl')
+    training_data_path_kr = os.path.join(config.CRISIS_DATES,'train_data_kr_w{}.pkl'.format(window_size))
     training_data_path_ve_q = os.path.join(config.CRISIS_DATES,'train_data_ve_q.pkl')
     #%%
+    ###################
     ## read news emb
     all_country_df = create_load_news_emb(filtered_data_path,read_data= read_data)
     all_country_df['ifs_code'] = all_country_df['country'].map(ft2ifs_map)                 ## add country code 
     all_country_df['imf_country_name'] = all_country_df['ifs_code'].map(ifs2imf_map)       ## add country name 
-    ##read crisis date
-    df_crisis_dates = pd.read_pickle(crisis_date_path)
-    df_crisis_dates_kr = pd.read_pickle(kr_crisis_date_path)
-    df_crisis_dates_ve_q = pd.read_pickle(ve_q_crisis_date_path)
+    
+    ##############################
+    ## merge export training data // rr
+    if run_rr:
+        df_crisis_dates = pd.read_pickle(crisis_date_path)
+        train_df= all_country_df.merge(df_crisis_dates,
+                                         how='inner', 
+                                         left_on=['month','country'],
+                                         right_on=['month','transformed_country_name'])
+        train_df.to_pickle(training_data_path_rr)
+        logger.info('export to {}'.format(training_data_path_rr))
 
-
-    ## merge export training data
-    train_df= all_country_df.merge(df_crisis_dates,
-                                     how='inner', 
-                                     left_on=['month','country'],
-                                     right_on=['month','transformed_country_name'])
-    train_df.to_pickle(training_data_path_rr)
-    logger.info('export to {}'.format(training_data_path_rr))
-
-    ## merge export kr data
-    train_df= all_country_df.merge(df_crisis_dates_kr,
-                                     how='inner', 
-                                     left_on=['month','country'],
-                                     right_on=['month','country_name'])
-    ## export data
-    train_df.to_pickle(training_data_path_kr)
-    logger.info('export to {}'.format(training_data_path_kr))
+    ##############################
+    ## merge export kr data  // kr data with different window
+    if run_kr:
+        df_crisis_dates_kr = pd.read_pickle(kr_crisis_date_path)
+        train_df= all_country_df.merge(df_crisis_dates_kr,
+                                         how='inner', 
+                                         left_on=['month','country'],
+                                         right_on=['month','country_name'])
+        ## export data
+        train_df.to_pickle(training_data_path_kr)
+        logger.info('export to {}'.format(training_data_path_kr))
     #train_df.drop(['quarter_y','transformed_country_name'],axis=1,inplace=True)
 
+    ##############################
     ## merge export ve data 
-    train_df= all_country_df.merge(df_crisis_dates_ve_q,
-                                     how='inner', 
-                                     left_on=['month','ifs_code'],
-                                     right_on=['month','ifscode'])
-    train_df.drop(['country','ifscode'],axis=1,inplace=True)
-    ## export data
-    train_df.to_pickle(training_data_path_ve_q)
-    logger.info('export to {}'.format(training_data_path_ve_q))
+    if run_ve_q:
+        df_crisis_dates_ve_q = pd.read_pickle(ve_q_crisis_date_path)
+        train_df= all_country_df.merge(df_crisis_dates_ve_q,
+                                         how='inner', 
+                                         left_on=['month','ifs_code'],
+                                         right_on=['month','ifscode'])
+        train_df.drop(['country','ifscode'],axis=1,inplace=True)
+        ## export data
+        train_df.to_pickle(training_data_path_ve_q)
+        logger.info('export to {}'.format(training_data_path_ve_q))

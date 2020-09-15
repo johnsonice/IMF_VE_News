@@ -32,9 +32,15 @@ logger.setLevel(logging.INFO)
         #%%
     
 if __name__ == '__main__':
-    crisis_version = 've_q' #or 'rr' or 've_q' or 'kr'
+    crisis_version = 'kr_w12' #or 'rr' or 've_q' or 'kr'
+    crisis_version_w24 = 'kr'
+    
+#    training_data_path = os.path.join(config.CRISIS_DATES,
+#                                      'train_data_{}.pkl'.format(crisis_version))
+    ## when evaluating we are still using 24 month window, so we don't specify window size here 
     training_data_path = os.path.join(config.CRISIS_DATES,
-                                      'train_data_{}.pkl'.format(crisis_version))
+                                      'train_data_{}.pkl'.format(crisis_version_w24))
+    
     cv_data_path = os.path.join(config.CRISIS_DATES,
                                       'train_data_cv_{}.pkl'.format(crisis_version))
     ## load cv data
@@ -44,7 +50,7 @@ if __name__ == '__main__':
 
     trained_model_paths={i:os.path.join(config.TRAINED_DEEP_MODEL,
                                     'cv_nn_model',
-                                    'weights_cv_{}'.format(i)) for i in cv_data.keys()}
+                                    'weights_cv_{}_{}'.format(crisis_version,i)) for i in cv_data.keys()}
     
     label_map_path = os.path.join(config.TRAINED_DEEP_MODEL,
                                   'cv_nn_model',
