@@ -32,6 +32,7 @@ if __name__ == '__main__':
             ds = ds.append(pd.read_pickle(this_pickle))
         print("Read {} files, this one {}".format(file_index, this_pickle))
 
+
     df = pd.read_pickle(meta_pkl)
     new_df = df.join(ds)  # merge topic meta
     new_df_file = os.path.join(meta_aug, 'doc_details_{}_topic_{}.pkl'.format('crisis', model_name))
