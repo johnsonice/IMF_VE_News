@@ -17,7 +17,7 @@ from crisis_points import crisis_points, country_dict, ll_crisis_points
 
 ## global arguments
 MODE = 'test'# 'real'
-SAMPLE_LIMIT= 500000            ## set max doc number, to fit into your memory 
+SAMPLE_LIMIT = 500000            ## set max doc number, to fit into your memory
 COUNTRY_FREQ_PERIOD = 'month'   ## for country specific bow calculation 
 WEIGHTED = False                 ## do we want to weighted average on similar words when doing evaluation
 SIM = True
