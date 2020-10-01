@@ -37,10 +37,11 @@ def evaluate(word_list, country, frequency_path, method='zscore',
             NB beta determines how you weight recall wrt precision. 2 means recall is weighted as twice as important.
     """
     # Value checks
+    '''
     assert method in ('zscore', 'hpfilter')
     assert period in ('quarter', 'month', 'week', 'year')
     assert direction in ('incr', 'decr', None)
-    assert crisis_defs in ('kr', 'll')
+    assert crisis_defs in ('kr', 'll')''' # Chill again
     fq = period[0].lower()
     assert fq in ('q', 'm')  ## make sure period is set to eight quarter or month
     
