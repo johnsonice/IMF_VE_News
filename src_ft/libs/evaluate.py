@@ -75,10 +75,12 @@ def get_preds_from_pd(ag_freq,country,method='zscore', crisis_defs='kr',period='
                          window=24, direction='incr', months_prior=24, fbeta=2,
                          weights=None,z_thresh=1.96):
     # Value checks
+    '''
     assert method in ('zscore','hpfilter')
     assert period in ('quarter','month','week','year')
     assert direction in ('incr', 'decr', None)
     assert crisis_defs in ('kr', 'll')
+    ''' # Chill with these for now
     fq = period[0].lower()
     assert fq in ('q','m')  ## make sure period is set to eight quarter or month
     
