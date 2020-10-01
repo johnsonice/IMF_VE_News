@@ -33,7 +33,6 @@ def add_file_to_df(pre_combined_df, read_file, names_dict):
 
     return pre_combined_df
 
-
 for e_type in eval_types:
     for class_type_setup in config.class_type_setups:
         class_type = class_type_setup[0]
@@ -81,6 +80,18 @@ for e_type in eval_types:
 
                     combined_df = add_file_to_df(combined_df, file_path, name_dict)
 
+        # Only test assessment modes
+        elif config.experiment_mode == "crisis_assessments":
+            assess_on = ['Min1_AllCountry', 'Min1_ReinhartRogoffAll', 'Min1_RomerRomer', 'IMF_GAP_6', 'IMF_GAP_0']
+
+            for asses_type in assess_on:
+                ev_path = os.path.join('/data/News_data_raw/FT_WD_research/eval/new_comp', asses_type)
+                file_path = os.path.join(ev_path, 'overall_agg_sim_True_overall_month_offset_{}_smoothwindow_'
+                                                      '{}_evaluation.csv'.format(config.months_prior,
+                                                                                 config.smooth_window_size))
+                name_dict = {'classification_type': [asses_type]}
+                combined_df = add_file_to_df(combined_df, file_path, name_dict)
+
     # TODO modularize using args
     if config.experiment_mode == 'country_classification':
         out_file = os.path.join(config.EVAL_WG, 'classification_comparison',
@@ -88,6 +99,8 @@ for e_type in eval_types:
     elif config.experiment_mode == 'topiccing_discrimination':
         out_file = os.path.join(config.topiccing_eval_wg, 'topiccing_comparison',
                                 'topiccing_discrimination_comparison_using_{}.csv'.format(e_type))
+    elif config.experiment_mode == "crisis_assessments":
+        out_file = os.path.join('/data/News_data_raw/FT_WD_research/eval/new_comp/CrossSection/cross_comparison.csv')
 
     try:
         already_written = pd.read_csv(out_file)

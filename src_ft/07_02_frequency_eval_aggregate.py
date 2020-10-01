@@ -17,6 +17,7 @@ import pandas as pd
 import os
 from mp_utils import Mp
 import config
+import crisis_points
 
 
 def read_grouped_search_words(file_path):
@@ -212,6 +213,25 @@ if __name__ == '__main__':
         eval_type = config.eval_type
         original_eval_path = args.eval_path
         original_freq_path = args.frequency_path
+
+        # Only test assessment modes
+        if config.experiment_mode == "crisis_assessments":
+            assess_dict = {
+                'IMF_GAP_6': crisis_points.imf_gap_6_events,
+                'IMF_GAP_0': crisis_points.imf_all_events
+            }
+            for asses_type in list(assess_dict.keys()):
+                freq_path = '/data/News_data_raw/FT_WD_research/frequency/temp/All_Comb'  # Moved the TF_DFs manually for speed since 06_0
+                ev_path = os.path.join('/data/News_data_raw/FT_WD_research/eval/new_comp', asses_type)
+
+                args.frequency_path = freq_path
+                args.eval_path = ev_path
+
+                args.crisis_defs = assess_dict[asses_type]
+                args.countries = list(args.crisis_defs.key())
+
+                # Execute the process setups times
+                main_process(args, iter_items)
 
         # iterate over different country-document classification
         for setup in class_type_setups:
