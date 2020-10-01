@@ -12,7 +12,7 @@ pd.set_option('display.max_columns', 10)
 #import warnings 
 #%%
 sys.path.insert(0, './libs')
-from crisis_points import crisis_points, country_dict, ll_crisis_points
+from crisis_points import crisis_points, country_dict
 
 
 ## global arguments
