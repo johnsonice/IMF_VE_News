@@ -96,8 +96,11 @@ for e_type in eval_types:
             for asses_type in assess_on:
                 ev_path = os.path.join('/data/News_data_raw/FT_WD_research/eval/new_comp', asses_type)
                 file_path = os.path.join(ev_path, 'overall_agg_sim_True_overall_month_offset_{}_smoothwindow_'
-                                                      '{}_evaluation.csv'.format(config.months_prior,
-                                                                                 config.smooth_window_size))
+                                                  '{}_evaluation.csv'.format(config.months_prior,
+                                                                             config.smooth_window_size))
+                if asses_type == 'Min1_AllCountry':
+                    ev_path = os.path.join('/data/News_data_raw/FT_WD_research/eval/new_comp', asses_type, e_type)
+
                 name_dict = {'classification_type': [asses_type]}
                 combined_df = add_file_to_df(combined_df, file_path, name_dict)
 
