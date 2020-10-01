@@ -82,7 +82,15 @@ for e_type in eval_types:
 
         # Only test assessment modes
         elif config.experiment_mode == "crisis_assessments":
-            assess_on = ['Min1_AllCountry', 'Min1_ReinhartRogoffAll', 'Min1_RomerRomer', 'IMF_GAP_6', 'IMF_GAP_0']
+            assess_dict = {
+                'IMF_GAP_6': crisis_points.imf_gap_6_events,
+                'IMF_GAP_0': crisis_points.imf_all_events,
+                'LoDuca': crisis_points.crisis_points_LoDuca,
+                'ReinhartRogoff': crisis_points.crisis_points_Reinhart_Rogoff_All,
+                'RomerRomer': crisis_points.crisis_points_RomerNRomer,
+
+            }
+            assess_on = ['Min1_AllCountry', 'IMF_GAP_6', 'IMF_GAP_0', 'LoDuca', 'ReinhartRogoff', 'RomerRomer']
 
             for asses_type in assess_on:
                 ev_path = os.path.join('/data/News_data_raw/FT_WD_research/eval/new_comp', asses_type)

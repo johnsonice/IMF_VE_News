@@ -218,7 +218,10 @@ if __name__ == '__main__':
         if config.experiment_mode == "crisis_assessments":
             assess_dict = {
                 'IMF_GAP_6': crisis_points.imf_gap_6_events,
-                'IMF_GAP_0': crisis_points.imf_all_events
+                'IMF_GAP_0': crisis_points.imf_all_events,
+                'LoDuca': crisis_points.crisis_points_LoDuca,
+                'ReinhartRogoff': crisis_points.crisis_points_Reinhart_Rogoff_All,
+                'RomerRomer': crisis_points.crisis_points_RomerNRomer,
             }
             for asses_type in list(assess_dict.keys()):
                 freq_path = '/data/News_data_raw/FT_WD_research/frequency/temp/All_Comb'  # Moved the TF_DFs manually for speed since 06_0
@@ -227,7 +230,7 @@ if __name__ == '__main__':
                 args.frequency_path = freq_path
                 args.eval_path = ev_path
 
-                args.crisis_defs = assess_dict[asses_type]
+                args.crisis_defs = asses_type
                 args.countries = list(args.crisis_defs.keys())
 
                 # Execute the process setups times

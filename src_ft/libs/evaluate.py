@@ -6,7 +6,7 @@ description: collection of functions used in evaluation scripts
 import numpy as np
 import pandas as pd
 from frequency_utils import rolling_z_score, aggregate_freq, signif_change
-from crisis_points import crisis_points,ll_crisis_points
+from crisis_points import ll_crisis_points
 from anomaly_detection_hpfilter_mad import anomaly_detection
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -54,13 +54,57 @@ def evaluate(word_list, country, frequency_path, method='zscore',
     if crisis_defs == 'kr':
         ag_freq = ag_freq[:eval_end_date[fq]] # Don't look beyond when Kaminsky and 
         # Get start and 'end' periods for crises depending on definition
-        starts = list(pd.PeriodIndex(crisis_points[country]['starts'], freq=fq))
-        ends = list(pd.PeriodIndex(crisis_points[country]['peaks'], freq=fq))
+        starts = list(pd.PeriodIndex(crisis_points.crisis_points[country]['starts'], freq=fq))
+        ends = list(pd.PeriodIndex(crisis_points.crisis_points[country]['peaks'], freq=fq))
+
     elif crisis_defs == 'll':
         ag_freq = ag_freq[:eval_end_date[fq]] # Don't look beyond when ll ends
         # Get start and 'end' periods for crises depending on definition
         starts = list(pd.PeriodIndex(ll_crisis_points[country]['starts'], freq=fq))
         ends = list(pd.PeriodIndex(ll_crisis_points[country]['peaks'], freq=fq))
+
+    elif crisis_defs == 'IMF_GAP_6':
+        end = '2019-12'
+        ag_freq = ag_freq[:end]  # Don't look beyond when ll ends
+        # Get start and 'end' periods for crises depending on definition
+        crisis_dict = crisis_points.imf_gap_6_events
+        starts = list(pd.PeriodIndex(crisis_dict[country]['starts'], freq=fq))
+        ends = list(pd.PeriodIndex(crisis_dict[country]['peaks'], freq=fq))
+
+    elif crisis_defs == 'IMF_GAP_0':
+        end = '2019-12'
+        ag_freq = ag_freq[:end] # Don't look beyond when ll ends
+        # Get start and 'end' periods for crises depending on definition
+
+        crisis_dict = crisis_points.imf_all_events
+        starts = list(pd.PeriodIndex(crisis_dict[country]['starts'], freq=fq))
+        ends = list(pd.PeriodIndex(crisis_dict[country]['peaks'], freq=fq))
+
+    elif crisis_defs == 'RomerRomer':
+        end = '2012-12'
+        ag_freq = ag_freq[:end]  # Don't look beyond when ll ends
+        # Get start and 'end' periods for crises depending on definition
+
+        crisis_dict = crisis_points.crisis_points_RomerNRomer
+        starts = list(pd.PeriodIndex(crisis_dict[country]['starts'], freq=fq))
+        ends = list(pd.PeriodIndex(crisis_dict[country]['peaks'], freq=fq))
+
+    elif crisis_defs == 'LoDuca':
+        end = '2016-12'
+        ag_freq = ag_freq[:end]  # Don't look beyond when ll ends
+        # Get start and 'end' periods for crises depending on definition
+
+        crisis_dict = crisis_points.crisis_points_LoDuca
+        starts = list(pd.PeriodIndex(crisis_dict[country]['starts'], freq=fq))
+        ends = list(pd.PeriodIndex(crisis_dict[country]['peaks'], freq=fq))
+
+    elif crisis_defs == 'ReinhartRogoff':
+        end = '2014-12'
+        ag_freq = ag_freq[:end]
+
+        crisis_dict = crisis_points.crisis_points_Reinhart_Rogoff_All
+        starts = list(pd.PeriodIndex(crisis_dict[country]['starts'], freq=fq))
+        ends = list(pd.PeriodIndex(crisis_dict[country]['peaks'], freq=fq))
 
     preds = get_preds_from_pd(ag_freq, country, method, crisis_defs, period,
                               window, direction, months_prior, fbeta,
