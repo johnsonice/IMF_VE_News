@@ -114,6 +114,3 @@ venv.bak/
 
 # ServerSide Logs
 log_*
-
-# Imf libs
-!/src_ft/libs/
