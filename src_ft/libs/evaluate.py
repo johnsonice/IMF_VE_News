@@ -107,11 +107,11 @@ def evaluate(word_list, country, frequency_path, method='zscore',
         starts = list(pd.PeriodIndex(crisis_dict[country]['starts'], freq=fq))
         ends = list(pd.PeriodIndex(crisis_dict[country]['peaks'], freq=fq))
 
-    elif crisis_defs in ['IMF_Data_New_Some_Countries', 'IMF_Mothly_Starts_Gap_3', 'IMF_Mothly_Starts_Gap_6']:
+    elif crisis_defs in ['IMF_Monthly_Starts', 'IMF_Monthly_Starts_Gap_3', 'IMF_Monthly_Starts_Gap_6']:
         assess_dict = {
-            'IMF_Mothly_Starts': crisis_points.imf_programs_monthly,
-            'IMF_Mothly_Starts_Gap_3': crisis_points.imf_programs_monthly_gap3,
-            'IMF_Mothly_Starts_Gap_6': crisis_points.imf_programs_monthly_gap6
+            'IMF_Monthly_Starts': crisis_points.imf_programs_monthly,
+            'IMF_Monthly_Starts_Gap_3': crisis_points.imf_programs_monthly_gap3,
+            'IMF_Monthly_Starts_Gap_6': crisis_points.imf_programs_monthly_gap6
         }
 
         end = '2019-12'

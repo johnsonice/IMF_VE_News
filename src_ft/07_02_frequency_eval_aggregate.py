@@ -227,9 +227,9 @@ if __name__ == '__main__':
             '''
             # TEMP
             assess_dict = {
-                'IMF_Mothly_Starts': crisis_points.imf_programs_monthly,
-                'IMF_Mothly_Starts_Gap_3': crisis_points.imf_programs_monthly_gap3,
-                'IMF_Mothly_Starts_Gap_6': crisis_points.imf_programs_monthly_gap6
+                'IMF_Monthly_Starts': crisis_points.imf_programs_monthly,
+                'IMF_Monthly_Starts_Gap_3': crisis_points.imf_programs_monthly_gap3,
+                'IMF_Monthly_Starts_Gap_6': crisis_points.imf_programs_monthly_gap6
             }
 
             for asses_type in list(assess_dict.keys()):
