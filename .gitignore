@@ -115,5 +115,5 @@ venv.bak/
 # ServerSide Logs
 log_*
 
-# Imf Monthly obs
-!/src_ft/libs/imf_dates_new_fix.csv
+# Imf libs
+!/src_ft/libs/
