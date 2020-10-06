@@ -107,6 +107,20 @@ def evaluate(word_list, country, frequency_path, method='zscore',
         starts = list(pd.PeriodIndex(crisis_dict[country]['starts'], freq=fq))
         ends = list(pd.PeriodIndex(crisis_dict[country]['peaks'], freq=fq))
 
+    elif crisis_defs in ['IMF_Data_New_Some_Countries', 'IMF_Mothly_Starts_Gap_3', 'IMF_Mothly_Starts_Gap_6']:
+        assess_dict = {
+            'IMF_Mothly_Starts': crisis_points.imf_programs_monthly,
+            'IMF_Mothly_Starts_Gap_3': crisis_points.imf_programs_monthly_gap3,
+            'IMF_Mothly_Starts_Gap_6': crisis_points.imf_programs_monthly_gap6
+        }
+
+        end = '2019-12'
+        ag_freq = ag_freq[:end]  # Don't look beyond when ll ends
+        # Get start and 'end' periods for crises depending on definition
+        crisis_dict = assess_dict[crisis_defs]
+        starts = list(pd.PeriodIndex(crisis_dict[country]['starts'], freq=fq))
+        ends = list(pd.PeriodIndex(crisis_dict[country]['peaks'], freq=fq))
+
     preds = get_preds_from_pd(ag_freq, country, method, crisis_defs, period,
                               window, direction, months_prior, fbeta,
                               weights, z_thresh)

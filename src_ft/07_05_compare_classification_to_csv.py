@@ -83,6 +83,7 @@ for e_type in eval_types:
 
         # Only test assessment modes
         elif config.experiment_mode == "crisis_assessments":
+            '''
             assess_dict = {
                 'IMF_GAP_6': crisis_points.imf_gap_6_events,
                 'IMF_GAP_0': crisis_points.imf_all_events,
@@ -91,7 +92,15 @@ for e_type in eval_types:
                 'RomerRomer': crisis_points.crisis_points_RomerNRomer,
 
             }
-            assess_on = ['Min1_AllCountry', 'IMF_GAP_6', 'IMF_GAP_0', 'LoDuca', 'ReinhartRogoff', 'RomerRomer']
+            '''
+            #assess_on = ['Min1_AllCountry', 'IMF_GAP_6', 'IMF_GAP_0', 'LoDuca', 'ReinhartRogoff', 'RomerRomer']
+
+            assess_dict = {
+                'IMF_Mothly_Starts': crisis_points.imf_programs_monthly,
+                'IMF_Mothly_Starts_Gap_3': crisis_points.imf_programs_monthly_gap3,
+                'IMF_Mothly_Starts_Gap_6': crisis_points.imf_programs_monthly_gap6
+            }
+            assess_on = list(assess_dict.keys())
 
             for asses_type in assess_on:
                 ev_path = os.path.join('/data/News_data_raw/FT_WD_research/eval/new_comp', asses_type)
@@ -114,7 +123,8 @@ for e_type in eval_types:
         out_file = os.path.join(config.topiccing_eval_wg, 'topiccing_comparison',
                                 'topiccing_discrimination_comparison_using_{}.csv'.format(e_type))
     elif config.experiment_mode == "crisis_assessments":
-        out_file = os.path.join('/data/News_data_raw/FT_WD_research/eval/new_comp/CrossSection/cross_comparison.csv')
+        #out_file = os.path.join('/data/News_data_raw/FT_WD_research/eval/new_comp/CrossSection/cross_comparison.csv')
+        out_file = os.path.join('/data/News_data_raw/FT_WD_research/eval/new_comp/CrossSection/cross_comparison_monthly_IMF.csv')
 
     try:
         already_written = pd.read_csv(out_file)

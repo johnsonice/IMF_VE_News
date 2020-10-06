@@ -1,5 +1,5 @@
 from load_ll_crisis_util import get_ll_crisis_points
-
+import pandas as pd
 
 crisis_points_TEMP_KnR = {
     'argentina': {
@@ -965,6 +965,42 @@ imf_all_events = {
     }
 }
 
+# Temp - TODO move to other file - add dictionary options
+read_df = pd.read_csv('imf_dates_new_fix.csv')
+unique_countries = read_df['country'].unique()
+read_df['Date of Arrangement'] = pd.to_datetime(read_df['Date of Arrangement'])
+read_df['Actual/Current Expiration Date'] = pd.to_datetime(read_df['Actual/Current Expiration Date'])
+read_df = read_df.sort_values(by='Date of Arrangement', ascending=True)
+
+imf_programs_monthly = {}
+imf_programs_monthly_gap3 = {}
+imf_programs_monthly_gap6 = {}
+one_year_delta = pd.Timedelta(days=365)
+for country in unique_countries:
+    this_country_df = read_df[read_df['country'] == country].reset_index(drop=True)
+    imf_programs_monthly[country] = {'starts': [], 'peaks': []}
+    imf_programs_monthly_gap3[country] = {'starts': [], 'peaks': []}
+    imf_programs_monthly_gap6[country] = {'starts': [], 'peaks': []}
+    last_start_3 = None
+    last_start_6 = None
+    for i in range(this_country_df.shape[0]):
+        start_time = "{}-{}".format(this_country_df.loc[i, 'Date of Arrangement'].year,
+                                    this_country_df.loc[i, 'Date of Arrangement'].month)
+        end_time = "{}-{}".format(this_country_df.loc[i, 'Actual/Current Expiration Date'].year,
+                                  this_country_df.loc[i, 'Actual/Current Expiration Date'].month)
+        imf_programs_monthly[country]['starts'].append(start_time)
+        imf_programs_monthly[country]['peaks'].append(end_time)
+
+        if last_start_3 is None or this_country_df.loc[i, 'Date of Arrangement'] - last_start_3 >= 3*one_year_delta:
+            last_start_3 = this_country_df.loc[i, 'Date of Arrangement']
+            imf_programs_monthly_gap3[country]['starts'].append(start_time)
+            imf_programs_monthly_gap3[country]['peaks'].append(end_time)
+
+        if last_start_6 is None or this_country_df.loc[i, 'Date of Arrangement'] - last_start_6 >= 6*one_year_delta:
+            last_start_6 = this_country_df.loc[i, 'Date of Arrangement']
+            imf_programs_monthly_gap6[country]['starts'].append(start_time)
+            imf_programs_monthly_gap6[country]['peaks'].append(end_time)
+
 #country_dict = country_dict_all
 country_dict_lo_duca = {}
 for key_c in list(crisis_points_LoDuca.keys()): ## TEMP
@@ -984,7 +1020,7 @@ imf_all_dict = {}
 for key_c in list(imf_all_events.keys()):  ## TEMP
     imf_all_dict.update({key_c: country_dict_thin[key_c]})
 
-country_dict = country_dict_thin
+country_dict = imf_all_dict
 crisis_points = imf_gap_6_events
 
 import os 

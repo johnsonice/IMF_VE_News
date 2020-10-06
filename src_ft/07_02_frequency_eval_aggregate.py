@@ -216,6 +216,7 @@ if __name__ == '__main__':
 
         # Only test assessment modes
         if config.experiment_mode == "crisis_assessments":
+            '''
             assess_dict = {
                 'IMF_GAP_6': crisis_points.imf_gap_6_events,
                 'IMF_GAP_0': crisis_points.imf_all_events,
@@ -223,7 +224,16 @@ if __name__ == '__main__':
                 'ReinhartRogoff': crisis_points.crisis_points_Reinhart_Rogoff_All,
                 'RomerRomer': crisis_points.crisis_points_RomerNRomer,
             }
+            '''
+            # TEMP
+            assess_dict = {
+                'IMF_Mothly_Starts': crisis_points.imf_programs_monthly,
+                'IMF_Mothly_Starts_Gap_3': crisis_points.imf_programs_monthly_gap3,
+                'IMF_Mothly_Starts_Gap_6': crisis_points.imf_programs_monthly_gap6
+            }
+
             for asses_type in list(assess_dict.keys()):
+                # TODO standardize
                 freq_path = '/data/News_data_raw/FT_WD_research/frequency/temp/All_Comb'  # Moved the TF_DFs manually for speed since 06_0
                 ev_path = os.path.join('/data/News_data_raw/FT_WD_research/eval/new_comp', asses_type)
 
