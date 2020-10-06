@@ -121,6 +121,9 @@ def evaluate(word_list, country, frequency_path, method='zscore',
         starts = list(pd.PeriodIndex(crisis_dict[country]['starts'], freq=fq))
         ends = list(pd.PeriodIndex(crisis_dict[country]['peaks'], freq=fq))
 
+    else:
+        raise ValueError("Wrong crisis_defs value presented")
+
     preds = get_preds_from_pd(ag_freq, country, method, crisis_defs, period,
                               window, direction, months_prior, fbeta,
                               weights, z_thresh)

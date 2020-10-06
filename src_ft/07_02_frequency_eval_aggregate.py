@@ -241,7 +241,8 @@ if __name__ == '__main__':
                 args.eval_path = ev_path
 
                 args.crisis_defs = asses_type
-                args.countries = list(assess_dict[asses_type].keys())
+                #args.countries = list(assess_dict[asses_type].keys())
+                args.countries = crisis_points.country_dict
 
                 # Execute the process setups times
                 main_process(args, iter_items)
