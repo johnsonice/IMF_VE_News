@@ -14,7 +14,8 @@ import config
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn; seaborn.set()
-from crisis_points import country_dict
+from crisis_points import country_dict_missing as country_dict # Temp - to run the missing ones only
+# from crisis_points import country_dict
 from nltk.tokenize import word_tokenize
 from stream import MetaStreamer_fast as MetaStreamer
 from stream import MetaStreamer_slow as MetaStreamer_SLOW
@@ -380,7 +381,8 @@ if __name__ == '__main__':
         if pre_chunked:
 
             data_list = df['data_path'].tolist()
-            pre_chunk_size = 50000
+            # pre_chunk_size = 50000
+            pre_chunk_size = 5000
             chunky_index = 0
             data_length = len(data_list)
             index = []
@@ -393,12 +395,14 @@ if __name__ == '__main__':
                 #streamer = MetaStreamer(data_list[chunky_index:chunk_end])
                 streamer = MetaStreamer_SLOW(data_list[chunky_index:chunk_end]) #TMP
 
-                news = streamer.multi_process_files(workers=10, chunk_size=5000)
+                #news = streamer.multi_process_files(workers=10, chunk_size=5000)
+                news = streamer.multi_process_files(workers=4, chunk_size=1250)
 
-                #mp = Mp(news, get_countries_by_count_2)
-                mp = Mp(news, get_countries_by_count_2_slow) #TMP
+                mp = Mp(news, get_countries_by_count_2)
+                #mp = Mp(news, get_countries_by_count_2_slow) #TMP
 
-                country_meta = mp.multi_process_files(workers=10, chunk_size=5000)
+                #country_meta = mp.multi_process_files(workers=10, chunk_size=5000)
+                country_meta = mp.multi_process_files(workers=4, chunk_size=1250)
                 index = index + [i[0] for i in country_meta]
                 country_list = country_list + [i[1] for i in country_meta]
                 del country_meta  ## clear memory
@@ -421,7 +425,8 @@ if __name__ == '__main__':
         new_df = df.join(ds) ## merge country meta
         del ds  # Free space
         new_df['country_n'] = new_df['country'].map(lambda x: len(x))
-        new_df.to_pickle(os.path.join(meta_aug, 'doc_details_{}_aug_{}.pkl'.format('crisis',class_type)))
+        #new_df.to_pickle(os.path.join(meta_aug, 'doc_details_{}_aug_{}.pkl'.format('crisis',class_type)))
+        new_df.to_pickle(os.path.join(meta_aug, 'doc_details_{}_aug_{}_expander.pkl'.format('crisis',class_type)))
         print('augumented document meta data saved at {}'.format(meta_aug))
     
         #%%
@@ -433,6 +438,6 @@ if __name__ == '__main__':
         create_summary(agg_q,meta_root,class_type)
 
 
-
+# TODO clean up this file
 
 #%%

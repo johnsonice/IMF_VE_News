@@ -1023,6 +1023,15 @@ for key_c in list(imf_all_events.keys()):  ## TEMP
 country_dict = imf_all_dict
 crisis_points = imf_gap_6_events
 
+country_dict_missing = {}
+all_assessed = set(country_dict_all.keys()) # Will need update
+missing_keys = set(imf_programs_monthly.keys()) - all_assessed
+for key in missing_keys:
+    # These need manual inspection
+    if '-' in key:
+        continue
+    country_dict_missing[key] = [key] # Mimics "Thin" dictionary
+
 import os 
 cd = os.path.dirname(os.path.abspath(__file__))
 ll_crisis_points = get_ll_crisis_points(os.path.join(cd, 'll_crisis_dates.xlsx'), 'import', list(country_dict.keys()))
