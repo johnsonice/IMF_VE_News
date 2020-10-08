@@ -25,7 +25,7 @@ if __name__ == "__main__":
     def export_country_ts(country, period=period, frequency_path=frequency_path, out_dir=out_dir):
         series_wg = list()
         for wg in non_vec_targs:
-            df = aggregate_freq(wg, country, period=period, stemmed=False, frequency_path=frequency_path)
+            df = aggregate_freq([wg], country, period=period, stemmed=False, frequency_path=frequency_path)
             df.name = wg
             series_wg.append(df)
 
