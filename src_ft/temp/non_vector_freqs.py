@@ -13,7 +13,7 @@ from mp_utils import Mp
 if __name__ == "__main__":
     period = config.COUNTRY_FREQ_PERIOD
     #vecs = KeyedVectors.load(config.W2V)
-    frequency_path = config.FREQUENCY
+    frequency_path = '/data/News_data_raw/FT_WD_research/frequency/temp/All_Comb'
     countries = list(crisis_points.country_dict_original.keys())
     # countries = ['argentina']
     out_dir = '/data/News_data_raw/FT_WD_research/w2v_test/eval/time_series'
