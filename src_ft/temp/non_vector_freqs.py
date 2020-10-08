@@ -37,4 +37,4 @@ if __name__ == "__main__":
 
 
     mp = Mp(countries, export_country_ts)
-    res = mp.multi_process_files(chunk_size=1)
+    res = mp.multi_process_files(workers=4, chunk_size=1)
