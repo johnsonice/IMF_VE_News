@@ -30,7 +30,7 @@ from functools import partial as functools_partial
 
 #%%
 def get_stats(starts,ends,preds,offset,fbeta=2):
-    tp, fn, mid_crisis  = [], [], []
+    tp, fn, mid_crisis = [], [], []
     for s, e in zip(starts, ends):
         forecast_window = pd.PeriodIndex(pd.date_range(s.to_timestamp() - offset, s.to_timestamp(), freq='q'), freq='q')
         crisis_window = pd.PeriodIndex(pd.date_range(s.to_timestamp(), e.to_timestamp(), freq='q'), freq='q')
@@ -96,13 +96,13 @@ if __name__ == "__main__":
     def export_country_ts(country, period=period, vecs=vecs, frequency_path=frequency_path, out_dir=out_dir):
         series_wg = list()
         for wg in config.targets:
-            word_groups = get_sim_words(vecs,wg,15)
+            word_groups = get_sim_words(vecs,wg,15) #TODO remove 15 hardcoding omg
             df = aggregate_freq(word_groups, country,period=period,stemmed=False,frequency_path=frequency_path)
             df.name = wg
             series_wg.append(df)
         
-        df_all = pd.concat(series_wg,axis=1)
-        out_csv = os.path.join(out_dir, '{}_{}_time_series.csv'.format(country,period))
+        df_all = pd.concat(series_wg, axis=1)
+        out_csv = os.path.join(out_dir, '{}_{}_time_series.csv'.format(country, period))
         df_all.to_csv(out_csv)
         
         return country, df_all
