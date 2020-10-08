@@ -3,6 +3,7 @@ sys.path.insert(0,'..')
 sys.path.insert(0,'../libs')
 import pandas as pd
 import config
+import crisis_points
 
 # %%
 def get_stats(starts, ends, preds, offset, fbeta=2):
