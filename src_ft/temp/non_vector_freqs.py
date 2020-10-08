@@ -35,6 +35,5 @@ if __name__ == "__main__":
 
         return country, df_all
 
-
-    mp = Mp(countries, export_country_ts)
-    res = mp.multi_process_files(workers=4, chunk_size=1)
+    for country in countries:
+        export_country_ts(country)
