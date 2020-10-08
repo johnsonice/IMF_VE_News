@@ -19,7 +19,7 @@ import os
 import pandas as pd
 import sys
 
-sys.path.insert(0, './libs')
+sys.path.insert(0, '../libs')
 import config
 from frequency_utils import rolling_z_score, aggregate_freq, signif_change
 from evaluate import get_recall, get_precision, get_fscore
