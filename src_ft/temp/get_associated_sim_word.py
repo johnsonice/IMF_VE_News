@@ -28,7 +28,7 @@ def get_sim_words(vecs,wg,topn):
 vecs = KeyedVectors.load(config.W2V)
 
 targets = config.targets
-target_sim_df = pd.DataFrame(index=range(15), columns=targets)
+target_sim_df = pd.DataFrame(columns=targets)
 
 for target in targets:
     target_sim_df[target] = get_sim_words(vecs, target, 15)
