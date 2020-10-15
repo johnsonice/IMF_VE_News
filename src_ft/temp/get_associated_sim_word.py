@@ -28,9 +28,11 @@ def get_sim_words(vecs,wg,topn):
 vecs = KeyedVectors.load(config.W2V)
 
 targets = config.targets
-target_sim_df = pd.DataFrame(columns=targets)
+target_sim_dict = {}
 
 for target in targets:
-    target_sim_df[target] = get_sim_words(vecs, target, 15)
+    target_sim_dict[target] = get_sim_words(vecs, target, 15)
+
+target_sim_df = pd.DataFrame(target_sim_dict)
 
 target_sim_df.to_csv('/home/apsurek/IMF_VE_News/research/w2v_compare/targets_to_sims_mapping.csv')
