@@ -18,7 +18,8 @@ if __name__ == "__main__":
     # countries = ['argentina']
     out_dir = '/data/News_data_raw/FT_WD_research/w2v_test/eval/time_series'
 
-    words_to_lists_df = pd.read_csv('/home/apsurek/IMF_VE_News/research/w2v_compare/words_mapping.csv')
+    #words_to_lists_df = pd.read_csv('/home/apsurek/IMF_VE_News/research/w2v_compare/words_mapping.csv')
+    words_to_lists_df = pd.read_csv('/home/apsurek/IMF_VE_News/research/w2v_compare/words_mapping_2.csv')
 
     positive_targs = ['able', 'enable', 'adequately', 'benign', 'buoyant', 'buoyancy', 'comfortable', 'confident', 'enhance', 'favorable', 'favourably', 'healthy', 'improve', 'improvement', 'mitigate', 'positive', 'positively', 'profits', 'rebound', 'recover', 'recovery', 'resilience', 'resilient', 'solid', 'sound', 'stabilise', 'stabilize', 'success', 'successful', 'successfully']
     negative_targs = ['abrupt', 'adverse', 'adversely', 'aggravate', 'bad', 'burden', 'challenge', 'closure', 'contraction', 'costly', 'damage', 'danger', 'deficit', 'dent', 'destabilise', 'deteriorate', 'deterioration', 'deterioration', 'difficult', 'discourage', 'downgrade', 'drag', 'erode', 'erosion', 'exacerbate', 'expose', 'fear', 'force', 'fragility', 'gloomy', 'hurt', 'illiquid', 'impairment', 'inability', 'jeopardise', 'lose', 'negative', 'pose', 'question', 'repercussion', 'risky', 'severely', 'shortfall', 'spiral', 'squeeze', 'stagnate', 'strain', 'stress', 'struggle', 'suffer', 'threaten', 'turbulent', 'unable', 'undermine', 'unease', 'unexpectedly', 'vulnerable', 'weakness', 'worsen', 'writedowns']
@@ -38,7 +39,8 @@ if __name__ == "__main__":
 
         df_all = pd.concat(series_wg, axis=1)
         #out_csv = os.path.join(out_dir, '{}_{}_time_series_non_vec.csv'.format(country, period))
-        out_csv = os.path.join(out_dir, '{}_{}_time_series_cherry_picked.csv'.format(country, period))
+        #out_csv = os.path.join(out_dir, '{}_{}_time_series_cherry_picked.csv'.format(country, period))
+        out_csv = os.path.join(out_dir, '{}_{}_time_series_cherry_picked_2.csv'.format(country, period))
         df_all.to_csv(out_csv)
 
         return country, df_all
