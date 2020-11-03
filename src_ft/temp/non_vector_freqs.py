@@ -81,5 +81,5 @@ if __name__ == "__main__":
         return country, df_all
 
     for country in countries:
-        export_country_negative_count(country)
+        #export_country_negative_count(country)
         get_word_counts(country)
