@@ -93,7 +93,7 @@ def all_word_count(country, period='quarter', stemmed=False, frequency_path='../
 
     data_path_csv = os.path.join(frequency_path, '{}_{}_word_freqs{}.csv'.format(country, period, s_flag))
     data = pd.read_csv(data_path_csv, index_col=0)
-    ww = zip(data.columns.values, weights)
+    ww = zip(data.columns.values, weights*len(data.columns.values))
 
     ## fill nas only when document is missing
     cs = list(data.columns)
