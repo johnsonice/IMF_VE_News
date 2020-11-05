@@ -94,7 +94,7 @@ def all_word_count(country, period='quarter', stemmed=False, frequency_path='../
     data_path_csv = os.path.join(frequency_path, '{}_{}_word_freqs{}.csv'.format(country, period, s_flag))
     data = pd.read_csv(data_path_csv, index_col=0)
 
-    return data.sum(axis=1)
+    return data.sum(axis=0)
 
 
 def weight_freq_topic(country, topics_list, period='quarter', frequency_path='../data/frequency',
