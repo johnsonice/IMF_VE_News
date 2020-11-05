@@ -75,7 +75,7 @@ if __name__ == "__main__":
         df_all = pd.concat(series_wg, axis=1)
         #out_csv = os.path.join(out_dir, '{}_{}_time_series_non_vec.csv'.format(country, period))
         #out_csv = os.path.join(out_dir, '{}_{}_time_series_cherry_picked.csv'.format(country, period))
-        out_csv = os.path.join(out_dir, '{}_{}_word_counts_fix.csv'.format(country, period))
+        out_csv = os.path.join(out_dir, '{}_{}_word_counts_fix_2.csv'.format(country, period))
         df_all.to_csv(out_csv)
 
         return country, df_all

@@ -93,32 +93,8 @@ def all_word_count(country, period='quarter', stemmed=False, frequency_path='../
 
     data_path_csv = os.path.join(frequency_path, '{}_{}_word_freqs{}.csv'.format(country, period, s_flag))
     data = pd.read_csv(data_path_csv, index_col=0)
-    ww = zip(data.columns.values, weights*len(data.columns.values))
 
-    ## fill nas only when document is missing
-    cs = list(data.columns)
-    for c in cs:
-        if data[c].sum() == 0:
-            pass
-        else:
-            data[c].fillna(0, inplace=True)
-
-    freqs = [data.loc[word] * weight for word, weight in ww if word in data.index]
-    grp_freq = sum(freqs)
-
-    ##if none of the words are in corpus, frp_freq qill return 0 need to check befor proceed
-    if isinstance(grp_freq, pd.Series):
-        return grp_freq
-    else:
-        try:
-            grp_freq = data.iloc[0]
-        except:
-            print(country)
-            print('no data for the entire country')
-            grp_freq = pd.Series(np.zeros(len(data.columns)), index=data.columns)
-        grp_freq.values[:] = np.nan
-
-    return grp_freq
+    return data.sum(axis=1)
 
 
 def weight_freq_topic(country, topics_list, period='quarter', frequency_path='../data/frequency',
