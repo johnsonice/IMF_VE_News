@@ -76,6 +76,9 @@ class data_updator():
             old_ts_path = os.path.join(self.args.old_ts_folder,"agg_{}_month_z2.1_time_series.csv".format(c))
             
             country_res = self.append_update_data(new_ts_path,old_ts_path)
+            ## fill NA with 0 for now, when exporting
+            country_res.fillna(0,inplace=True)
+            ####
             new_res = self.cal_merge_all_signals(country_res)
             out_file = os.path.join(self.args.out_dir,"agg_{}_month_z{}_time_series.csv".format(c,self.args.z_thresh))
             new_res.to_csv(out_file,encoding='utf-8')

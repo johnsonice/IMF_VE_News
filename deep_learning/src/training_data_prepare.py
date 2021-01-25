@@ -83,7 +83,7 @@ if __name__ == '__main__':
     
     ## set up global arguments
     read_data=True
-    window_size = 3
+    window_size = 12
     run_rr = False
     run_kr = True
     run_ve_q = False

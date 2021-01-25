@@ -26,7 +26,7 @@ def convert_date(d):
 #%%
 if __name__ == "__main__":    
     ## specify argument
-    window_size = 3 
+    window_size = 12
     
     ## get and tansform crisis date
     crisis_file = os.path.join(config.CRISIS_DATES,'crisis_dates.xlsx')

@@ -173,6 +173,7 @@ if __name__ == "__main__":
     #%%
     generate_country_bow()
     generate_country_time_series()
+    #%%
     merge_with_historical()
 
     long_df = create_data_for_tableau()

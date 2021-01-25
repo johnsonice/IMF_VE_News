@@ -153,7 +153,7 @@ class TS_generator(object):
             series_wg.append(df)
 
         df_all = pd.concat(series_wg,axis=1)
-        #df_all.fillna(0,inplace=True)
+        df_all.fillna(0,inplace=True)  ## still fill NA with 0 for now
         
         ####################################################
         ####################################################
@@ -180,9 +180,10 @@ if __name__ == '__main__':
 #    for country in config.countries:
 #        print(country)
 #        c,d = ts_generator.export_country_ts(country)
-#    country = "uruguay"
-#    c,d = export_country_ts(country)
-#
+    #%%
+#    country = "argentina"
+#    c,d = ts_generator.export_country_ts(country)
+#%%
     mp = Mp(config.countries,ts_generator.export_country_ts)
     res = mp.multi_process_files(chunk_size=1,workers=15)
 
