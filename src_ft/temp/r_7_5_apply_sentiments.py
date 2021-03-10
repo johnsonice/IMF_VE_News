@@ -11,7 +11,8 @@ NOTE: can be done for as many countries at a time as you want.
 import logging
 import os
 import sys
-sys.path.insert(0,'./libs')
+sys.path.insert(0,'..')
+sys.path.insert(0,'../libs')
 import pandas as pd
 from stream import DocStreamer_fast
 from crisis_points import country_dict
