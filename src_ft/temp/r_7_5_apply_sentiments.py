@@ -95,6 +95,7 @@ def textblob_subjectivity(testblob_rate):
 
 
 # flair sentiment analysis
+'''
 import flair
 flair_sentiment = flair.models.TextClassifier.load('en-sentiment')
 
@@ -119,7 +120,7 @@ def flair_neg_value(flair_rate):
     if flair_rate[0].value == 'NEGATIVE':
         return flair_rate[0].score
     return 0
-
+'''
 
 # afinn sentiment analysis
 from afinn import Afinn
@@ -152,11 +153,13 @@ def get_sentiments(doc, word_defs):
     sent_df['tb_is_positive'] = textblob_is_positive(testblob_score)
     sent_df['tb_subjectivity'] = textblob_subjectivity(testblob_score)
 
+    '''
     # Flair
     flair_sent = flair_rate(sentence)
     sent_df['flair_is_positive'] = flair_is_positive(flair_sent)
     sent_df['flair_pos_value'] = flair_pos_value(flair_sent)
     sent_df['flair_neg_value'] = flair_neg_value(flair_sent)
+    '''
 
     # Afinn
     af_score = get_affin_score(sentence)
