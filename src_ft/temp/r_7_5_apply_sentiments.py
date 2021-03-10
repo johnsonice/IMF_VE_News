@@ -253,7 +253,7 @@ if __name__ == '__main__':
     parser.add_argument('-f', '--wv_filter', action='store', dest='wv_filter', default='TRUE')
     args = parser.parse_args()
 
-    word_defs_f = os.path.join('/home/apsurek', '/IMF_VE_News/research/w2v_compare/all_sims_maps.csv')
+    word_defs_f = '/home/apsurek/IMF_VE_News/research/w2v_compare/all_sims_maps.csv'
     word_defs = pd.read_csv(word_defs_f)
 
     class_type = 'Min1_AllCountry'
