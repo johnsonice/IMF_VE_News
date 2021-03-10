@@ -100,6 +100,7 @@ if experimenting:
         EVAL = os.path.join(NEW_PROCESSING_FOLDER, 'eval_weighted')
 EVAL_WG = os.path.join(EVAL, 'word_groups')
 EVAL_TS = os.path.join(EVAL, 'time_series')
+EVAL_WordDefs = os.path.join(EVAL, 'word_defs')
 
 ## document-topic assessment information"
 num_topics = 100
@@ -224,7 +225,7 @@ if __name__ == "__main__":
 
     folders = [RAW_DATA_PATH, PROCESSING_FOLDER, NEW_PROCESSING_FOLDER, SEARCH_TERMS,
                DOC_META, AUG_DOC_META, JSON_LEMMA, JSON_LEMMA_SMALL, MODELS, NGRAMS, TOPIC_MODELS,
-               VS_MODELS, BOW_TFIDF_DOCS, FREQUENCY, EVAL, EVAL_WG, EVAL_TS]
+               VS_MODELS, BOW_TFIDF_DOCS, FREQUENCY, EVAL, EVAL_WG, EVAL_TS, EVAL_WordDefs]
     topiccing_folders = [topiccing_folder, topiccing_meta, topiccing_time_series, topiccing_frequency, topiccing_eval,
                          topiccing_eval_ts, topiccing_eval_wg, topiccing_eval_levels_ts, topiccing_aug_meta,
                          topiccing_eval_comparison]
