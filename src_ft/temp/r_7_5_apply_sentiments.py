@@ -210,28 +210,24 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
             small_doc_map['month'] = period
             small_doc_map['country'] = country
 
-            docnum = 0
+            docnum = -1
             for doc in streamer:
+                docnum += 1
                 if doc is None:
                     continue
 
-                sentiments = get_sentiments(doc, word_defs, i) # Returns DataFrame
+                sentiments = get_sentiments(doc, word_defs, docnum) # Returns DataFrame
                 if sentiments is None:
                     small_doc_map = None
 
                 small_doc_map = pd.merge(small_doc_map, sentiments, left_index=True, right_index=True, how='outer')
                 print('print 1\n\n',small_doc_map)
 
-        i+=1
-
         if small_doc_map is None:
             continue
 
-        print('small d map cols',small_doc_map.columns)
+        huge_doc_map = huge_doc_map.append(small_doc_map, ignore_index=True)
 
-        print('print FF\n\n',small_doc_map)
-
-        huge_doc_map = huge_doc_map.append(small_doc_map)
 
     #outname = os.path.join(outdir, 'doc_sentiment_map.csv')
     outname = os.path.join(outdir, 'doc_sentiment_map_test.csv')
