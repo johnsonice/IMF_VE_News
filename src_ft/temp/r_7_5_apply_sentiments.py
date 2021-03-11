@@ -138,8 +138,8 @@ def affin_is_positive(affin_score):
     return affin_score > 0
 
 
-def get_sentiments(doc, word_defs):
-    sent_df = pd.DataFrame(index=[0])
+def get_sentiments(doc, word_defs, ind):
+    sent_df = pd.DataFrame(index=[ind])
     sentence = ' '.join(doc)
     divisor = len(doc)
 
@@ -190,6 +190,7 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
         small_doc_map = None
 
         #for i, period in enumerate(uniq_periods):
+        i = 0
         for period in list(uniq_periods)[0:2]:
 
             #print("\r\tworking on period {} of {}...".format(i, len(uniq_periods)), end=' ')
@@ -214,12 +215,14 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
                 if doc is None:
                     continue
 
-                sentiments = get_sentiments(doc, word_defs) # Returns DataFrame
+                sentiments = get_sentiments(doc, word_defs, i) # Returns DataFrame
                 if sentiments is None:
                     small_doc_map = None
 
                 small_doc_map = pd.merge(small_doc_map, sentiments, left_index=True, right_index=True, how='outer')
                 print('print 1\n\n',small_doc_map)
+
+        i+=1
 
         if small_doc_map is None:
             continue
@@ -230,7 +233,9 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
 
         huge_doc_map = huge_doc_map.append(small_doc_map)
 
-    outname = os.path.join(outdir, 'doc_sentiment_map.csv')
+    #outname = os.path.join(outdir, 'doc_sentiment_map.csv')
+    outname = os.path.join(outdir, 'doc_sentiment_map_test.csv')
+
     huge_doc_map.to_csv(outname)
     return huge_doc_map
 
