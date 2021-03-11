@@ -1021,8 +1021,8 @@ for key_c in list(imf_all_events.keys()):  ## TEMP
     imf_all_dict.update({key_c: country_dict_thin[key_c]})
 
 country_dict = imf_all_dict
-crisis_points = imf_gap_6_events
-
+#crisis_points = imf_gap_6_events
+crisis_points = crisis_points_TEMP_KnR
 country_dict_missing = {}
 all_assessed = set(country_dict_all.keys()) # Will need update
 missing_keys = set(imf_programs_monthly.keys()) - all_assessed

@@ -146,7 +146,7 @@ def get_sentiments(doc, word_defs):
     # Word counts / sum words
     for def_name in word_defs.columns:
         sent_df[def_name] = sum_words(sentence, word_defs[def_name].dropna())/divisor
-        if np.isnan(sent_df[def_name]):
+        if np.isnan(sent_df[def_name].values[0]):
             return None
     # Vader
     vader_rate = vader_sentiment(sentence)
@@ -261,7 +261,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     word_defs_f = '/home/apsurek/IMF_VE_News/research/w2v_compare/all_sims_maps.csv'
-    word_defs = pd.read_csv(word_defs_f)
+    word_defs = pd.read_csv(word_defs_f).drop(columns='Unnamed: 0')
 
     class_type = 'Min1_AllCountry'
     doc_deetz = os.path.join(config.AUG_DOC_META, 'doc_details_crisis_aug_{}.pkl'.format(class_type))
@@ -269,7 +269,7 @@ if __name__ == '__main__':
     args.out_dir = config.EVAL_WordDefs
     #args.out_dir = os.path.join('/home/apsurek', 'pos_neg_compare')
 
-    args.countries = ['argentina']
+    #args.countries = ['argentina']
 
     time_df, uniq_periods = data_setup(doc_deetz, config.COUNTRY_FREQ_PERIOD)
     get_country_freqs_sample(args.countries, args.period, time_df, uniq_periods, args.out_dir, args.phraser,
