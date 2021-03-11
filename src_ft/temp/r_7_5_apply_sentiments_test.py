@@ -137,27 +137,36 @@ def get_affin_score(sentence):
 def affin_is_positive(affin_score):
     return affin_score > 0
 
+import time
+
 
 def get_sentiments(doc, word_defs, ind):
     sent_df = pd.DataFrame(index=[ind])
     sentence = ' '.join(doc)
     divisor = len(doc)
 
+    start_time = time.time()
     # Word counts / sum words
     for def_name in word_defs.columns:
         sent_df[def_name] = sum_words(sentence, word_defs[def_name].dropna())/divisor
         if np.isnan(sent_df[def_name].values[0]):
             return None
+    sent_df['count_time'] = start_time - time.time() # Timing
+
     # Vader
+    start_time = time.time()
     vader_rate = vader_sentiment(sentence)
     sent_df['vader_pos'] = vader_postive(vader_rate)
     sent_df['vader_neg'] = vader_negative(vader_rate)
+    sent_df['vader_time'] = start_time - time.time()
 
     # Testblob
+    start_time = time.time()
     testblob_score = testblob_rate(sentence)
     sent_df['tb_polarity'] = textblob_polarity(testblob_score)
     sent_df['tb_is_positive'] = textblob_is_positive(testblob_score)
     sent_df['tb_subjectivity'] = textblob_subjectivity(testblob_score)
+    sent_df['textblob_time'] = start_time - time.time()
 
     '''
     # Flair
@@ -168,11 +177,14 @@ def get_sentiments(doc, word_defs, ind):
     '''
 
     # Afinn
+    start_time = time.time()
     af_score = get_affin_score(sentence)
     sent_df['afinn_score'] = af_score
     sent_df['affin_is_positive'] = affin_is_positive(af_score)
+    sent_df['afinn_time'] = start_time - time.time()
 
     return sent_df
+
 
 def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, outdir, phraser, filter_dict=None,
                              sample_size=25, word_defs=None):
@@ -230,7 +242,7 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
 
 
     #outname = os.path.join(outdir, 'doc_sentiment_map.csv')
-    outname = os.path.join(outdir, 'doc_sentiment_map_test.csv')
+    outname = os.path.join(outdir, 'doc_sentiment_map_test_time.csv')
 
     huge_doc_map.to_csv(outname)
     return huge_doc_map
