@@ -257,11 +257,11 @@ if __name__ == '__main__':
     word_defs = pd.read_csv(word_defs_f)
 
     class_type = 'Min1_AllCountry'
-    args.doc_deets = os.path.join(config.AUG_DOC_META, 'doc_details_crisis_aug_{}.pkl'.format(class_type))
+    doc_deetz = os.path.join(config.AUG_DOC_META, 'doc_details_crisis_aug_{}.pkl'.format(class_type))
 
     args.out_dir = config.EVAL_WordDefs
     #args.out_dir = os.path.join('/home/apsurek', 'pos_neg_compare')
 
-    time_df, uniq_periods = data_setup(args.doc_deets, args.period)
+    time_df, uniq_periods = data_setup(doc_deetz, config.COUNTRY_FREQ_PERIOD)
     get_country_freqs_sample(args.countries, args.period, time_df, uniq_periods, args.out_dir, args.phraser,
                               filter_dict=None, word_defs=word_defs)
