@@ -52,8 +52,13 @@ def country_period_filter(time_df,country,period):
 import numpy as np
 
 def sum_words(sentence, words):
-    return np.sum([sentence.count(x) for x in words])
-
+    try:
+        to_re = np.sum([sentence.count(x) for x in words])
+    except:
+        print('SENTENCE ', sentence, '\nWORDS', words)
+        to_re = np.NaN
+        exit(-1)
+    return to_re
 # Vader Sentiment analysis
 import nltk
 nltk.download('vader_lexicon')
