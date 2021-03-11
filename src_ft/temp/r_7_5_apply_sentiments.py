@@ -190,7 +190,7 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
         small_doc_map = None
 
         #for i, period in enumerate(uniq_periods):
-        for period in uniq_periods[0:2]:
+        for period in list(uniq_periods)[0:2]:
 
             #print("\r\tworking on period {} of {}...".format(i, len(uniq_periods)), end=' ')
 
