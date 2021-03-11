@@ -218,7 +218,7 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
 
                 tiny_doc_map = pd.merge(tiny_doc_map, sentiments, left_index=True, right_index=True, how='outer')
                 small_doc_map = small_doc_map.append(tiny_doc_map, ignore_index=True)
-                print('print 1\n\n',small_doc_map)
+                #print('print 1\n\n',small_doc_map)
 
             small_doc_map['month'] = period
             small_doc_map['country'] = country
