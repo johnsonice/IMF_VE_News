@@ -98,7 +98,7 @@ def plot_and_correlate_pairs(expanded_df):
         pos_v = expanded_df[pos_t]
         neg_t = definitions[key][1]
         neg_v = expanded_df[neg_t]
-        corr = np.correlate(pos_v.values, neg_v.values)[0]
+        corr = np.corrcoef(pos_v.values, neg_v.values)[0]
         correlations[title] = corr
         #graph_and_correlate(pos_v, neg_v, True, key)
 
