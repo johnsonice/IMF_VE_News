@@ -205,10 +205,7 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
             streamer = DocStreamer_fast(doc_list, language='en', phraser=phraser,
                                         stopwords=[], lemmatize=False).multi_process_files(workers=15, chunk_size=50)
             # count
-            small_doc_map = pd.DataFrame(index=range(len(doc_list_a)))
-            small_doc_map['doc_names'] = doc_list
-            small_doc_map['month'] = period
-            small_doc_map['country'] = country
+            small_doc_map = pd.DataFrame()
 
             docnum = -1
             for doc in streamer:
@@ -216,12 +213,17 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
                 if doc is None:
                     continue
 
+                tiny_doc_map = pd.DataFrame(index=[docnum],data={'doc_name': doc_list[docnum]})
                 sentiments = get_sentiments(doc, word_defs, docnum) # Returns DataFrame
                 if sentiments is None:
                     small_doc_map = None
 
-                small_doc_map = pd.merge(small_doc_map, sentiments, left_index=True, right_index=True, how='outer')
+                tiny_doc_map = pd.merge(tiny_doc_map, sentiments, left_index=True, right_index=True, how='outer')
+                small_doc_map = small_doc_map.append(tiny_doc_map, ignore_index=True)
                 print('print 1\n\n',small_doc_map)
+
+            small_doc_map['month'] = period
+            small_doc_map['country'] = country
 
         if small_doc_map is None:
             continue
