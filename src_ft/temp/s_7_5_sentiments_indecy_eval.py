@@ -12,7 +12,7 @@ import sys
 sys.path.insert(0,'..')
 sys.path.insert(0,'../libs')
 #from region_mapping import region
-import os 
+import os
 import config
 import pandas as pd
 import numpy as np
@@ -111,7 +111,7 @@ in_file = os.path.join(config.EVAL_WordDefs, 'doc_sentiment_map_test.csv')
 in_df = pd.read_csv(in_file)
 
 expanded = apply_expansions(in_df)
-grouped = expanded.groupby(['country','month'])
+grouped = expanded.groupby(['country','month']).mean()
 
 #out_file = os.path.join(config.EVAL_WordDefs, 'month_sentiment_indeces.csv')
 out_file = os.path.join(config.EVAL_WordDefs, 'month_sentiment_indeces_test.csv')
