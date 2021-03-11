@@ -12,7 +12,7 @@ import sys
 sys.path.insert(0,'..')
 sys.path.insert(0,'../libs')
 #from region_mapping import region
-
+import os 
 import config
 import pandas as pd
 import numpy as np
