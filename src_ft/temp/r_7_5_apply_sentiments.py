@@ -269,6 +269,8 @@ if __name__ == '__main__':
     args.out_dir = config.EVAL_WordDefs
     #args.out_dir = os.path.join('/home/apsurek', 'pos_neg_compare')
 
+    args.countries = ['argentina']
+
     time_df, uniq_periods = data_setup(doc_deetz, config.COUNTRY_FREQ_PERIOD)
     get_country_freqs_sample(args.countries, args.period, time_df, uniq_periods, args.out_dir, args.phraser,
                               filter_dict=None, word_defs=word_defs)
