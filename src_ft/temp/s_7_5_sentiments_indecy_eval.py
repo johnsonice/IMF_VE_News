@@ -122,4 +122,5 @@ grouped.to_csv(out_file)
 corr_file = os.path.join(config.EVAL_WordDefs, 'corr_sentiment_indeces_test.csv')
 
 corr_df = plot_and_correlate_pairs(grouped)
+corr_df.to_csv(corr_file)
 
