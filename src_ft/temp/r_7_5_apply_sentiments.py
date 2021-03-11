@@ -189,9 +189,7 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
         # for i, (period, doc_list) in enumerate(period_dict.items()):
         small_doc_map = None
 
-        #for i, period in enumerate(uniq_periods):
-        i = 0
-        for period in list(uniq_periods)[0:2]:
+        for i, period in enumerate(uniq_periods):
 
             #print("\r\tworking on period {} of {}...".format(i, len(uniq_periods)), end=' ')
 
@@ -231,8 +229,8 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
         huge_doc_map = huge_doc_map.append(small_doc_map, ignore_index=True)
 
 
-    #outname = os.path.join(outdir, 'doc_sentiment_map.csv')
-    outname = os.path.join(outdir, 'doc_sentiment_map_test.csv')
+    outname = os.path.join(outdir, 'doc_sentiment_map.csv')
+    #outname = os.path.join(outdir, 'doc_sentiment_map_test.csv')
 
     huge_doc_map.to_csv(outname)
     return huge_doc_map
@@ -280,7 +278,7 @@ if __name__ == '__main__':
     args.out_dir = config.EVAL_WordDefs
     #args.out_dir = os.path.join('/home/apsurek', 'pos_neg_compare')
 
-    args.countries = ['argentina']
+    #args.countries = ['argentina']
 
     time_df, uniq_periods = data_setup(doc_deetz, config.COUNTRY_FREQ_PERIOD)
     get_country_freqs_sample(args.countries, args.period, time_df, uniq_periods, args.out_dir, args.phraser,
