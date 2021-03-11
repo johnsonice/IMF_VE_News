@@ -57,7 +57,6 @@ def sum_words(sentence, words):
     except:
         print('SENTENCE ', sentence, '\nWORDS', words)
         to_re = np.NaN
-        exit(-1)
     return to_re
 # Vader Sentiment analysis
 import nltk
@@ -147,7 +146,8 @@ def get_sentiments(doc, word_defs):
     # Word counts / sum words
     for def_name in word_defs.columns:
         sent_df[def_name] = sum_words(sentence, word_defs[def_name].dropna())/divisor
-
+        if np.isnan(sent_df[def_name]):
+            return None
     # Vader
     vader_rate = vader_sentiment(sentence)
     sent_df['vader_pos'] = vader_postive(vader_rate)
@@ -214,6 +214,8 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
 
                 sentiments = get_sentiments(doc, word_defs) # Returns DataFrame
                 small_doc_map = pd.merge(small_doc_map, sentiments, left_index=True, right_index=True, how='outer')
+                if sentiments is None:
+                    small_doc_map = None
 
         if small_doc_map is None:
             continue
