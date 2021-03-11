@@ -189,7 +189,9 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
         # for i, (period, doc_list) in enumerate(period_dict.items()):
         small_doc_map = None
 
-        for i, period in enumerate(uniq_periods)[0:2]:
+        #for i, period in enumerate(uniq_periods):
+        for period in uniq_periods[0:2]:
+
             #print("\r\tworking on period {} of {}...".format(i, len(uniq_periods)), end=' ')
 
             doc_list_a = country_period_filter(time_df, country, period)
@@ -223,7 +225,7 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
             continue
 
         print('small d map cols',small_doc_map.columns)
-        
+
         print('print FF\n\n',small_doc_map)
 
         huge_doc_map = huge_doc_map.append(small_doc_map)
