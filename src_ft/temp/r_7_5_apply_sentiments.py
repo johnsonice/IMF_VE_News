@@ -189,7 +189,7 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
         # for i, (period, doc_list) in enumerate(period_dict.items()):
         small_doc_map = None
 
-        for i, period in enumerate(uniq_periods):
+        for i, period in enumerate(uniq_periods)[0:2]:
             #print("\r\tworking on period {} of {}...".format(i, len(uniq_periods)), end=' ')
 
             doc_list_a = country_period_filter(time_df, country, period)
@@ -213,12 +213,18 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
                     continue
 
                 sentiments = get_sentiments(doc, word_defs) # Returns DataFrame
-                small_doc_map = pd.merge(small_doc_map, sentiments, left_index=True, right_index=True, how='outer')
                 if sentiments is None:
                     small_doc_map = None
 
+                small_doc_map = pd.merge(small_doc_map, sentiments, left_index=True, right_index=True, how='outer')
+                print('print 1\n\n',small_doc_map)
+
         if small_doc_map is None:
             continue
+
+        print('small d map cols',small_doc_map.columns)
+        
+        print('print FF\n\n',small_doc_map)
 
         huge_doc_map = huge_doc_map.append(small_doc_map)
 
@@ -269,7 +275,7 @@ if __name__ == '__main__':
     args.out_dir = config.EVAL_WordDefs
     #args.out_dir = os.path.join('/home/apsurek', 'pos_neg_compare')
 
-    #args.countries = ['argentina']
+    args.countries = ['argentina']
 
     time_df, uniq_periods = data_setup(doc_deetz, config.COUNTRY_FREQ_PERIOD)
     get_country_freqs_sample(args.countries, args.period, time_df, uniq_periods, args.out_dir, args.phraser,
