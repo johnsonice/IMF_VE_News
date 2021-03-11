@@ -223,10 +223,10 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
             small_doc_map['month'] = period
             small_doc_map['country'] = country
 
-        if small_doc_map is None:
-            continue
+            if small_doc_map is None:
+                continue
 
-        huge_doc_map = huge_doc_map.append(small_doc_map, ignore_index=True)
+            huge_doc_map = huge_doc_map.append(small_doc_map, ignore_index=True)
 
 
     outname = os.path.join(outdir, 'doc_sentiment_map.csv')
