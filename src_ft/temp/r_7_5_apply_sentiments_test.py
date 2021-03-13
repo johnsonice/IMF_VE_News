@@ -286,7 +286,7 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
 
 
     #outname = os.path.join(outdir, 'doc_sentiment_map.csv')
-    outname = os.path.join(outdir, 'doc_sentiment_map_test_time.csv')
+    outname = os.path.join(outdir, 'doc_sentiment_map_test_time_new.csv')
 
     huge_doc_map.to_csv(outname)
     return huge_doc_map
