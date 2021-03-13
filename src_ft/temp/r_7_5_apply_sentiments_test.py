@@ -51,6 +51,34 @@ def country_period_filter(time_df,country,period):
 # Base - Words Counting
 import numpy as np
 
+
+def sum_words_fast(doc, word_defs, widest_ind=0):
+    '''
+    doc - list of words
+    word_defs - list of lists of words to look for in doc
+    widest_ind - column name of longest list
+    '''
+    widest_words = pd.Series(word_defs[widest_ind]).dropna().values
+    wide_map = {w: 0 for w in widest_words}
+
+    for wd in doc:
+        if wd in widest_words:
+            wide_map[wd] += 1
+
+    counts = np.zeros(shape=len(word_defs))
+    # counts_df = pd.DataFrame
+    # for col in word_defs.col:
+    for i in range(len(word_defs)):
+        this_def = pd.Series(word_defs[i]).dropna().values
+        count = 0
+        for wrd in this_def:
+            count += wide_map[wrd]
+        counts[i] = count
+
+    # pd.DataFrame
+    return counts
+
+
 def sum_words(sentence, words):
     try:
         to_re = np.sum([sentence.count(x) for x in words])
@@ -58,9 +86,11 @@ def sum_words(sentence, words):
         print('SENTENCE ', sentence, '\nWORDS', words)
         to_re = np.NaN
     return to_re
+
+
 # Vader Sentiment analysis
-import nltk
-nltk.download('vader_lexicon')
+#import nltk
+#nltk.download('vader_lexicon')
 
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 sid = SentimentIntensityAnalyzer()
@@ -147,18 +177,32 @@ def get_sentiments(doc, word_defs, ind):
 
     start_time = time.time()
     # Word counts / sum words
-    for def_name in word_defs.columns:
-        sent_df[def_name] = sum_words(sentence, word_defs[def_name].dropna())/divisor
-        if np.isnan(sent_df[def_name].values[0]):
+    # Count Positive
+    pos_columns = word_defs.columns[0::2].values
+    returned = sum_words_fast(sentence.split(), word_defs[pos_columns].values.T, 1)
+
+    for i in range(len(pos_columns)):
+        sent_df[pos_columns[i]] = returned[i] / divisor
+        if np.isnan(sent_df[pos_columns[i]].values[0]):
             return None
-    sent_df['count_time'] = start_time - time.time() # Timing
+
+    # Count Negative
+    neg_columns = word_defs.columns[1::2].values
+    returned = sum_words_fast(sentence.split(), word_defs[neg_columns].values.T, 1)
+
+    for i in range(len(neg_columns)):
+        sent_df[neg_columns[i]] = returned[i] / divisor
+        if np.isnan(sent_df[neg_columns[i]].values[0]):
+            return None
+
+    sent_df['count_time'] = time.time() - start_time # Timing
 
     # Vader
     start_time = time.time()
     vader_rate = vader_sentiment(sentence)
     sent_df['vader_pos'] = vader_postive(vader_rate)
     sent_df['vader_neg'] = vader_negative(vader_rate)
-    sent_df['vader_time'] = start_time - time.time()
+    sent_df['vader_time'] = time.time() - start_time
 
     # Testblob
     start_time = time.time()
@@ -166,7 +210,7 @@ def get_sentiments(doc, word_defs, ind):
     sent_df['tb_polarity'] = textblob_polarity(testblob_score)
     sent_df['tb_is_positive'] = textblob_is_positive(testblob_score)
     sent_df['tb_subjectivity'] = textblob_subjectivity(testblob_score)
-    sent_df['textblob_time'] = start_time - time.time()
+    sent_df['textblob_time'] = time.time() - start_time
 
     '''
     # Flair
@@ -181,7 +225,7 @@ def get_sentiments(doc, word_defs, ind):
     af_score = get_affin_score(sentence)
     sent_df['afinn_score'] = af_score
     sent_df['affin_is_positive'] = affin_is_positive(af_score)
-    sent_df['afinn_time'] = start_time - time.time()
+    sent_df['afinn_time'] = time.time() - start_time
 
     return sent_df
 
@@ -283,6 +327,8 @@ if __name__ == '__main__':
 
     word_defs_f = '/home/apsurek/IMF_VE_News/research/w2v_compare/all_sims_maps.csv'
     word_defs = pd.read_csv(word_defs_f).drop(columns='Unnamed: 0')
+    word_defs = word_defs.drop(columns=['w2v_refined_0_pos', 'w2v_refined_0_neg','w2v_refined_1_pos',
+                                        'w2v_refined_1_neg'])
 
     class_type = 'Min1_AllCountry'
     doc_deetz = os.path.join(config.AUG_DOC_META, 'doc_details_crisis_aug_{}.pkl'.format(class_type))
