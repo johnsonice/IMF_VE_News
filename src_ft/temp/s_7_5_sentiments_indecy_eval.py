@@ -54,8 +54,8 @@ def plot_and_correlate_pairs(expanded_df):
         # Base Counts
         'Fed Words': ('fed_pos', 'fed_neg'),
         'w2v Words': ('w2v_pos', 'w2v_neg'),
-        'w2v Words Revised': ('w2v_refined_0_pos', 'w2v_refined_0_neg'),
-        'w2v Words Revised v2': ('w2v_refined_1_pos', 'w2v_refined_1_neg'),
+        #'w2v Words Revised': ('w2v_refined_0_pos', 'w2v_refined_0_neg'),
+        #'w2v Words Revised v2': ('w2v_refined_1_pos', 'w2v_refined_1_neg'),
         'w2v Words Revised v3': ('w2v_refined_2_pos', 'w2v_refined_2_neg'),
 
         # Fed words x Sentiments
