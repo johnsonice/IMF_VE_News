@@ -195,8 +195,8 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
 
             doc_list_a = country_period_filter(time_df, country, period)
 
-            if len(doc_list_a) > sample_size:
-                doc_list_a = np_choice(doc_list_a, size=sample_size)
+            #if len(doc_list_a) > sample_size:
+            #    doc_list_a = np_choice(doc_list_a, size=sample_size)
 
             doc_list = [os.path.join(config.JSON_LEMMA, os.path.basename(p)) for p in doc_list_a]
 
@@ -222,18 +222,19 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
 
             small_doc_map['month'] = period
             small_doc_map['country'] = country
+            small_doc_map['num_doc'] = docnum
 
             if small_doc_map is None:
                 continue
 
             huge_doc_map = huge_doc_map.append(small_doc_map, ignore_index=True)
 
+        outname = os.path.join(outdir, '{}_doc_sentiment_map.csv'.format(country))
+        #outname = os.path.join(outdir, 'doc_sentiment_map_test.csv')
 
-    outname = os.path.join(outdir, 'doc_sentiment_map.csv')
-    #outname = os.path.join(outdir, 'doc_sentiment_map_test.csv')
+        huge_doc_map.to_csv(outname)
 
-    huge_doc_map.to_csv(outname)
-    return huge_doc_map
+    return None
 
 class args_class(object):
     def __init__(self, corpus=config.JSON_LEMMA,doc_deets=config.AUG_DOC_META_FILE,
@@ -271,6 +272,8 @@ if __name__ == '__main__':
 
     word_defs_f = '/home/apsurek/IMF_VE_News/research/w2v_compare/all_sims_maps.csv'
     word_defs = pd.read_csv(word_defs_f).drop(columns='Unnamed: 0')
+    word_defs = word_defs.drop(columns=['w2v_refined_0_pos', 'w2v_refined_0_neg','w2v_refined_1_pos',
+                                        'w2v_refined_1_neg'])
 
     class_type = 'Min1_AllCountry'
     doc_deetz = os.path.join(config.AUG_DOC_META, 'doc_details_crisis_aug_{}.pkl'.format(class_type))
