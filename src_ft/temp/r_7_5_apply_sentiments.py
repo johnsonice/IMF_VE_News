@@ -281,6 +281,12 @@ if __name__ == '__main__':
     args.out_dir = config.EVAL_WordDefs
     #args.out_dir = os.path.join('/home/apsurek', 'pos_neg_compare')
 
+    sentiment_progress = pd.read_csv(os.path.join(config.AUG_DOC_META, 'sentiment_progress.csv'))
+    possible_countries = sentiment_progress['aug_doc_countries'].values
+    done_countries = sentiment_progress['sentimented_countries'].dropna().values
+    remaining_countries = set(possible_countries) - set(done_countries)
+    args.countries = list(remaining_countries)
+
     #args.countries = ['argentina']
 
     time_df, uniq_periods = data_setup(doc_deetz, config.COUNTRY_FREQ_PERIOD)
