@@ -106,7 +106,7 @@ def plot_and_correlate_pairs(expanded_df):
 
 for country in config.countries:
     #in_file = os.path.join(config.EVAL_WordDefs, 'doc_sentiment_map.csv')
-    in_file = os.path.join(config.EVAL_WordDefs, '{}_doc_sentiment_map_test.csv'.format(country))
+    in_file = os.path.join(config.EVAL_WordDefs, '{}_doc_sentiment_map.csv'.format(country))
 
     in_df = pd.read_csv(in_file)
 
@@ -114,12 +114,12 @@ for country in config.countries:
     grouped = expanded.groupby(['country','month']).mean()
 
     #out_file = os.path.join(config.EVAL_WordDefs, 'month_sentiment_indeces.csv')
-    out_file = os.path.join(config.EVAL_WordDefs, '{}_month_sentiment_indeces_test.csv'.format(country))
+    out_file = os.path.join(config.EVAL_WordDefs, '{}_month_sentiment_indeces.csv'.format(country))
 
     grouped.to_csv(out_file)
 
     #corr_file = os.path.join(config.EVAL_WordDefs, 'corr_sentiment_indeces.csv')
-    corr_file = os.path.join(config.EVAL_WordDefs, '{}_corr_sentiment_indeces_test.csv'.format(country))
+    corr_file = os.path.join(config.EVAL_WordDefs, '{}_corr_sentiment_indeces.csv'.format(country))
 
     corr_df = plot_and_correlate_pairs(grouped)
     corr_df.to_csv(corr_file)
