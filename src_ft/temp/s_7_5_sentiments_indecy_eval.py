@@ -104,23 +104,23 @@ def plot_and_correlate_pairs(expanded_df):
 
     return correlations.T
 
+for country in config.countries:
+    #in_file = os.path.join(config.EVAL_WordDefs, 'doc_sentiment_map.csv')
+    in_file = os.path.join(config.EVAL_WordDefs, '{}_doc_sentiment_map_test.csv'.format(country))
 
-#in_file = os.path.join(config.EVAL_WordDefs, 'doc_sentiment_map.csv')
-in_file = os.path.join(config.EVAL_WordDefs, 'doc_sentiment_map_test.csv')
+    in_df = pd.read_csv(in_file)
 
-in_df = pd.read_csv(in_file)
+    expanded = apply_expansions(in_df)
+    grouped = expanded.groupby(['country','month']).mean()
 
-expanded = apply_expansions(in_df)
-grouped = expanded.groupby(['country','month']).mean()
+    #out_file = os.path.join(config.EVAL_WordDefs, 'month_sentiment_indeces.csv')
+    out_file = os.path.join(config.EVAL_WordDefs, '{}_month_sentiment_indeces_test.csv'.format(country))
 
-#out_file = os.path.join(config.EVAL_WordDefs, 'month_sentiment_indeces.csv')
-out_file = os.path.join(config.EVAL_WordDefs, 'month_sentiment_indeces_test.csv')
+    grouped.to_csv(out_file)
 
-grouped.to_csv(out_file)
+    #corr_file = os.path.join(config.EVAL_WordDefs, 'corr_sentiment_indeces.csv')
+    corr_file = os.path.join(config.EVAL_WordDefs, '{}_corr_sentiment_indeces_test.csv'.format(country))
 
-#corr_file = os.path.join(config.EVAL_WordDefs, 'corr_sentiment_indeces.csv')
-corr_file = os.path.join(config.EVAL_WordDefs, 'corr_sentiment_indeces_test.csv')
-
-corr_df = plot_and_correlate_pairs(grouped)
-corr_df.to_csv(corr_file)
+    corr_df = plot_and_correlate_pairs(grouped)
+    corr_df.to_csv(corr_file)
 
