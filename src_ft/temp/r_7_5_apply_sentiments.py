@@ -185,8 +185,12 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
 
     small_doc_map = None
     for country in countries:
-        logger.info("\nWorking on {}".format(country))
+        print("\nWorking on {}".format(country))
         # for i, (period, doc_list) in enumerate(period_dict.items()):
+
+        total_doc = 0
+        n_outs = 1
+
         small_doc_map = None
 
         for i, period in enumerate(uniq_periods):
@@ -227,9 +231,21 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
             if small_doc_map is None:
                 continue
 
-            huge_doc_map = huge_doc_map.append(small_doc_map, ignore_index=True)
+            total_doc += docnum
 
-        outname = os.path.join(outdir, '{}_doc_sentiment_map.csv'.format(country))
+
+            huge_doc_map = huge_doc_map.append(small_doc_map, ignore_index=True)
+            if total_doc > 10000*n_outs:
+                outname = os.path.join(outdir, '{}_doc_sentiment_map_{}.csv'.format(country, n_outs))
+                huge_doc_map.to_csv(outname)
+                huge_doc_map = pd.DataFrame()
+                n_outs += 1
+
+        if total_doc < 10000:
+            outname = os.path.join(outdir, '{}_doc_sentiment_map.csv'.format(country))
+        else:
+            outname = os.path.join(outdir, '{}_doc_sentiment_map_{}.csv'.format(country,n_outs))
+
         #outname = os.path.join(outdir, 'doc_sentiment_map_test.csv')
 
         huge_doc_map.to_csv(outname)
