@@ -159,8 +159,8 @@ def evaluate(frequency_ser, country, method='zscore',
         #fq = pd.to_datetime(fq, format='%Y-%m')
         #ag_freq = frequency_ser[:eval_end_date[fq]]  # Don't look beyond when Kaminsky and
         # Get start and 'end' periods for crises depending on definition
-        starts = list(pd.PeriodIndex(crisis_points.crisis_points[country]['starts'], freq=fq))
-        ends = list(pd.PeriodIndex(crisis_points.crisis_points[country]['peaks'], freq=fq))
+        starts = list(pd.PeriodIndex(crisis_points.crisis_points_TEMP_KnR[country]['starts'], freq=fq))
+        ends = list(pd.PeriodIndex(crisis_points.crisis_points_TEMP_KnR[country]['peaks'], freq=fq))
 
     elif crisis_defs == 'll':
         ag_freq = frequency_ser[:eval_end_date[fq]]  # Don't look beyond when ll ends
