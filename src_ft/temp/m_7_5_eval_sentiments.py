@@ -288,8 +288,9 @@ if __name__ == '__main__':
     for ctry in config.countries:
         in_f = in_name.format(ctry)
         df = pd.read_csv(in_f)
-        sent_cols = df.columns[3:8].values + df.columns[10:12].values +  ['vader_pos_x_fed_pos', 'vader_neg_x_fed_neg',
-       'vader_is_pos_x_fed_pos', 'vader_is_neg_x_fed_neg']
+        sent_cols = np.append(df.columns[3:8].values.extend, df.columns[10:12].values)
+        sent_cols = np.append(sent_cols, ['vader_pos_x_fed_pos', 'vader_neg_x_fed_neg',
+       'vader_is_pos_x_fed_pos', 'vader_is_neg_x_fed_neg'])
         df['month'] = pd.to_datetime(df['month'])
         df.set_index('month')
         recls, precs, fscrs, ntps, nfps, nfns = [], [], [], [], [], []
