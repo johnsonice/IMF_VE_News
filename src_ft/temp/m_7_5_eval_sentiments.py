@@ -309,7 +309,7 @@ if __name__ == '__main__':
 
             overall_df.loc[sent_def, 'tp'] += ntp
             overall_df.loc[sent_def, 'fp'] += nfp
-            overall_df.loc[sent_def, 'nf'] += nfn
+            overall_df.loc[sent_def, 'fn'] += nfn
 
         df_out = pd.DataFrame({
             'recall':recls,
