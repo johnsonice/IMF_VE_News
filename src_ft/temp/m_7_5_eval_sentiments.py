@@ -276,7 +276,9 @@ if __name__ == '__main__':
     out_name = os.path.join('/data/News_data_raw/FT_WD_research/eval/word_defs/series', '{}_sentiment_eval.csv')
 
     df = pd.read_csv(in_name.format('argentina'))
-    sent_cols = df.columns[4:].values
+    sent_cols = np.append(df.columns[3:8].values, df.columns[10:12].values)
+    sent_cols = np.append(sent_cols, ['vader_pos_x_fed_pos', 'vader_neg_x_fed_neg',
+                                      'vader_is_pos_x_fed_pos', 'vader_is_neg_x_fed_neg'])
     overall_tp, overall_fp, overall_fn = np.zeros(shape=len(sent_cols)), np.zeros(shape=len(sent_cols)), \
                                          np.zeros(shape=len(sent_cols))
 
@@ -288,9 +290,6 @@ if __name__ == '__main__':
     for ctry in config.countries:
         in_f = in_name.format(ctry)
         df = pd.read_csv(in_f)
-        sent_cols = np.append(df.columns[3:8].values, df.columns[10:12].values)
-        sent_cols = np.append(sent_cols, ['vader_pos_x_fed_pos', 'vader_neg_x_fed_neg',
-       'vader_is_pos_x_fed_pos', 'vader_is_neg_x_fed_neg'])
         df['month'] = pd.to_datetime(df['month'])
         df.set_index('month')
         recls, precs, fscrs, ntps, nfps, nfns = [], [], [], [], [], []
