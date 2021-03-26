@@ -292,9 +292,11 @@ if __name__ == '__main__':
 
             freq_ser = df[sent_def]
             recall, precision, fscore, ntp, nfp, nfn = evaluate(freq_ser, ctry,method='zscore',crisis_defs='kr',
-                                                          period='month',stemmed=False,
-                                                          window=24, direction='incr', months_prior=24,
-                                                          fbeta=2,eval_end_date=None,weights=None,z_thresh=1.96)
+                                                          period=args.period,stemmed=False,
+                                                          window=args.window, direction='incr',
+                                                                months_prior=args.months_prior,
+                                                          fbeta=2,eval_end_date=args.eval_end_date,weights=None,
+                                                                z_thresh=args.z_thresh)
 
             recls.append(recall)
             precs.append(precision)
