@@ -13,7 +13,7 @@ sys.path.insert(0,'..')
 sys.path.insert(0,'../libs')
 #import argparse
 from gensim.models.keyedvectors import KeyedVectors
-from crisis_points import crisis_points
+from crisis_points import crisis_points_TEMP_KnR, crisis_points
 from evaluate import evaluate, get_recall, get_precision, get_fscore ,get_input_words_weights,get_country_stats, \
     get_preds_from_pd, get_eval_stats
 import pandas as pd
@@ -159,8 +159,8 @@ def evaluate(frequency_ser, country, method='zscore',
         #fq = pd.to_datetime(fq, format='%Y-%m')
         #ag_freq = frequency_ser[:eval_end_date[fq]]  # Don't look beyond when Kaminsky and
         # Get start and 'end' periods for crises depending on definition
-        starts = list(pd.PeriodIndex(crisis_points.crisis_points_TEMP_KnR[country]['starts'], freq=fq))
-        ends = list(pd.PeriodIndex(crisis_points.crisis_points_TEMP_KnR[country]['peaks'], freq=fq))
+        starts = list(pd.PeriodIndex(crisis_points_TEMP_KnR[country]['starts'], freq=fq))
+        ends = list(pd.PeriodIndex(crisis_points_TEMP_KnR[country]['peaks'], freq=fq))
 
     elif crisis_defs == 'll':
         ag_freq = frequency_ser[:eval_end_date[fq]]  # Don't look beyond when ll ends
