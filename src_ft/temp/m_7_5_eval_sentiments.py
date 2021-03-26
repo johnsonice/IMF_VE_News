@@ -283,6 +283,8 @@ if __name__ == '__main__':
     overall_df = pd.DataFrame({'sentiment':sent_cols,'tp':overall_tp, 'fp':overall_fp, 'fn':overall_fn})
     overall_df = overall_df.set_index('sentiment')
 
+    config.countries = ['argentina']
+
     for ctry in config.countries:
         in_f = in_name.format(ctry)
         df = pd.read_csv(in_f)
