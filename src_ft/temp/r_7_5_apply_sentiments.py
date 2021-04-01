@@ -303,6 +303,14 @@ if __name__ == '__main__':
     possible_countries = sentiment_progress['aug_doc_countries'].values
     done_countries = sentiment_progress['sentimented_countries'].dropna().values
     remaining_countries = set(possible_countries) - set(done_countries)
+
+    snd_cntries = ['argentina','bolivia','brazil','chile','colombia','denmark',
+                   'finland', 'iceland', 'indonesia', 'israel','japan','malaysia',
+                   'mexico','norway','peru','philippines','poland','spain','sweden',
+                   'thailand','turkey','united-states', 'uruguay', 'venezuela']
+
+    remaining_countries = remaining_countries - set(snd_cntries)
+
     args.countries = list(remaining_countries)
 
     #args.countries = ['argentina']
