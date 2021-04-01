@@ -239,6 +239,7 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
                 outname = os.path.join(outdir, '{}_doc_sentiment_map_{}.csv'.format(country, n_outs))
                 huge_doc_map.to_csv(outname)
                 huge_doc_map = pd.DataFrame()
+                small_doc_map = pd.DataFrame()
                 n_outs += 1
 
         if total_doc < 10000:
@@ -249,6 +250,7 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
         #outname = os.path.join(outdir, 'doc_sentiment_map_test.csv')
 
         huge_doc_map.to_csv(outname)
+        huge_doc_map = pd.DataFrame()
 
     return None
 
