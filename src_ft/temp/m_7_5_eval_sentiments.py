@@ -22,33 +22,6 @@ from mp_utils import Mp
 import os
 import config
 
-
-def get_key_sim_pair(word_groups,args,vecs):
-    key_sim_pairs = []
-    for wg in word_groups:
-        if args.sims:
-            # use topn most similar terms as words for aggregate freq if args.sims
-            try:
-                # get words and weights. weights will be 1s if weight flag is false
-                # otherwise weights will be cos distance
-                words, weights = get_input_words_weights(args,
-                                                         wg,
-                                                         vecs=vecs,
-                                                         weighted=args.weighted)
-            except:
-                print('Not in vocabulary: {}'.format(wg))
-                continue
-        else:
-            weights= None  ## if not using w2v , set weights to None
-            if isinstance(wg,list):
-                words = wg
-            else:
-                words = [wg]
-
-        key_sim_pairs.append((wg,words,weights))
-
-    return key_sim_pairs
-
 def run_evaluation(iter_item,args):
     ## unpack iter items
     wg,words,weights = iter_item
@@ -155,9 +128,7 @@ def evaluate(frequency_ser, country, method='zscore',
         return np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
 
     if crisis_defs == 'kr':
-        #eval_end_date = pd.to_datetime(eval_end_date)
-        #fq = pd.to_datetime(fq, format='%Y-%m')
-        ag_freq = frequency_ser#[:eval_end_date[fq]]  # Don't look beyond when Kaminsky and
+        ag_freq = frequency_ser[:eval_end_date[fq]]  # Don't look beyond when Kaminsky and
         # Get start and 'end' periods for crises depending on definition
         starts = list(pd.PeriodIndex(crisis_points_TEMP_KnR[country]['starts'], freq=fq))
         ends = list(pd.PeriodIndex(crisis_points_TEMP_KnR[country]['peaks'], freq=fq))
@@ -275,6 +246,7 @@ if __name__ == '__main__':
     in_name = os.path.join(in_directory, '{}_sentiment_indeces.csv')
     out_name = os.path.join('/data/News_data_raw/FT_WD_research/eval/word_defs/series', '{}_sentiment_eval.csv')
 
+
     df = pd.read_csv(in_name.format('argentina'))
     sent_cols = np.append(df.columns[3:8].values, df.columns[10:12].values)
     sent_cols = np.append(sent_cols, ['vader_pos_x_fed_pos', 'vader_neg_x_fed_neg',
@@ -285,22 +257,24 @@ if __name__ == '__main__':
     overall_df = pd.DataFrame({'sentiment':sent_cols,'tp':overall_tp, 'fp':overall_fp, 'fn':overall_fn})
     overall_df = overall_df.set_index('sentiment')
 
-    config.countries = ['argentina']
+    #countries = config.countries
+    countries = ['argentina']
 
-    for ctry in config.countries:
+    for ctry in countries:
         in_f = in_name.format(ctry)
         df = pd.read_csv(in_f)
+        df = df[df['country'] == ctry]
         df['month'] = pd.to_datetime(df['month'])
         df.set_index('month')
         recls, precs, fscrs, ntps, nfps, nfns = [], [], [], [], [], []
         for sent_def in sent_cols:
 
             freq_ser = df[sent_def]
-            recall, precision, fscore, ntp, nfp, nfn = evaluate(freq_ser, ctry,method='zscore',crisis_defs='kr',
+            recall, precision, fscore, ntp, nfp, nfn = evaluate(freq_ser, ctry, method='zscore', crisis_defs='kr',
                                                           period=args.period,stemmed=False,
                                                           window=args.window, direction='incr',
                                                                 months_prior=args.months_prior,
-                                                          fbeta=2,eval_end_date=args.eval_end_date,weights=None,
+                                                          fbeta=2,eval_end_date=args.eval_end_date, weights=None,
                                                                 z_thresh=args.z_thresh)
 
             recls.append(recall)
@@ -342,4 +316,4 @@ if __name__ == '__main__':
     overall_df['precision'] = opre
     overall_df['fscore'] = of2
     overall_df.sort_values(by='fscore', ascending=False)
-    overall_df.to_csv('/home/apsurek/IMF_VE_News/research/overall_sentiment_analysis.csv')
+    overall_df.to_csv('/home/apsurek/IMF_VE_News/research/overall_sentiment_analysis_test.csv')
