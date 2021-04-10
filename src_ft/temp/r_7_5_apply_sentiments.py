@@ -192,7 +192,6 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
         n_outs = 1
 
         small_doc_map = None
-
         for i, period in enumerate(uniq_periods):
 
             #print("\r\tworking on period {} of {}...".format(i, len(uniq_periods)), end=' ')
@@ -310,6 +309,19 @@ if __name__ == '__main__':
                    'thailand','turkey','united-states', 'uruguay', 'venezuela']
 
     remaining_countries = remaining_countries - set(snd_cntries)
+
+    thrd_ctry = {'poland', 'latvia', 'nigeria', 'iceland', 'italy', 'venezuela', 'vietnam', 'bulgaria', 'mexico',
+                 'south-korea', 'zambia', 'israel', 'pakistan', 'china', 'argentina', 'sweden', 'ukraine', 'spain',
+                 'jordan', 'bolivia', 'greece', 'zimbabwe', 'japan', 'thailand', 'india', 'malaysia',
+                 'australia', 'indeces', 'russia', 'uruguay', 'colombia', 'france', 'chile', 'tunisia', 'netherlands',
+                 'germany', 'lebanon', 'finland', 'series', 'ireland', 'egypt', 'philippines', 'ecuador', 'norway',
+                 'united-states', 'denmark', 'uganda', 'hungary', 'peru', 'nicaragua', 'new-zealand', 'canada',
+                 'turkey', 'indonesia', 'brazil'}
+
+
+    temp_hold = {'united-kingdom'}
+
+    remaining_countries = remaining_countries - thrd_ctry - temp_hold
 
     args.countries = list(remaining_countries)
 
