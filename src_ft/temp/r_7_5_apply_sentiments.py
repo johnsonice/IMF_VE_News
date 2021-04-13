@@ -323,7 +323,8 @@ if __name__ == '__main__':
 
     remaining_countries = remaining_countries - thrd_ctry - temp_hold
 
-    args.countries = list(remaining_countries)
+    #args.countries = list(remaining_countries)
+    args.countries = ['united-states']
 
     #args.countries = ['argentina']
 
