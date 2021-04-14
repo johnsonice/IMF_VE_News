@@ -192,6 +192,7 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
         n_outs = 1
 
         small_doc_map = None
+        uniq_periods = sorted(list(uniq_periods))
         for i, period in enumerate(uniq_periods):
 
             #print("\r\tworking on period {} of {}...".format(i, len(uniq_periods)), end=' ')
@@ -240,11 +241,13 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
                 huge_doc_map = pd.DataFrame()
                 small_doc_map = pd.DataFrame()
                 n_outs += 1
+                print('Saved up to {} inclusive'.format(period))
 
         if total_doc < 10000:
             outname = os.path.join(outdir, '{}_doc_sentiment_map.csv'.format(country))
         else:
             outname = os.path.join(outdir, '{}_doc_sentiment_map_{}.csv'.format(country,n_outs))
+        print('Done {}'.format(country))
 
         #outname = os.path.join(outdir, 'doc_sentiment_map_test.csv')
 
