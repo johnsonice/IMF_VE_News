@@ -196,8 +196,10 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
 
         # Temp, subset
         last_done = '1980-05'
-        print(uniq_periods)
-        lastx = np.where(uniq_periods == last_done)[0][0]
+        uniq_periods_str = list(uniq_periods)
+        uniq_periods_str = np.array([str(per) for per in uniq_periods_str])
+        print(uniq_periods_str)
+        lastx = np.where(uniq_periods_str == last_done)[0][0]
         uniq_periods = uniq_periods[lastx+1:]
 
 
