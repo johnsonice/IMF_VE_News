@@ -192,7 +192,14 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
         n_outs = 1
 
         small_doc_map = None
-        uniq_periods = sorted(list(uniq_periods))
+        uniq_periods = np.array(sorted(list(uniq_periods)))
+
+        # Temp, subset
+        last_done = '1980-05'
+        lastx = np.where(uniq_periods == last_done)[0]
+        uniq_periods = uniq_periods[lastx+1:]
+
+
         for i, period in enumerate(uniq_periods):
 
             #print("\r\tworking on period {} of {}...".format(i, len(uniq_periods)), end=' ')
@@ -235,7 +242,7 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
 
 
             huge_doc_map = huge_doc_map.append(small_doc_map, ignore_index=True)
-            if total_doc > 10000*n_outs:
+            if total_doc > 5000*n_outs:
                 outname = os.path.join(outdir, '{}_doc_sentiment_map_{}.csv'.format(country, n_outs))
                 huge_doc_map.to_csv(outname)
                 huge_doc_map = pd.DataFrame()
