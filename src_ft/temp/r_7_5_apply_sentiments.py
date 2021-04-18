@@ -196,12 +196,12 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
 
         # Temp, subset
         #last_done = '1980-05'
-        last_done = '1983-02'
-        uniq_periods_str = list(uniq_periods)
-        uniq_periods_str = np.array([str(per) for per in uniq_periods_str])
-        print(uniq_periods_str)
-        lastx = np.where(uniq_periods_str == last_done)[0][0]
-        uniq_periods = uniq_periods[lastx+1:]
+        #last_done = '1983-02'
+        #uniq_periods_str = list(uniq_periods)
+        #uniq_periods_str = np.array([str(per) for per in uniq_periods_str])
+        #print(uniq_periods_str)
+        #lastx = np.where(uniq_periods_str == last_done)[0][0]
+        #uniq_periods = uniq_periods[lastx+1:]
 
 
         for i, period in enumerate(uniq_periods):
@@ -216,7 +216,7 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
             doc_list = [os.path.join(config.JSON_LEMMA, os.path.basename(p)) for p in doc_list_a]
 
             streamer = DocStreamer_fast(doc_list, language='en', phraser=phraser,
-                                        stopwords=[], lemmatize=False).multi_process_files(workers=5, chunk_size=50)
+                                        stopwords=[], lemmatize=False).multi_process_files(workers=15, chunk_size=50)
             # count
             small_doc_map = pd.DataFrame()
 
@@ -251,8 +251,8 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
                 huge_doc_map.to_csv(outname)
                 huge_doc_map = pd.DataFrame()
                 small_doc_map = pd.DataFrame()
+                print('Saved up to {} inclusive with ending {}'.format(period, n_outs))
                 n_outs += 1
-                print('Saved up to {} inclusive'.format(period))
 
         if total_doc < 10000:
             outname = os.path.join(outdir, '{}_doc_sentiment_map.csv'.format(country))
