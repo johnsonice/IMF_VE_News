@@ -190,6 +190,7 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
 
         total_doc = 0
         n_outs = 1
+        #write_outs = n_outs = 1
 
         small_doc_map = None
         uniq_periods = np.array(sorted(list(uniq_periods)))
@@ -202,7 +203,7 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
         #print(uniq_periods_str)
         lastx = np.where(uniq_periods_str == last_done)[0][0]
         uniq_periods = uniq_periods[lastx+1:]
-        n_outs = 3
+        write_outs = 3 + 1
 
         for i, period in enumerate(uniq_periods):
 
@@ -216,7 +217,7 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
             doc_list = [os.path.join(config.JSON_LEMMA, os.path.basename(p)) for p in doc_list_a]
 
             streamer = DocStreamer_fast(doc_list, language='en', phraser=phraser,
-                                        stopwords=[], lemmatize=False).multi_process_files(workers=15, chunk_size=50)
+                                        stopwords=[], lemmatize=False).multi_process_files(workers=5, chunk_size=50)
             # count
             small_doc_map = pd.DataFrame()
 
@@ -247,17 +248,18 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
 
             huge_doc_map = huge_doc_map.append(small_doc_map, ignore_index=True)
             if total_doc > 5000*n_outs:
-                outname = os.path.join(outdir, '{}_doc_sentiment_map_{}.csv'.format(country, n_outs))
+                outname = os.path.join(outdir, '{}_doc_sentiment_map_{}.csv'.format(country, write_outs))
                 huge_doc_map.to_csv(outname)
                 huge_doc_map = pd.DataFrame()
                 small_doc_map = pd.DataFrame()
-                print('Saved up to {} inclusive with ending {}'.format(period, n_outs))
+                print('Saved up to {} inclusive with ending {}'.format(period, write_outs))
                 n_outs += 1
+                write_outs += 1
 
         if total_doc < 10000:
             outname = os.path.join(outdir, '{}_doc_sentiment_map.csv'.format(country))
         else:
-            outname = os.path.join(outdir, '{}_doc_sentiment_map_{}.csv'.format(country,n_outs))
+            outname = os.path.join(outdir, '{}_doc_sentiment_map_{}.csv'.format(country,write_outs))
         print('Done {}'.format(country))
 
         #outname = os.path.join(outdir, 'doc_sentiment_map_test.csv')
