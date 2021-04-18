@@ -203,7 +203,7 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
         #print(uniq_periods_str)
         lastx = np.where(uniq_periods_str == last_done)[0][0]
         uniq_periods = uniq_periods[lastx+1:]
-        write_outs = 3 + 1
+        write_outs = 2 + 1
 
         for i, period in enumerate(uniq_periods):
 
