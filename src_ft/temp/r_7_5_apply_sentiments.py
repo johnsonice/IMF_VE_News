@@ -216,7 +216,7 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
             doc_list = [os.path.join(config.JSON_LEMMA, os.path.basename(p)) for p in doc_list_a]
 
             streamer = DocStreamer_fast(doc_list, language='en', phraser=phraser,
-                                        stopwords=[], lemmatize=False).multi_process_files(workers=15, chunk_size=50)
+                                        stopwords=[], lemmatize=False).multi_process_files(workers=5, chunk_size=50)
             # count
             small_doc_map = pd.DataFrame()
 
