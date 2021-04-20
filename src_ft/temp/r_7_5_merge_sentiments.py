@@ -38,6 +38,6 @@ if __name__ == '__main__':
             merge_df = pd.read_csv(cntry_files[0]).drop(columns='Unnamed: 0')
             for c_file in cntry_files[1:]:
                 c_df = pd.read_csv(c_file).drop(columns='Unnamed: 0')
-                merge_df = pd.concat(c_df)
+                merge_df = pd.concat([merge_df, c_df])
             merge_df.to_csv(out_f)
             print('Merged and saved ' + cntry)
