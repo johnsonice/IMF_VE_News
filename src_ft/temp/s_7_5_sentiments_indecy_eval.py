@@ -119,7 +119,7 @@ if __name__ == '__main__':
     corr_dirr = os.path.join(config.EVAL_WordDefs,'month_sentiment_correlations')
 
     for country in countries:
-        if country == 'Tanzania':
+        if country == 'tanzania':
             continue
         #in_file = os.path.join(config.EVAL_WordDefs, 'doc_sentiment_map.csv')
 
