@@ -190,21 +190,21 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
 
         total_doc = 0
         n_outs = 1
-        #write_outs = n_outs = 1
+        write_outs = n_outs = 1
 
         small_doc_map = None
         uniq_periods = np.array(sorted(list(uniq_periods)))
 
         # Temp, subset
-        last_done = '1980-05'
+        #last_done = '1980-05'
         #last_done = '1983-02'
-        last_done = '1988-10'
-        uniq_periods_str = list(uniq_periods)
-        uniq_periods_str = np.array([str(per) for per in uniq_periods_str])
+        #last_done = '1988-10'
+        #uniq_periods_str = list(uniq_periods)
+        #uniq_periods_str = np.array([str(per) for per in uniq_periods_str])
         #print(uniq_periods_str)
-        lastx = np.where(uniq_periods_str == last_done)[0][0]
-        uniq_periods = uniq_periods[lastx+1:]
-        write_outs = 49 + 1
+        #lastx = np.where(uniq_periods_str == last_done)[0][0]
+        #uniq_periods = uniq_periods[lastx+1:]
+        #write_outs = 49 + 1
 
         for i, period in enumerate(uniq_periods):
 
@@ -344,7 +344,7 @@ if __name__ == '__main__':
     #args.countries = ['united-states']
     #args.countries = ['united-kingdom']
     #args.countries = ['tanzania']
-    args.countries = ['japan']
+    args.countries = ['tanzania', 'japan']
 
 
     #args.countries = ['argentina']
