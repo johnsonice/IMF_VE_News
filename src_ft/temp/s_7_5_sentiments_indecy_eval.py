@@ -106,10 +106,10 @@ def plot_and_correlate_pairs(expanded_df):
 
 if __name__ == '__main__':
 
-    #sentiment_progress = pd.read_csv(os.path.join(config.AUG_DOC_META, 'sentiment_progress.csv'))
-    #countries = sentiment_progress['aug_doc_countries'].values
+    sentiment_progress = pd.read_csv(os.path.join(config.AUG_DOC_META, 'sentiment_progress.csv'))
+    countries = sentiment_progress['aug_doc_countries'].values
 
-    countries = ['argentina']
+    #countries = ['argentina']
 
     in_dir = os.path.join(config.EVAL_WordDefs,'final_sent_merge')
     out_dir = os.path.join(config.EVAL_WordDefs,'final_sent_mean2')
@@ -126,13 +126,15 @@ if __name__ == '__main__':
         grouped = expanded.groupby(['country','month']).mean()
 
         #out_file = os.path.join(config.EVAL_WordDefs, 'month_sentiment_indeces.csv')
-        out_file = os.path.join(config.EVAL_WordDefs, '{}_month_sentiment_indeces.csv'.format(country))
-
+        out_file = os.path.join(out_dir, '{}_month_sentiment_indeces.csv'.format(country))
         grouped.to_csv(out_file)
+        print('Saved indecies for', country)
 
         #corr_file = os.path.join(config.EVAL_WordDefs, 'corr_sentiment_indeces.csv')
         corr_file = os.path.join(corr_dirr, '{}_corr_sentiment_indeces.csv'.format(country))
 
         corr_df = plot_and_correlate_pairs(grouped)
         corr_df.to_csv(corr_file)
+        print('Saved correlations for', country)
+
 
