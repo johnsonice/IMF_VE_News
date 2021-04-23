@@ -42,20 +42,13 @@ if __name__ == '__main__':
         count_aug = aug_doc['country'].apply(contains_ctry, ctry=country).sum()
         count_sent = len(sent_df)
 
-        issue_countries = []
-        fine_countries = []
-
         if count_aug == count_sent:
             print('Counts for {} match up'.format(country))
-            fine_countries.append(country)
         elif count_aug > count_sent:
             print('Count in aug doc bigger for {}'.format(country))
             print('\tAug: {}, Sent: {}'.format(count_aug, count_sent))
-            issue_countries.append(country)
         else:
             print('Count in sent bigger for {}'.format(country))
             print('\tAug: {}, Sent: {}'.format(count_aug, count_sent))
-            issue_countries.append(country)
 
-    print('Fine countries\n',fine_countries)
-    print('\nIssue countries\n',issue_countries)
+
