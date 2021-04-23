@@ -104,23 +104,35 @@ def plot_and_correlate_pairs(expanded_df):
 
     return correlations.T
 
-for country in config.countries:
-    #in_file = os.path.join(config.EVAL_WordDefs, 'doc_sentiment_map.csv')
-    in_file = os.path.join(config.EVAL_WordDefs, '{}_doc_sentiment_map.csv'.format(country))
+if __name__ == '__main__':
 
-    in_df = pd.read_csv(in_file)
+    #sentiment_progress = pd.read_csv(os.path.join(config.AUG_DOC_META, 'sentiment_progress.csv'))
+    #countries = sentiment_progress['aug_doc_countries'].values
 
-    expanded = apply_expansions(in_df)
-    grouped = expanded.groupby(['country','month']).mean()
+    countries = ['argentina']
 
-    #out_file = os.path.join(config.EVAL_WordDefs, 'month_sentiment_indeces.csv')
-    out_file = os.path.join(config.EVAL_WordDefs, '{}_month_sentiment_indeces.csv'.format(country))
+    in_dir = os.path.join(config.EVAL_WordDefs,'final_sent_merge')
+    out_dir = os.path.join(config.EVAL_WordDefs,'final_sent_mean2')
+    corr_dirr = os.path.join(config.EVAL_WordDefs,'month_sentiment_correlations')
 
-    grouped.to_csv(out_file)
+    for country in countries:
+        #in_file = os.path.join(config.EVAL_WordDefs, 'doc_sentiment_map.csv')
 
-    #corr_file = os.path.join(config.EVAL_WordDefs, 'corr_sentiment_indeces.csv')
-    corr_file = os.path.join(config.EVAL_WordDefs, '{}_corr_sentiment_indeces.csv'.format(country))
+        in_file = os.path.join(in_dir, '{}_doc_sentiment_map.csv'.format(country))
 
-    corr_df = plot_and_correlate_pairs(grouped)
-    corr_df.to_csv(corr_file)
+        in_df = pd.read_csv(in_file).drop()
+
+        expanded = apply_expansions(in_df)
+        grouped = expanded.groupby(['country','month']).mean()
+
+        #out_file = os.path.join(config.EVAL_WordDefs, 'month_sentiment_indeces.csv')
+        out_file = os.path.join(config.EVAL_WordDefs, '{}_month_sentiment_indeces.csv'.format(country))
+
+        grouped.to_csv(out_file)
+
+        #corr_file = os.path.join(config.EVAL_WordDefs, 'corr_sentiment_indeces.csv')
+        corr_file = os.path.join(corr_dirr, '{}_corr_sentiment_indeces.csv'.format(country))
+
+        corr_df = plot_and_correlate_pairs(grouped)
+        corr_df.to_csv(corr_file)
 

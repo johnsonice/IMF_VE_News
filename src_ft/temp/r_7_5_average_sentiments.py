@@ -15,7 +15,6 @@ sys.path.insert(0,'../libs')
 import pandas as pd
 import config
 import glob
-import shutil
 
 if __name__ == '__main__':
 
