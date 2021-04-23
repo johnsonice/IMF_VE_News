@@ -109,7 +109,7 @@ if __name__ == '__main__':
     sentiment_progress = pd.read_csv(os.path.join(config.AUG_DOC_META, 'sentiment_progress.csv'))
     countries = sentiment_progress['aug_doc_countries'].values
 
-    continue_ind = np.where(countries == 'brazil')[0] + 1
+    continue_ind = np.where(countries == 'brazil')[0][0] + 1
     countries = countries[continue_ind:] # Temp
 
     #countries = ['argentina']
