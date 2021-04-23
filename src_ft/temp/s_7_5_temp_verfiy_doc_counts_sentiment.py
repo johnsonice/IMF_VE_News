@@ -33,6 +33,9 @@ if __name__ == '__main__':
     aug_doc = pd.read_pickle(doc_deetz)
     aug_doc = aug_doc[aug_doc['country_n'] > 0]
 
+    issue_countries = []
+    fine_countries = []
+    
     for country in countries:
 
         print('\nWorking on', country)
@@ -42,8 +45,7 @@ if __name__ == '__main__':
         count_aug = aug_doc['country'].apply(contains_ctry, ctry=country).sum()
         count_sent = len(sent_df)
 
-        issue_countries = []
-        fine_countries = []
+
 
         if count_aug == count_sent:
             print('Counts for {} match up'.format(country))
