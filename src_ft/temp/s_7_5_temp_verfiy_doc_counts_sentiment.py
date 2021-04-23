@@ -25,6 +25,10 @@ if __name__ == '__main__':
     sentiment_progress = pd.read_csv(os.path.join(config.AUG_DOC_META, 'sentiment_progress.csv'))
     countries = sentiment_progress['aug_doc_countries'].values
 
+    fine_countries =  ['pakistan', 'united-states', 'new-zealand', 'latvia', 'poland', 'ukraine', 'russia', 'kenya', 'australia', 'jordan', 'canada', 'egypt', 'ireland', 'nigeria', 'zambia', 'france', 'nicaragua', 'zimbabwe', 'greece', 'india', 'south-africa', 'tunisia', 'jamaica', 'ecuador', 'vietnam', 'united-kingdom', 'belgium', 'uganda', 'italy', 'china', 'south-korea', 'germany', 'bulgaria', 'argentina', 'lebanon', 'netherlands', 'hungary']
+
+    countries = list(set(countries)-set(fine_countries))
+
     #countries = ['argentina']
 
     in_dir = os.path.join(config.EVAL_WordDefs,'final_sent_merge')
@@ -33,9 +37,10 @@ if __name__ == '__main__':
     aug_doc = pd.read_pickle(doc_deetz)
     aug_doc = aug_doc[aug_doc['country_n'] > 0]
 
+    orig_issues =  ['peru', 'mexico', 'turkey', 'israel', 'malaysia', 'norway', 'venezuela', 'finland', 'thailand', 'chile', 'uruguay', 'sweden', 'philippines', 'japan', 'iceland', 'denmark', 'bolivia', 'indonesia', 'spain', 'colombia', 'brazil', 'tanzania']
+
     issue_countries = []
-    fine_countries = []
-    
+
     for country in countries:
 
         print('\nWorking on', country)
@@ -44,8 +49,6 @@ if __name__ == '__main__':
         sent_df = pd.read_csv(in_file).drop(columns='Unnamed: 0')
         count_aug = aug_doc['country'].apply(contains_ctry, ctry=country).sum()
         count_sent = len(sent_df)
-
-
 
         if count_aug == count_sent:
             print('Counts for {} match up'.format(country))
@@ -59,5 +62,7 @@ if __name__ == '__main__':
             print('\tAug: {}, Sent: {}'.format(count_aug, count_sent))
             issue_countries.append(country)
 
+
     print('Fine countries\n',fine_countries)
     print('\nIssue countries\n',issue_countries)
+    print('\n\nPrevious issue count: {}\nNew issue count: {}'.format(len(orig_issues), len(issue_countries)))

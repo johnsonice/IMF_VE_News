@@ -28,27 +28,18 @@ if __name__ == '__main__':
     #countries = ['argentina']
 
     in_dir = os.path.join(config.EVAL_WordDefs,'final_sent_merge')
-    class_type = 'Min1_AllCountry'
-    doc_deetz = os.path.join(config.AUG_DOC_META, 'doc_details_crisis_aug_{}.pkl'.format(class_type))
-    aug_doc = pd.read_pickle(doc_deetz)
-    aug_doc = aug_doc[aug_doc['country_n'] > 0]
+    out_dir = os.path.join(config.EVAL_WordDefs,'final_sent_merge')
 
-    for country in countries:
+    issue_countries =  ['peru', 'mexico', 'turkey', 'israel', 'malaysia', 'norway', 'venezuela', 'finland', 'thailand', 'chile', 'uruguay', 'sweden', 'philippines', 'japan', 'iceland', 'denmark', 'bolivia', 'indonesia', 'spain', 'colombia', 'brazil', 'tanzania']
+
+    for country in issue_countries:
 
         print('\nWorking on', country)
         in_file = os.path.join(in_dir, '{}_doc_sentiment_map.csv'.format(country))
+        out_file = os.path.join(out_dir, '{}_doc_sentiment_map.csv'.format(country))
 
         sent_df = pd.read_csv(in_file).drop(columns='Unnamed: 0')
-        count_aug = aug_doc['country'].apply(contains_ctry, ctry=country).sum()
-        count_sent = len(sent_df)
+        sent_df = sent_df[sent_df['country'] == country]
 
-        if count_aug == count_sent:
-            print('Counts for {} match up'.format(country))
-        elif count_aug > count_sent:
-            print('Count in aug doc bigger for {}'.format(country))
-            print('\tAug: {}, Sent: {}'.format(count_aug, count_sent))
-        else:
-            print('Count in sent bigger for {}'.format(country))
-            print('\tAug: {}, Sent: {}'.format(count_aug, count_sent))
-
+        sent_df.to_csv(out_file)
 
