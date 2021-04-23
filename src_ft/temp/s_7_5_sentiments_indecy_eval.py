@@ -120,7 +120,7 @@ if __name__ == '__main__':
 
         in_file = os.path.join(in_dir, '{}_doc_sentiment_map.csv'.format(country))
 
-        in_df = pd.read_csv(in_file).drop()
+        in_df = pd.read_csv(in_file).drop(columns='Unnamed: 0')
 
         expanded = apply_expansions(in_df)
         grouped = expanded.groupby(['country','month']).mean()
