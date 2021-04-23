@@ -343,7 +343,9 @@ if __name__ == '__main__':
     #args.countries = list(remaining_countries)
     #args.countries = ['united-states']
     #args.countries = ['united-kingdom']
-    args.countries = ['tanzania']
+    #args.countries = ['tanzania']
+    args.countries = ['japan']
+
 
     #args.countries = ['argentina']
 

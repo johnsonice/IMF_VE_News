@@ -30,7 +30,7 @@ if __name__ == '__main__':
     in_dir = os.path.join(config.EVAL_WordDefs,'final_sent_merge')
     out_dir = os.path.join(config.EVAL_WordDefs,'final_sent_merge')
 
-    issue_countries =  ['peru', 'mexico', 'turkey', 'israel', 'malaysia', 'norway', 'venezuela', 'finland', 'thailand', 'chile', 'uruguay', 'sweden', 'philippines', 'japan', 'iceland', 'denmark', 'bolivia', 'indonesia', 'spain', 'colombia', 'brazil', 'tanzania']
+    issue_countries = ['japan', 'tanzania']
 
     for country in issue_countries:
 
