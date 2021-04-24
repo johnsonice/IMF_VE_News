@@ -312,8 +312,8 @@ if __name__ == '__main__':
     class_type = 'Min1_AllCountry'
     doc_deetz = os.path.join(config.AUG_DOC_META, 'doc_details_crisis_aug_{}.pkl'.format(class_type))
 
-    args.out_dir = config.EVAL_WordDefs
-    #args.out_dir = os.path.join(config.EVAL_WordDefs, 'final_sent_merge')
+    #args.out_dir = config.EVAL_WordDefs
+    args.out_dir = os.path.join(config.EVAL_WordDefs, 'final_sent')
 
     sentiment_progress = pd.read_csv(os.path.join(config.AUG_DOC_META, 'sentiment_progress.csv'))
     possible_countries = sentiment_progress['aug_doc_countries'].values
@@ -345,7 +345,6 @@ if __name__ == '__main__':
     #args.countries = ['united-kingdom']
     #args.countries = ['tanzania']
     args.countries = ['japan']
-
 
     #args.countries = ['argentina']
 

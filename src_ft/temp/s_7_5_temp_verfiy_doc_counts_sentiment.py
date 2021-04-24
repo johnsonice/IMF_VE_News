@@ -37,11 +37,13 @@ if __name__ == '__main__':
     aug_doc = pd.read_pickle(doc_deetz)
     aug_doc = aug_doc[aug_doc['country_n'] > 0]
 
-    orig_issues =  ['peru', 'mexico', 'turkey', 'israel', 'malaysia', 'norway', 'venezuela', 'finland', 'thailand', 'chile', 'uruguay', 'sweden', 'philippines', 'japan', 'iceland', 'denmark', 'bolivia', 'indonesia', 'spain', 'colombia', 'brazil', 'tanzania']
+    #orig_issues =  ['peru', 'mexico', 'turkey', 'israel', 'malaysia', 'norway', 'venezuela', 'finland', 'thailand', 'chile', 'uruguay', 'sweden', 'philippines', 'japan', 'iceland', 'denmark', 'bolivia', 'indonesia', 'spain', 'colombia', 'brazil', 'tanzania']
+
+    orig_issues = ['japan', 'tanzania']
 
     issue_countries = []
 
-    for country in countries:
+    for country in orig_issues:
 
         print('\nWorking on', country)
         in_file = os.path.join(in_dir, '{}_doc_sentiment_map.csv'.format(country))

@@ -20,10 +20,12 @@ import shutil
 if __name__ == '__main__':
 
     sentiment_progress = pd.read_csv(os.path.join(config.AUG_DOC_META, 'sentiment_progress.csv'))
-    possible_countries = sentiment_progress['aug_doc_countries'].values
+    #possible_countries = sentiment_progress['aug_doc_countries'].values
 
     in_dir = os.path.join(config.EVAL_WordDefs,'final_sent')
     out_dir = os.path.join(config.EVAL_WordDefs,'final_sent_merge')
+
+    possible_countries = ['japan', 'tanzania']
 
     for cntry in possible_countries:
         cntry_fbase = os.path.join(in_dir, cntry+'*')
