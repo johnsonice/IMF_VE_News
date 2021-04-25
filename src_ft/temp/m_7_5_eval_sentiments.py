@@ -11,14 +11,11 @@ NOTE: to see an explanation of optional arguments, use python3 frequency_eval.py
 import sys
 sys.path.insert(0,'..')
 sys.path.insert(0,'../libs')
-#import argparse
-from gensim.models.keyedvectors import KeyedVectors
-from crisis_points import crisis_points_TEMP_KnR, crisis_points
+from crisis_points import crisis_points_TEMP_KnR, crisis_points, ll_crisis_points
 from evaluate import evaluate, get_recall, get_precision, get_fscore ,get_input_words_weights,get_country_stats, \
     get_preds_from_pd, get_eval_stats
 import pandas as pd
 import numpy as np
-from mp_utils import Mp
 import os
 import config
 
@@ -93,6 +90,8 @@ def evaluate(frequency_ser, country, method='zscore',
              crisis_defs='kr', period='month', stemmed=False,
              window=24, direction='incr', months_prior=24, fbeta=2,
              eval_end_date=None, weights=None, z_thresh=1.96):
+
+    print('Evaluating on :', frequency_ser)
     """
     evaluates how the aggregate frequency of the provided word list performs based on the evaluation method
     and the crisis definitions provided.
@@ -131,7 +130,9 @@ def evaluate(frequency_ser, country, method='zscore',
         ag_freq = frequency_ser#[:pd.to_datetime(eval_end_date[fq])]  # Don't look beyond when Kaminsky and
         # Get start and 'end' periods for crises depending on definition
         starts = list(pd.PeriodIndex(crisis_points_TEMP_KnR[country]['starts'], freq=fq))
+        print('Starts are:', starts)
         ends = list(pd.PeriodIndex(crisis_points_TEMP_KnR[country]['peaks'], freq=fq))
+        print('Ends are:', ends)
 
     elif crisis_defs == 'll':
         ag_freq = frequency_ser[:eval_end_date[fq]]  # Don't look beyond when ll ends
@@ -241,10 +242,9 @@ if __name__ == '__main__':
                           weighted= config.WEIGHTED,
                           z_thresh = config.z_thresh)
 
-
-    in_directory = '/data/News_data_raw/FT_WD_research/eval/word_defs/series'
-    in_name = os.path.join(in_directory, '{}_sentiment_indeces.csv')
-    out_name = os.path.join('/data/News_data_raw/FT_WD_research/eval/word_defs/series', '{}_sentiment_eval.csv')
+    in_dir = os.path.join(config.EVAL_WordDefs, 'final_sent_mean')
+    in_name = os.path.join(in_dir, '{}_sentiment_indeces.csv')
+    out_name = os.path.join(config.EVAL_WordDefs,'indecy_eval', '{}_sentiment_eval.csv')
 
 
     df = pd.read_csv(in_name.format('argentina'))
@@ -260,15 +260,22 @@ if __name__ == '__main__':
     #countries = config.countries
     countries = ['argentina']
 
+    # TODO figure this part out \/
+    # Design issue around printing out each sentiment column on its own - this is BAD
+    # Fix? Maybe save each one in one big DF - Need to calibrate for this, redising how it's being saved
+
+    # TODO ALSO need to fill in months without obs as 0 - FIRST before running this file
+
     for ctry in countries:
+        print('Working on ', ctry)
         in_f = in_name.format(ctry)
         df = pd.read_csv(in_f)
         df = df[df['country'] == ctry]
         df['month'] = pd.to_datetime(df['month'])
-        df.set_index('month')
+        df = df.set_index('month')
         recls, precs, fscrs, ntps, nfps, nfns = [], [], [], [], [], []
         for sent_def in sent_cols:
-
+            print('\tWorking on', sent_def)
             freq_ser = df[sent_def]
             recall, precision, fscore, ntp, nfp, nfn = evaluate(freq_ser, ctry, method='zscore', crisis_defs='kr',
                                                           period=args.period,stemmed=False,
@@ -282,7 +289,7 @@ if __name__ == '__main__':
             fscrs.append(fscore)
             ntps.append(ntp)
             nfps.append(nfp)
-            nfns.append(nfns)
+            nfns.append(nfn)
 
             overall_df.loc[sent_def, 'tp'] += ntp
             overall_df.loc[sent_def, 'fp'] += nfp
@@ -299,7 +306,9 @@ if __name__ == '__main__':
 
         df_out['sentiment_def'] = sent_cols
 
-        df_out.to_csv(out_name.format(ctry))
+        df_out_name = out_name.format(ctry)
+        df_out.to_csv(df_out_name)
+        print('Saves {} at {}'.format(ctry, df_out_name))
 
     orec = []
     opre = []
@@ -316,4 +325,7 @@ if __name__ == '__main__':
     overall_df['precision'] = opre
     overall_df['fscore'] = of2
     overall_df.sort_values(by='fscore', ascending=False)
-    overall_df.to_csv('/home/apsurek/IMF_VE_News/research/overall_sentiment_analysis_test.csv')
+    overall_out_name = os.path.join(config.EVAL_WordDefs,'indecy_eval', 'all_country_overall_sentiment_eval.csv')
+    overall_df.to_csv(overall_out_name)
+
+    print('Saved overall stats at',overall_out_name)
