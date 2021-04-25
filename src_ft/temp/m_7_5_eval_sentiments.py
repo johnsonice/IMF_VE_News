@@ -270,7 +270,7 @@ if __name__ == '__main__':
         print('Working on ', ctry)
         in_f = in_name.format(ctry)
         df = pd.read_csv(in_f)
-        df = df[df['country'] == ctry]
+        #df = df[df['country'] == ctry]
         df['month'] = pd.to_datetime(df['month'])
         df = df.set_index('month')
         recls, precs, fscrs, ntps, nfps, nfns = [], [], [], [], [], []
