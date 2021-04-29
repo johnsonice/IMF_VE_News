@@ -248,9 +248,7 @@ if __name__ == '__main__':
 
 
     df_a = pd.read_csv(in_name.format('argentina'))
-    sent_cols = np.append(df_a.columns[3:8].values, df_a.columns[10:12].values)
-    sent_cols = np.append(sent_cols, ['vader_pos_x_fed_pos', 'vader_neg_x_fed_neg',
-                                      'vader_is_pos_x_fed_pos', 'vader_is_neg_x_fed_neg'])
+    sent_cols = df_a.columns[2:]
     overall_tp, overall_fp, overall_fn = np.zeros(shape=len(sent_cols)), np.zeros(shape=len(sent_cols)), \
                                          np.zeros(shape=len(sent_cols))
 
