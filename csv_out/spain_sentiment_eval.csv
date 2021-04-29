@@ -1,0 +1,12 @@
+,recall,precision,fscore,tp,fp,fn,sentiment_def
+0,0.0,0.0,0.0,0,30,1,fed_neg
+1,0.0,0.0,0.0,0,25,1,w2v_pos
+2,0.0,0.0,0.0,0,26,1,w2v_neg
+3,0.0,0.0,0.0,0,25,1,w2v_refined_2_pos
+4,0.0,0.0,0.0,0,24,1,w2v_refined_2_neg
+5,0.0,0.0,0.0,0,28,1,tb_polarity
+6,0.0,0.0,0.0,0,15,1,tb_is_positive
+7,0.0,0.0,0.0,0,26,1,vader_pos_x_fed_pos
+8,0.0,0.0,0.0,0,29,1,vader_neg_x_fed_neg
+9,0.0,0.0,0.0,0,29,1,vader_is_pos_x_fed_pos
+10,0.0,0.0,0.0,0,24,1,vader_is_neg_x_fed_neg
