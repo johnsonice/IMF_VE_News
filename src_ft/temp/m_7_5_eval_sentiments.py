@@ -263,9 +263,7 @@ if __name__ == '__main__':
 
 
     #countries = config.countries
-    countries = ['argentina', 'tanzania'] # TODO SWAP ^
-
-    # TODO ALSO need to fill in months without obs as 0 - FIRST before running this file
+    countries = config.countries # TODO SWAP ^ add other crisis defs
 
     for ctry in countries:
         print('Working on ', ctry)
