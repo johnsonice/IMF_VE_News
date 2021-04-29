@@ -247,8 +247,8 @@ if __name__ == '__main__':
     out_name = os.path.join(config.EVAL_WordDefs,'indecy_eval', '{}_sentiment_eval.csv')
 
 
-    df = pd.read_csv(in_name.format('argentina'))
-    sent_cols = np.append(df.columns[3:8].values, df.columns[10:12].values)
+    df_a = pd.read_csv(in_name.format('argentina'))
+    sent_cols = np.append(df_a.columns[3:8].values, df_a.columns[10:12].values)
     sent_cols = np.append(sent_cols, ['vader_pos_x_fed_pos', 'vader_neg_x_fed_neg',
                                       'vader_is_pos_x_fed_pos', 'vader_is_neg_x_fed_neg'])
     overall_tp, overall_fp, overall_fn = np.zeros(shape=len(sent_cols)), np.zeros(shape=len(sent_cols)), \
@@ -257,12 +257,13 @@ if __name__ == '__main__':
     overall_df = pd.DataFrame({'sentiment':sent_cols,'tp':overall_tp, 'fp':overall_fp, 'fn':overall_fn})
     overall_df = overall_df.set_index('sentiment')
 
-    #countries = config.countries
-    countries = ['argentina']
+    df_a['month'] = pd.to_datetime(df_a['month'])
+    df_a = df_a.set_index('month')
+    idx = df_a.index
 
-    # TODO figure this part out \/
-    # Design issue around printing out each sentiment column on its own - this is BAD
-    # Fix? Maybe save each one in one big DF - Need to calibrate for this, redising how it's being saved
+
+    #countries = config.countries
+    countries = ['argentina', 'tunisia'] # TODO SWAP ^
 
     # TODO ALSO need to fill in months without obs as 0 - FIRST before running this file
 
@@ -273,6 +274,10 @@ if __name__ == '__main__':
         #df = df[df['country'] == ctry]
         df['month'] = pd.to_datetime(df['month'])
         df = df.set_index('month')
+
+        #re-index for missing dates
+        df = df.reindex(idx, fill_value=0)
+
         recls, precs, fscrs, ntps, nfps, nfns = [], [], [], [], [], []
         for sent_def in sent_cols:
             print('\tWorking on', sent_def)
