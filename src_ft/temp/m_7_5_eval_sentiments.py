@@ -263,7 +263,7 @@ if __name__ == '__main__':
 
 
     #countries = config.countries
-    countries = ['argentina', 'tunisia'] # TODO SWAP ^
+    countries = ['argentina', 'tanzania'] # TODO SWAP ^
 
     # TODO ALSO need to fill in months without obs as 0 - FIRST before running this file
 
