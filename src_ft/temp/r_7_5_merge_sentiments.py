@@ -23,7 +23,7 @@ if __name__ == '__main__':
     sentiment_progress = pd.read_csv(os.path.join(config.AUG_DOC_META, 'sentiment_progress.csv'))
     #possible_countries = sentiment_progress['aug_doc_countries'].values
 
-    in_dir = os.path.join(config.EVAL_WordDefs,'final_sent2')
+    in_dir = os.path.join(config.EVAL_WordDefs,'final_sent')
     out_dir = os.path.join(config.EVAL_WordDefs,'final_sent_merge')
 
     # Add all possible countries, from IMF defs and all others
