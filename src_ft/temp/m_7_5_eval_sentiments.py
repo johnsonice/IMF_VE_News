@@ -229,6 +229,11 @@ def get_fscore(tp, fp, fn, beta=2):
     except ZeroDivisionError:
         return np.nan
 
+def get_countries(crisis_def):
+    if crisis_def == 'KR':
+        return config.countries
+    if crisis_def == 'RR':
+
 
 if __name__ == '__main__':
 
@@ -259,74 +264,77 @@ if __name__ == '__main__':
     df_a = df_a.set_index('month')
     idx = df_a.index
 
+    crisis_definitions = ['RomerRomer','RR','']
 
-    #countries = config.countries
-    countries = config.countries # TODO SWAP ^ add other crisis defs
+    for crisis_def in crisis_definitions:
+        #countries = config.countries
+        countries = config.countries # TODO SWAP ^ add other crisis defs
 
-    for ctry in countries:
-        print('Working on ', ctry)
-        in_f = in_name.format(ctry)
-        df = pd.read_csv(in_f)
-        #df = df[df['country'] == ctry]
-        df['month'] = pd.to_datetime(df['month'])
-        df = df.set_index('month')
+        for ctry in countries:
+            print('Working on ', ctry)
+            in_f = in_name.format(ctry)
+            df = pd.read_csv(in_f)
+            #df = df[df['country'] == ctry]
+            df['month'] = pd.to_datetime(df['month'])
+            df = df.set_index('month')
 
-        #re-index for missing dates
-        df = df.reindex(idx, fill_value=0)
+            #re-index for missing dates
+            df = df.reindex(idx, fill_value=0)
 
-        recls, precs, fscrs, ntps, nfps, nfns = [], [], [], [], [], []
+            recls, precs, fscrs, ntps, nfps, nfns = [], [], [], [], [], []
+            for sent_def in sent_cols:
+                print('\tWorking on', sent_def)
+                freq_ser = df[sent_def]
+                recall, precision, fscore, ntp, nfp, nfn = evaluate(freq_ser, ctry, method='zscore', crisis_defs='kr',
+                                                              period=args.period,stemmed=False,
+                                                              window=args.window, direction='incr',
+                                                                    months_prior=args.months_prior,
+                                                              fbeta=2,eval_end_date=args.eval_end_date, weights=None,
+                                                                    z_thresh=args.z_thresh)
+
+                recls.append(recall)
+                precs.append(precision)
+                fscrs.append(fscore)
+                ntps.append(ntp)
+                nfps.append(nfp)
+                nfns.append(nfn)
+
+                overall_df.loc[sent_def, 'tp'] += ntp
+                overall_df.loc[sent_def, 'fp'] += nfp
+                overall_df.loc[sent_def, 'fn'] += nfn
+
+            df_out = pd.DataFrame({
+                'recall':recls,
+                'precision':precs,
+                'fscore':fscrs,
+                'tp': ntps,
+                'fp': nfps,
+                'fn': nfns
+            })
+
+            df_out['sentiment_def'] = sent_cols
+
+            df_out_name = out_name.format(ctry)
+            df_out.to_csv(df_out_name)
+            print('Saves {} at {}'.format(ctry, df_out_name))
+
+        orec = []
+        opre = []
+        of2 = []
         for sent_def in sent_cols:
-            print('\tWorking on', sent_def)
-            freq_ser = df[sent_def]
-            recall, precision, fscore, ntp, nfp, nfn = evaluate(freq_ser, ctry, method='zscore', crisis_defs='kr',
-                                                          period=args.period,stemmed=False,
-                                                          window=args.window, direction='incr',
-                                                                months_prior=args.months_prior,
-                                                          fbeta=2,eval_end_date=args.eval_end_date, weights=None,
-                                                                z_thresh=args.z_thresh)
+            tp = overall_df.loc[sent_def, 'tp']
+            fp = overall_df.loc[sent_def, 'fp']
+            fn = overall_df.loc[sent_def, 'fn']
+            orec.append(get_recall(tp,fn))
+            opre.append(get_precision(tp,fp))
+            of2.append(get_fscore(tp,fp,fn))
 
-            recls.append(recall)
-            precs.append(precision)
-            fscrs.append(fscore)
-            ntps.append(ntp)
-            nfps.append(nfp)
-            nfns.append(nfn)
+        overall_df['recall'] = orec
+        overall_df['precision'] = opre
+        overall_df['fscore'] = of2
+        overall_df.sort_values(by='fscore', ascending=False)
+        overall_out_name = os.path.join(config.EVAL_WordDefs,'indecy_eval', 'all_country_overall_sentiment_eval.csv')
+        overall_df.to_csv(overall_out_name)
 
-            overall_df.loc[sent_def, 'tp'] += ntp
-            overall_df.loc[sent_def, 'fp'] += nfp
-            overall_df.loc[sent_def, 'fn'] += nfn
+        print(f'Saved overall stats for {crisis_def} at {overall_out_name}')
 
-        df_out = pd.DataFrame({
-            'recall':recls,
-            'precision':precs,
-            'fscore':fscrs,
-            'tp': ntps,
-            'fp': nfps,
-            'fn': nfns
-        })
-
-        df_out['sentiment_def'] = sent_cols
-
-        df_out_name = out_name.format(ctry)
-        df_out.to_csv(df_out_name)
-        print('Saves {} at {}'.format(ctry, df_out_name))
-
-    orec = []
-    opre = []
-    of2 = []
-    for sent_def in sent_cols:
-        tp = overall_df.loc[sent_def, 'tp']
-        fp = overall_df.loc[sent_def, 'fp']
-        fn = overall_df.loc[sent_def, 'fn']
-        orec.append(get_recall(tp,fn))
-        opre.append(get_precision(tp,fp))
-        of2.append(get_fscore(tp,fp,fn))
-
-    overall_df['recall'] = orec
-    overall_df['precision'] = opre
-    overall_df['fscore'] = of2
-    overall_df.sort_values(by='fscore', ascending=False)
-    overall_out_name = os.path.join(config.EVAL_WordDefs,'indecy_eval', 'all_country_overall_sentiment_eval.csv')
-    overall_df.to_csv(overall_out_name)
-
-    print('Saved overall stats at',overall_out_name)

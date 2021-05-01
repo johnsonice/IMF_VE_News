@@ -16,6 +16,7 @@ sys.path.insert(0,'../libs')
 import pandas as pd
 from stream import DocStreamer_fast
 from crisis_points import country_dict
+import crisis_points
 #from region_mapping import region
 import argparse
 import config
@@ -198,13 +199,13 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
         # Temp, subset
         #last_done = '1980-05'
         #last_done = '1983-02'
-        last_done = '1981-08'
-        uniq_periods_str = list(uniq_periods)
-        uniq_periods_str = np.array([str(per) for per in uniq_periods_str])
+        #last_done = '1981-08'
+        #uniq_periods_str = list(uniq_periods)
+        #uniq_periods_str = np.array([str(per) for per in uniq_periods_str])
         #print(uniq_periods_str)
-        lastx = np.where(uniq_periods_str == last_done)[0][0]
-        uniq_periods = uniq_periods[lastx+1:]
-        write_outs = 2 + 1
+        #lastx = np.where(uniq_periods_str == last_done)[0][0]
+        #uniq_periods = uniq_periods[lastx+1:]
+        #write_outs = 2 + 1
 
         for i, period in enumerate(uniq_periods):
 
@@ -344,7 +345,61 @@ if __name__ == '__main__':
     #args.countries = ['united-states']
     #args.countries = ['united-kingdom']
     #args.countries = ['tanzania']
-    args.countries = ['japan']
+    #args.countries = ['japan']
+
+    # Add all possible countries, from IMF defs and all others
+    countries_to_sent = set()
+
+    # KnR
+    crisis_dict = crisis_points.crisis_points_TEMP_KnR
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+    # LL
+    crisis_dict = crisis_points.ll_crisis_points
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+    # IMF all events
+    crisis_dict = crisis_points.imf_gap_6_events
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+
+    crisis_dict = crisis_points.imf_all_events
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+
+    # Romer Romer
+    crisis_dict = crisis_points.crisis_points_RomerNRomer
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+
+    # LoDuca
+    crisis_dict = crisis_points.crisis_points_LoDuca
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+
+    # Reinhart Rogoff
+    crisis_dict = crisis_points.crisis_points_Reinhart_Rogoff_All
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+
+    # IMF program starts
+
+    crisis_dict = crisis_points.imf_programs_monthly
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+    crisis_dict = crisis_points.imf_programs_monthly_gap3
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+
+    crisis_dict = crisis_points.imf_programs_monthly_gap6
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+
+    # Remove completed countries - 60 base
+    countries_to_sent = countries_to_sent - set(possible_countries)
+
+    args.countries = countries_to_sent
+    print(args.countries)
 
     #args.countries = ['argentina']
 
