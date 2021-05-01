@@ -318,28 +318,6 @@ if __name__ == '__main__':
 
     sentiment_progress = pd.read_csv(os.path.join(config.AUG_DOC_META, 'sentiment_progress.csv'))
     possible_countries = sentiment_progress['aug_doc_countries'].values
-    done_countries = sentiment_progress['sentimented_countries'].dropna().values
-    remaining_countries = set(possible_countries) - set(done_countries)
-
-    snd_cntries = ['argentina','bolivia','brazil','chile','colombia','denmark',
-                   'finland', 'iceland', 'indonesia', 'israel','japan','malaysia',
-                   'mexico','norway','peru','philippines','poland','spain','sweden',
-                   'thailand','turkey','united-states', 'uruguay', 'venezuela']
-
-    remaining_countries = remaining_countries - set(snd_cntries)
-
-    thrd_ctry = {'poland', 'latvia', 'nigeria', 'iceland', 'italy', 'venezuela', 'vietnam', 'bulgaria', 'mexico',
-                 'south-korea', 'zambia', 'israel', 'pakistan', 'china', 'argentina', 'sweden', 'ukraine', 'spain',
-                 'jordan', 'bolivia', 'greece', 'zimbabwe', 'japan', 'thailand', 'india', 'malaysia',
-                 'australia', 'indeces', 'russia', 'uruguay', 'colombia', 'france', 'chile', 'tunisia', 'netherlands',
-                 'germany', 'lebanon', 'finland', 'series', 'ireland', 'egypt', 'philippines', 'ecuador', 'norway',
-                 'united-states', 'denmark', 'uganda', 'hungary', 'peru', 'nicaragua', 'new-zealand', 'canada',
-                 'turkey', 'indonesia', 'brazil'}
-
-
-    temp_hold = {'united-kingdom'}
-
-    remaining_countries = remaining_countries - thrd_ctry - temp_hold
 
     #args.countries = list(remaining_countries)
     #args.countries = ['united-states']

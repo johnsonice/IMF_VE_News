@@ -16,6 +16,7 @@ import pandas as pd
 import config
 import glob
 import shutil
+import crisis_points
 
 if __name__ == '__main__':
 
@@ -25,7 +26,60 @@ if __name__ == '__main__':
     in_dir = os.path.join(config.EVAL_WordDefs,'final_sent2')
     out_dir = os.path.join(config.EVAL_WordDefs,'final_sent_merge')
 
-    possible_countries = ['japan', 'tanzania']
+    # Add all possible countries, from IMF defs and all others
+    countries_to_sent = set()
+
+    # KnR
+    crisis_dict = crisis_points.crisis_points_TEMP_KnR
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+    # LL
+    crisis_dict = crisis_points.ll_crisis_points
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+    # IMF all events
+    crisis_dict = crisis_points.imf_gap_6_events
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+
+    crisis_dict = crisis_points.imf_all_events
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+
+    # Romer Romer
+    crisis_dict = crisis_points.crisis_points_RomerNRomer
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+
+    # LoDuca
+    crisis_dict = crisis_points.crisis_points_LoDuca
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+
+    # Reinhart Rogoff
+    crisis_dict = crisis_points.crisis_points_Reinhart_Rogoff_All
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+
+    # IMF program starts
+
+    crisis_dict = crisis_points.imf_programs_monthly
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+    crisis_dict = crisis_points.imf_programs_monthly_gap3
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+
+    crisis_dict = crisis_points.imf_programs_monthly_gap6
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+    done_countries = sentiment_progress['aug_doc_countries'].values
+
+    # Remove completed countries - 60 base
+    countries_to_sent = countries_to_sent - set(done_countries)
+
+    possible_countries = countries_to_sent
+    print(possible_countries)
 
     for cntry in possible_countries:
         cntry_fbase = os.path.join(in_dir, cntry+'*')

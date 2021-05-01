@@ -249,26 +249,35 @@ if __name__ == '__main__':
 
     in_dir = os.path.join(config.EVAL_WordDefs, 'final_sent_mean2')
     in_name = os.path.join(in_dir, '{}_month_sentiment_indeces.csv')
-    out_name = os.path.join(config.EVAL_WordDefs,'indecy_eval', '{}_sentiment_eval.csv')
+    out_name = os.path.join(config.EVAL_WordDefs,'indecy_eval', '{}_sentiment_eval_on_{}_crisis_def.csv')
 
 
     df_a = pd.read_csv(in_name.format('argentina'))
     sent_cols = df_a.columns[2:]
-    overall_tp, overall_fp, overall_fn = np.zeros(shape=len(sent_cols)), np.zeros(shape=len(sent_cols)), \
-                                         np.zeros(shape=len(sent_cols))
-
-    overall_df = pd.DataFrame({'sentiment':sent_cols,'tp':overall_tp, 'fp':overall_fp, 'fn':overall_fn})
-    overall_df = overall_df.set_index('sentiment')
 
     df_a['month'] = pd.to_datetime(df_a['month'])
     df_a = df_a.set_index('month')
     idx = df_a.index
 
-    crisis_definitions = ['RomerRomer','RR','']
+    crisis_definitions = ['kr', 'll', 'IMF_GAP_6', 'IMF_GAP_0', 'RomerRomer', 'LoDuca',
+                   'ReinhartRogoff', 'IMF_Monthly_Starts', 'IMF_Monthly_Starts_Gap_3',
+                   'IMF_Monthly_Starts_Gap_6']
+
+    # all_sentiment_frame uses multi-index on crisis_def, sentiment_def
+    midx = pd.MultiIndex.from_product([crisis_definitions,sent_cols])
+    all_sentiment_frame = pd.DataFrame(index=midx,columns=['recall','precision','f2score','tp','fp','fn'])
+
 
     for crisis_def in crisis_definitions:
         #countries = config.countries
-        countries = config.countries # TODO SWAP ^ add other crisis defs
+        #countries = config.countries # TODO SWAP ^ add other crisis defs
+        countries = get_countries(crisis_def)
+
+        overall_tp, overall_fp, overall_fn = np.zeros(shape=len(sent_cols)), np.zeros(shape=len(sent_cols)), \
+                                             np.zeros(shape=len(sent_cols))
+
+        overall_df = pd.DataFrame({'sentiment': sent_cols, 'tp': overall_tp, 'fp': overall_fp, 'fn': overall_fn})
+        overall_df = overall_df.set_index('sentiment')
 
         for ctry in countries:
             print('Working on ', ctry)
@@ -314,10 +323,11 @@ if __name__ == '__main__':
 
             df_out['sentiment_def'] = sent_cols
 
-            df_out_name = out_name.format(ctry)
+            df_out_name = out_name.format(ctry, crisis_def)
             df_out.to_csv(df_out_name)
             print('Saves {} at {}'.format(ctry, df_out_name))
 
+        # Save and print overall predictive quality on this crisis defintion
         orec = []
         opre = []
         of2 = []
@@ -333,8 +343,14 @@ if __name__ == '__main__':
         overall_df['precision'] = opre
         overall_df['fscore'] = of2
         overall_df.sort_values(by='fscore', ascending=False)
-        overall_out_name = os.path.join(config.EVAL_WordDefs,'indecy_eval', 'all_country_overall_sentiment_eval.csv')
+        overall_out_name = os.path.join(config.EVAL_WordDefs,'indecy_eval', f'all_country_overall_sentiment_{crisis_def}_eval.csv')
         overall_df.to_csv(overall_out_name)
+        print(f'Saved overall stats for relevant countries, {crisis_def} crisis definitions saved at {overall_out_name}')
 
-        print(f'Saved overall stats for {crisis_def} at {overall_out_name}')
+        # Save to overall crisis defs for comparison
+        all_sentiment_frame.loc[crisis_def][:] = overall_df
+
+    all_sent_name = os.path.join(config.EVAL_WordDefs,'indecy_eval', f'all_country_all_defs_overall_sentiment_eval.csv')
+    all_sentiment_frame.to_csv(all_sent_name)
+    print(f'Saved overall stats for relevant countries, all definitions saved at {all_sent_name}')
 
