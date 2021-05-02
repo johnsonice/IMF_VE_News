@@ -16,6 +16,7 @@ import os
 import config
 import pandas as pd
 import numpy as np
+import crisis_points
 
 
 def apply_expansions(df, base=('fed', 'w2v', 'w2v_refined_2')):
@@ -107,7 +108,60 @@ def plot_and_correlate_pairs(expanded_df):
 if __name__ == '__main__':
 
     sentiment_progress = pd.read_csv(os.path.join(config.AUG_DOC_META, 'sentiment_progress.csv'))
-    countries = sentiment_progress['aug_doc_countries'].values
+    done_countries = sentiment_progress['aug_doc_countries'].values
+
+    # Add all possible countries, from IMF defs and all others
+    countries_to_sent = set()
+
+    # KnR
+    crisis_dict = crisis_points.crisis_points_TEMP_KnR
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+    # LL
+    crisis_dict = crisis_points.ll_crisis_points
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+    # IMF all events
+    crisis_dict = crisis_points.imf_gap_6_events
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+
+    crisis_dict = crisis_points.imf_all_events
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+
+    # Romer Romer
+    crisis_dict = crisis_points.crisis_points_RomerNRomer
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+
+    # LoDuca
+    crisis_dict = crisis_points.crisis_points_LoDuca
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+
+    # Reinhart Rogoff
+    crisis_dict = crisis_points.crisis_points_Reinhart_Rogoff_All
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+
+    # IMF program starts
+
+    crisis_dict = crisis_points.imf_programs_monthly
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+    crisis_dict = crisis_points.imf_programs_monthly_gap3
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+
+    crisis_dict = crisis_points.imf_programs_monthly_gap6
+    countries_to_sent.update(set(crisis_dict.keys()))
+
+    # Remove completed countries - 60 base
+    countries_to_sent = countries_to_sent - set(done_countries)
+
+    possible_countries = countries_to_sent
+
 
     #countries = ['argentina']
 
@@ -115,7 +169,7 @@ if __name__ == '__main__':
     out_dir = os.path.join(config.EVAL_WordDefs,'final_sent_mean2')
     corr_dirr = os.path.join(config.EVAL_WordDefs,'month_sentiment_correlations')
 
-    for country in countries:
+    for country in possible_countries:
         #in_file = os.path.join(config.EVAL_WordDefs, 'doc_sentiment_map.csv')
 
         in_file = os.path.join(in_dir, '{}_doc_sentiment_map.csv'.format(country))
