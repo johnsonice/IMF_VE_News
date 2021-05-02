@@ -310,11 +310,12 @@ if __name__ == '__main__':
     word_defs = word_defs.drop(columns=['w2v_refined_0_pos', 'w2v_refined_0_neg','w2v_refined_1_pos',
                                         'w2v_refined_1_neg'])
 
-    class_type = 'Min1_AllCountry'
-    doc_deetz = os.path.join(config.AUG_DOC_META, 'doc_details_crisis_aug_{}.pkl'.format(class_type))
+    #class_type = 'Min1_AllCountry'
+    #doc_deetz = os.path.join(config.AUG_DOC_META, 'doc_details_crisis_aug_{}.pkl'.format(class_type))
+    doc_deetz = os.path.join(config.AUG_DOC_META, 'doc_details_crisis_aug_Min1_Thin.pkl')
 
     #args.out_dir = config.EVAL_WordDefs
-    args.out_dir = os.path.join(config.EVAL_WordDefs, 'final_sent')
+    args.out_dir = os.path.join(config.EVAL_WordDefs, 'final_sent_new')
 
     sentiment_progress = pd.read_csv(os.path.join(config.AUG_DOC_META, 'sentiment_progress.csv'))
     possible_countries = sentiment_progress['aug_doc_countries'].values
