@@ -22,6 +22,8 @@ import crisis_points
 def apply_expansions(df, base=('fed', 'w2v', 'w2v_refined_2')):
     df = df.copy()
 
+    print(df.head()) # debug
+
     df['vader_is_pos'] = df['vader_pos'] > df['vader_neg']
     for b_col in base:
         b_pos = b_col + '_pos'
