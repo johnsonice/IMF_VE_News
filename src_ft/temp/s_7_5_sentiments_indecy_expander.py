@@ -22,8 +22,6 @@ import crisis_points
 def apply_expansions(df, base=('fed', 'w2v', 'w2v_refined_2')):
     df = df.copy()
 
-    print(df.head()) # debug
-
     df['vader_is_pos'] = df['vader_pos'] > df['vader_neg']
     for b_col in base:
         b_pos = b_col + '_pos'
@@ -155,7 +153,6 @@ if __name__ == '__main__':
     crisis_dict = crisis_points.imf_programs_monthly_gap3
     countries_to_sent.update(set(crisis_dict.keys()))
 
-
     crisis_dict = crisis_points.imf_programs_monthly_gap6
     countries_to_sent.update(set(crisis_dict.keys()))
 
@@ -178,6 +175,10 @@ if __name__ == '__main__':
         in_file = os.path.join(in_dir, '{}_doc_sentiment_map.csv'.format(country))
 
         in_df = pd.read_csv(in_file).drop(columns='Unnamed: 0')
+
+        if in_df.empty:
+            print(f'\tEmpty frame (no observations) for {country}')
+            continue
 
         expanded = apply_expansions(in_df)
         grouped = expanded.groupby(['country','month']).mean()
