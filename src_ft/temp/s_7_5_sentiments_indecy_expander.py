@@ -173,6 +173,7 @@ if __name__ == '__main__':
 
     for country in possible_countries:
         #in_file = os.path.join(config.EVAL_WordDefs, 'doc_sentiment_map.csv')
+        print(f"Working on {country}")
 
         in_file = os.path.join(in_dir, '{}_doc_sentiment_map.csv'.format(country))
 
