@@ -11,7 +11,7 @@ NOTE: to see an explanation of optional arguments, use python3 frequency_eval.py
 import sys
 sys.path.insert(0,'..')
 sys.path.insert(0,'../libs')
-from crisis_points import crisis_points_TEMP_KnR, crisis_points, ll_crisis_points
+import crisis_points
 from evaluate import evaluate, get_recall, get_precision, get_fscore ,get_input_words_weights,get_country_stats, \
     get_preds_from_pd, get_eval_stats
 import pandas as pd
@@ -129,16 +129,16 @@ def evaluate(frequency_ser, country, method='zscore',
     if crisis_defs == 'kr':
         ag_freq = frequency_ser#[:pd.to_datetime(eval_end_date[fq])]  # Don't look beyond when Kaminsky and
         # Get start and 'end' periods for crises depending on definition
-        starts = list(pd.PeriodIndex(crisis_points_TEMP_KnR[country]['starts'], freq=fq))
+        starts = list(pd.PeriodIndex(crisis_points.crisis_points_TEMP_KnR[country]['starts'], freq=fq))
         print('Starts are:', starts)
-        ends = list(pd.PeriodIndex(crisis_points_TEMP_KnR[country]['peaks'], freq=fq))
+        ends = list(pd.PeriodIndex(crisis_points.crisis_points_TEMP_KnR[country]['peaks'], freq=fq))
         print('Ends are:', ends)
 
     elif crisis_defs == 'll':
         ag_freq = frequency_ser[:eval_end_date[fq]]  # Don't look beyond when ll ends
         # Get start and 'end' periods for crises depending on definition
-        starts = list(pd.PeriodIndex(ll_crisis_points[country]['starts'], freq=fq))
-        ends = list(pd.PeriodIndex(ll_crisis_points[country]['peaks'], freq=fq))
+        starts = list(pd.PeriodIndex(crisis_points.ll_crisis_points[country]['starts'], freq=fq))
+        ends = list(pd.PeriodIndex(crisis_points.ll_crisis_points[country]['peaks'], freq=fq))
 
     elif crisis_defs == 'IMF_GAP_6':
         end = '2019-12'
