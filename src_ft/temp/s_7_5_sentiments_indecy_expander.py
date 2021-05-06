@@ -164,8 +164,8 @@ if __name__ == '__main__':
 
     #countries = ['argentina']
 
-    in_dir = os.path.join(config.EVAL_WordDefs,'final_sent_merge')
-    out_dir = os.path.join(config.EVAL_WordDefs,'final_sent_mean2')
+    in_dir = os.path.join(config.EVAL_WordDefs,'final_sent_merge_new')
+    out_dir = os.path.join(config.EVAL_WordDefs,'final_sent_mean2_new')
     corr_dirr = os.path.join(config.EVAL_WordDefs,'month_sentiment_correlations')
 
     for country in possible_countries:
