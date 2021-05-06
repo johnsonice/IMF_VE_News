@@ -84,7 +84,7 @@ if __name__ == '__main__':
             print(cntry + ' HAS NO FILES!!!')
         else:
             c_df = pd.read_csv(cntry_files[0]).drop(columns='Unnamed: 0')
-            if c_df.empty():
+            if c_df.empty:
                 print('No data in country', cntry)
             mean_df = c_df.groupby('month').mean()
             mean_df.to_csv(out_f.format(cntry))
