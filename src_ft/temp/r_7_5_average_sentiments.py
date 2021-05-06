@@ -21,8 +21,8 @@ if __name__ == '__main__':
     sentiment_progress = pd.read_csv(os.path.join(config.AUG_DOC_META, 'sentiment_progress.csv'))
     possible_countries = sentiment_progress['aug_doc_countries'].values
 
-    in_dir = os.path.join(config.EVAL_WordDefs,'final_sent_merge')
-    out_dir = os.path.join(config.EVAL_WordDefs,'final_sent_mean')
+    in_dir = os.path.join(config.EVAL_WordDefs,'final_sent_merge_new')
+    out_dir = os.path.join(config.EVAL_WordDefs,'final_sent_mean_new')
     out_f = os.path.join(out_dir, '{}_month_sentiment.csv')
 
     for cntry in possible_countries:
