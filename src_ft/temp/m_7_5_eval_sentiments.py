@@ -230,10 +230,27 @@ def get_fscore(tp, fp, fn, beta=2):
         return np.nan
 
 def get_countries(crisis_def):
-    if crisis_def == 'KR':
-        return config.countries
-    if crisis_def == 'RR':
-
+    # Return the countries associated with each crisis definition
+    if crisis_def == 'kr':
+        return crisis_points.crisis_points_TEMP_KnR.keys()
+    if crisis_def == 'll':
+        return crisis_points.ll_crisis_points.keys()
+    if crisis_def == 'IMF_GAP_6':
+        return crisis_points.imf_gap_6_events.keys()
+    if crisis_def == 'IMF_GAP_0':
+        return crisis_points.imf_all_events.keys()
+    if crisis_def == 'RomerRomer':
+        return crisis_points.crisis_points_RomerNRomer.keys()
+    if crisis_def == 'LoDuca':
+        return crisis_points.crisis_points_LoDuca.keys()
+    if crisis_def == 'ReinhartRogoff':
+        return crisis_points.crisis_points_Reinhart_Rogoff_All.keys()
+    if crisis_def == 'IMF_Monthly_Starts':
+        return crisis_points.imf_programs_monthly.keys()
+    if crisis_def == 'IMF_Monthly_Starts_Gap_3':
+        return crisis_points.imf_programs_monthly_gap3.keys()
+    if crisis_def == 'IMF_Monthly_Starts_Gap_6':
+        return crisis_points.imf_programs_monthly_gap6.keys()
 
 if __name__ == '__main__':
 
@@ -267,6 +284,7 @@ if __name__ == '__main__':
     midx = pd.MultiIndex.from_product([crisis_definitions,sent_cols])
     all_sentiment_frame = pd.DataFrame(index=midx,columns=['recall','precision','f2score','tp','fp','fn'])
 
+    no_data_countries = []
 
     for crisis_def in crisis_definitions:
         #countries = config.countries
@@ -282,7 +300,16 @@ if __name__ == '__main__':
         for ctry in countries:
             print('Working on ', ctry)
             in_f = in_name.format(ctry)
-            df = pd.read_csv(in_f)
+            try:
+                df = pd.read_csv(in_f)
+            except:
+                print('Cannot read', ctry)
+                no_data_countries.append(ctry)
+                continue
+            if df.empty:
+                print('File but no data for', ctry)
+                no_data_countries.append(ctry)
+                continue
             #df = df[df['country'] == ctry]
             df['month'] = pd.to_datetime(df['month'])
             df = df.set_index('month')
@@ -353,4 +380,5 @@ if __name__ == '__main__':
     all_sent_name = os.path.join(config.EVAL_WordDefs,'indecy_eval', f'all_country_all_defs_overall_sentiment_eval.csv')
     all_sentiment_frame.to_csv(all_sent_name)
     print(f'Saved overall stats for relevant countries, all definitions saved at {all_sent_name}')
+    print('\n\nCountries with no data:\n', no_data_countries)
 
