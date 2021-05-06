@@ -52,7 +52,7 @@ def run_evaluation(iter_item,args):
                                                                            args.window,
                                                                            '_'.join(wg))))
 
-    print('\n\n{}:\nevaluated words: {}\n\trecall: {}, precision: {}, f-score: {}'.format(wg,words,recall, prec, f2))
+    #print('\n\n{}:\nevaluated words: {}\n\trecall: {}, precision: {}, f-score: {}'.format(wg,words,recall, prec, f2))
 
     if args.weighted:
         return wg,list(zip(words,weights)),recall, prec, f2
@@ -91,7 +91,7 @@ def evaluate(frequency_ser, country, method='zscore',
              window=24, direction='incr', months_prior=24, fbeta=2,
              eval_end_date=None, weights=None, z_thresh=1.96):
 
-    print('Evaluating on :', frequency_ser)
+    #print('Evaluating on :', frequency_ser)
     """
     evaluates how the aggregate frequency of the provided word list performs based on the evaluation method
     and the crisis definitions provided.
@@ -130,9 +130,9 @@ def evaluate(frequency_ser, country, method='zscore',
         ag_freq = frequency_ser#[:pd.to_datetime(eval_end_date[fq])]  # Don't look beyond when Kaminsky and
         # Get start and 'end' periods for crises depending on definition
         starts = list(pd.PeriodIndex(crisis_points.crisis_points_TEMP_KnR[country]['starts'], freq=fq))
-        print('Starts are:', starts)
+        #print('Starts are:', starts)
         ends = list(pd.PeriodIndex(crisis_points.crisis_points_TEMP_KnR[country]['peaks'], freq=fq))
-        print('Ends are:', ends)
+        #print('Ends are:', ends)
 
     elif crisis_defs == 'll':
         ag_freq = frequency_ser[:eval_end_date[fq]]  # Don't look beyond when ll ends
@@ -287,6 +287,7 @@ if __name__ == '__main__':
     no_data_countries = []
 
     for crisis_def in crisis_definitions:
+        print('Working on crisis def', crisis_def)
         #countries = config.countries
         #countries = config.countries # TODO SWAP ^ add other crisis defs
         countries = get_countries(crisis_def)
@@ -321,7 +322,7 @@ if __name__ == '__main__':
             for sent_def in sent_cols:
                 print('\tWorking on', sent_def)
                 freq_ser = df[sent_def]
-                recall, precision, fscore, ntp, nfp, nfn = evaluate(freq_ser, ctry, method='zscore', crisis_defs='kr',
+                recall, precision, fscore, ntp, nfp, nfn = evaluate(freq_ser, ctry, method='zscore', crisis_defs=crisis_def,
                                                               period=args.period,stemmed=False,
                                                               window=args.window, direction='incr',
                                                                     months_prior=args.months_prior,
@@ -352,7 +353,7 @@ if __name__ == '__main__':
 
             df_out_name = out_name.format(ctry, crisis_def)
             df_out.to_csv(df_out_name)
-            print('Saves {} at {}'.format(ctry, df_out_name))
+            print('Saved {} at {}'.format(ctry, df_out_name))
 
         # Save and print overall predictive quality on this crisis defintion
         orec = []
