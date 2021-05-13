@@ -1,0 +1,23 @@
+,Correlation
+Fed Words,-0.04194420495087873
+w2v Words,0.5100185578104642
+w2v Words Revised v3,0.2421402628465922
+Vader Sentiment Score,0.4215720121256388
+Vader Score x Fed Words,0.138093984689791
+Vader Direction x Fed Words,-0.4002669544130828
+TextBlob Score x Fed Words,-0.13732355243451097
+TextBlob Direction x Fed Words,-0.30083893412430746
+Afinn Score x Fed Words,-0.238621301527057
+Afinn Direction x Fed Words,-0.46464322955739823
+Vader Score x w2v Words,0.3546165258730775
+Vader Direction x w2v Words,-0.5838813847033896
+Textblob Score x w2v Words,-0.2755659688215402
+Textblob Direction x w2v Words,-0.4012527403131263
+Afinn Score x w2v Words,-0.2595547750226162
+Afinn Direction x w2v Words,-0.6117744613983438
+Vader Score x w2v Words Revised v3,0.24065191900222996
+Vader Direction x w2v Words Revised v3,-0.4864371404068197
+TextBlob Score x w2v Words Revised v3,-0.21401215523214467
+TextBlob Direction x w2v Words Revised v3,-0.3329622031474884
+Afinn Score x w2v Words Revised v3,-0.24880975308119974
+Afinn Direction x w2v Words Revised v3,-0.5297188456183554
