@@ -266,8 +266,9 @@ if __name__ == '__main__':
                           z_thresh = config.z_thresh)
 
     in_dir = os.path.join(config.EVAL_WordDefs, 'final_sent_mean2')
+    in_dir = os.path.join(config.EVAL_WordDefs, 'final_sent_mean_new_test')
     in_name = os.path.join(in_dir, '{}_month_sentiment_indeces.csv')
-    out_name = os.path.join(config.EVAL_WordDefs,'indecy_eval', '{}_sentiment_eval_on_{}_crisis_def.csv')
+    out_name = os.path.join(config.EVAL_WordDefs,'indecy_eval_test', '{}_sentiment_eval_on_{}_crisis_def.csv')
 
 
     df_a = pd.read_csv(in_name.format('argentina'))
@@ -378,7 +379,9 @@ if __name__ == '__main__':
         overall_df['precision'] = opre
         overall_df['fscore'] = of2
         overall_df.sort_values(by='fscore', ascending=False)
-        overall_out_name = os.path.join(config.EVAL_WordDefs,'indecy_eval', f'all_country_overall_sentiment_{crisis_def}_eval.csv')
+        #overall_out_name = os.path.join(config.EVAL_WordDefs,'indecy_eval', f'all_country_overall_sentiment_{crisis_def}_eval.csv')
+        overall_out_name = os.path.join(config.EVAL_WordDefs,'indecy_eval_test', f'all_country_overall_sentiment_{crisis_def}_eval.csv')
+
         overall_df.to_csv(overall_out_name)
         print(f'Saved overall stats for relevant countries, {crisis_def} crisis definitions saved at {overall_out_name}')
 
