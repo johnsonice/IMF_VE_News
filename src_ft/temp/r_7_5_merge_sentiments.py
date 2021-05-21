@@ -23,8 +23,11 @@ if __name__ == '__main__':
     sentiment_progress = pd.read_csv(os.path.join(config.AUG_DOC_META, 'sentiment_progress.csv'))
     #possible_countries = sentiment_progress['aug_doc_countries'].values
 
-    in_dir = os.path.join(config.EVAL_WordDefs,'final_sent_new')
-    out_dir = os.path.join(config.EVAL_WordDefs,'final_sent_merge_new')
+    #in_dir = os.path.join(config.EVAL_WordDefs,'final_sent_new')
+    in_dir = os.path.join(config.EVAL_WordDefs,'final_sent_new_test')
+    #out_dir = os.path.join(config.EVAL_WordDefs,'final_sent_merge_new')
+    out_dir = os.path.join(config.EVAL_WordDefs,'final_sent_merge_new_test')
+
 
     # Add all possible countries, from IMF defs and all others
     countries_to_sent = set()
@@ -78,7 +81,8 @@ if __name__ == '__main__':
     # Remove completed countries - 60 base
     countries_to_sent = countries_to_sent - set(done_countries)
 
-    possible_countries = countries_to_sent
+    #possible_countries = countries_to_sent
+    possible_countries = ['argentina']
     print(possible_countries)
 
     for cntry in possible_countries:

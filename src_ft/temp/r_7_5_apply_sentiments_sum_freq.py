@@ -52,93 +52,13 @@ def country_period_filter(time_df,country,period):
 # Base - Words Counting
 import numpy as np
 
-def sum_words(sentence, words):
+def sum_words_freq(sentence, words):
     try:
-        to_re = np.sum([sentence.count(x) for x in words])
+        to_re = np.sum([sentence.count(x) for x in words])/len(sentence.split())
     except:
         print('SENTENCE ', sentence, '\nWORDS', words)
         to_re = np.NaN
     return to_re
-
-# Vader Sentiment analysis
-import nltk
-nltk.download('vader_lexicon')
-
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
-sid = SentimentIntensityAnalyzer()
-
-def vader_sentiment(sentence):
-    return sid.polarity_scores(sentence)
-
-
-def vader_postive(vader_rate):
-    return vader_rate['pos']
-
-
-def vader_negative(vader_rate):
-    return vader_rate['neg']
-
-
-def vader_is_postitive(vader_rate):
-    return vader_rate['pos'] > vader_rate['neg']
-
-# TextBlob sentiment analysis
-from textblob import TextBlob
-
-def testblob_rate(sentence):
-    return TextBlob(sentence).sentiment
-
-
-def textblob_polarity(testblob_rate):
-    return testblob_rate.polarity
-
-
-def textblob_is_positive(testblob_rate):
-    return testblob_rate.polarity > 0
-
-
-def textblob_subjectivity(testblob_rate):
-    return testblob_rate.subjectivity
-
-
-# flair sentiment analysis
-'''
-import flair
-flair_sentiment = flair.models.TextClassifier.load('en-sentiment')
-
-def flair_rate(sentence):
-    s = flair.data.Sentence(sentence)
-    flair_sentiment.predict(s)
-    total_sentiment = s.labels
-    return total_sentiment
-
-
-def flair_is_positive(flair_rate):
-    return flair_rate[0].value == 'POSITIVE'
-
-
-def flair_pos_value(flair_rate):
-    if flair_rate[0].value == 'POSITIVE':
-        return flair_rate[0].score
-    return 0
-
-
-def flair_neg_value(flair_rate):
-    if flair_rate[0].value == 'NEGATIVE':
-        return flair_rate[0].score
-    return 0
-'''
-
-# afinn sentiment analysis
-from afinn import Afinn
-af = Afinn()
-
-def get_affin_score(sentence):
-    return af.score(sentence)
-
-def affin_is_positive(affin_score):
-    return affin_score > 0
-
 
 def get_sentiments(doc, word_defs, ind):
     sent_df = pd.DataFrame(index=[ind])
@@ -147,32 +67,9 @@ def get_sentiments(doc, word_defs, ind):
 
     # Word counts / sum words
     for def_name in word_defs.columns:
-        sent_df[def_name] = sum_words(sentence, word_defs[def_name].dropna())/divisor
+        sent_df[def_name] = sum_words_freq(sentence, word_defs[def_name].dropna())/divisor
         if np.isnan(sent_df[def_name].values[0]):
             return None
-    # Vader
-    vader_rate = vader_sentiment(sentence)
-    sent_df['vader_pos'] = vader_postive(vader_rate)
-    sent_df['vader_neg'] = vader_negative(vader_rate)
-
-    # Testblob
-    testblob_score = testblob_rate(sentence)
-    sent_df['tb_polarity'] = textblob_polarity(testblob_score)
-    sent_df['tb_is_positive'] = textblob_is_positive(testblob_score)
-    sent_df['tb_subjectivity'] = textblob_subjectivity(testblob_score)
-
-    '''
-    # Flair
-    flair_sent = flair_rate(sentence)
-    sent_df['flair_is_positive'] = flair_is_positive(flair_sent)
-    sent_df['flair_pos_value'] = flair_pos_value(flair_sent)
-    sent_df['flair_neg_value'] = flair_neg_value(flair_sent)
-    '''
-
-    # Afinn
-    af_score = get_affin_score(sentence)
-    sent_df['afinn_score'] = af_score
-    sent_df['affin_is_positive'] = affin_is_positive(af_score)
 
     return sent_df
 
@@ -197,16 +94,6 @@ def get_country_freqs_sample(countries, period_choice, time_df, uniq_periods, ou
         small_doc_map = None
         uniq_periods = np.array(sorted(list(uniq_periods)))
 
-        # Temp, subset
-        #last_done = '1980-05'
-        #last_done = '1983-02'
-        #last_done = '1981-08'
-        #uniq_periods_str = list(uniq_periods)
-        #uniq_periods_str = np.array([str(per) for per in uniq_periods_str])
-        #print(uniq_periods_str)
-        #lastx = np.where(uniq_periods_str == last_done)[0][0]
-        #uniq_periods = uniq_periods[lastx+1:]
-        #write_outs = 2 + 1
 
         for i, period in enumerate(uniq_periods):
 
@@ -316,17 +203,11 @@ if __name__ == '__main__':
     doc_deetz = os.path.join(config.AUG_DOC_META, 'doc_details_crisis_aug_Min1_Thin.pkl')
 
     #args.out_dir = config.EVAL_WordDefs
-    args.out_dir = os.path.join(config.EVAL_WordDefs, 'final_sent_new')
-    #args.out_dir = os.path.join(config.EVAL_WordDefs, 'final_sent_new_test')
+    #args.out_dir = os.path.join(config.EVAL_WordDefs, 'final_sent_new')
+    args.out_dir = os.path.join(config.EVAL_WordDefs, 'final_sent_new_test')
 
     sentiment_progress = pd.read_csv(os.path.join(config.AUG_DOC_META, 'sentiment_progress.csv'))
     possible_countries = sentiment_progress['aug_doc_countries'].values
-
-    #args.countries = list(remaining_countries)
-    #args.countries = ['united-states']
-    #args.countries = ['united-kingdom']
-    #args.countries = ['tanzania']
-    #args.countries = ['japan']
 
     # Add all possible countries, from IMF defs and all others
     countries_to_sent = set()
@@ -343,20 +224,16 @@ if __name__ == '__main__':
     crisis_dict = crisis_points.imf_gap_6_events
     countries_to_sent.update(set(crisis_dict.keys()))
 
-
     crisis_dict = crisis_points.imf_all_events
     countries_to_sent.update(set(crisis_dict.keys()))
-
 
     # Romer Romer
     crisis_dict = crisis_points.crisis_points_RomerNRomer
     countries_to_sent.update(set(crisis_dict.keys()))
 
-
     # LoDuca
     crisis_dict = crisis_points.crisis_points_LoDuca
     countries_to_sent.update(set(crisis_dict.keys()))
-
 
     # Reinhart Rogoff
     crisis_dict = crisis_points.crisis_points_Reinhart_Rogoff_All
@@ -379,9 +256,9 @@ if __name__ == '__main__':
     # Remove completed countries - 60 base
     countries_to_sent = countries_to_sent - set(possible_countries)
 
-    args.countries = countries_to_sent
+    #args.countries = countries_to_sent
 
-    #args.countries = ['argentina']
+    args.countries = ['argentina']
     print(args.countries)
 
     time_df, uniq_periods = data_setup(doc_deetz, config.COUNTRY_FREQ_PERIOD)

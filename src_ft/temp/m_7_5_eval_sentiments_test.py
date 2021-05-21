@@ -127,7 +127,7 @@ def evaluate(frequency_ser, country, method='zscore',
         return np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
 
     if crisis_defs == 'kr':
-        ag_freq = frequency_ser#[:pd.to_datetime(eval_end_date[fq])]  # Don't look beyond when Kaminsky and
+        ag_freq = frequency_ser[:eval_end_date[fq]]  # Don't look beyond when Kaminsky and
         # Get start and 'end' periods for crises depending on definition
         starts = list(pd.PeriodIndex(crisis_points.crisis_points_TEMP_KnR[country]['starts'], freq=fq))
         #print('Starts are:', starts)
@@ -232,7 +232,8 @@ def get_fscore(tp, fp, fn, beta=2):
 def get_countries(crisis_def):
     # Return the countries associated with each crisis definition
     if crisis_def == 'kr':
-        return crisis_points.crisis_points_TEMP_KnR.keys()
+        #return crisis_points.crisis_points_TEMP_KnR.keys()
+        return ['argentina']
     if crisis_def == 'll':
         return crisis_points.ll_crisis_points.keys()
     if crisis_def == 'IMF_GAP_6':
@@ -276,9 +277,15 @@ if __name__ == '__main__':
     df_a = df_a.set_index('month')
     idx = df_a.index
 
-    crisis_definitions = ['kr', 'll', 'IMF_GAP_6', 'IMF_GAP_0', 'RomerRomer', 'LoDuca',
-                   'ReinhartRogoff', 'IMF_Monthly_Starts', 'IMF_Monthly_Starts_Gap_3',
-                   'IMF_Monthly_Starts_Gap_6']
+    # Match inputs from the paper (?)
+    args.window = 24
+    args.months_prior = 24
+    args.z_thresh = 2
+
+    #crisis_definitions = ['kr', 'll', 'IMF_GAP_6', 'IMF_GAP_0', 'RomerRomer', 'LoDuca',
+    #               'ReinhartRogoff', 'IMF_Monthly_Starts', 'IMF_Monthly_Starts_Gap_3',
+    #               'IMF_Monthly_Starts_Gap_6']
+    crisis_definitions = ['kr']
 
     # all_sentiment_frame uses multi-index on crisis_def, sentiment_def
     midx = pd.MultiIndex.from_product([crisis_definitions,sent_cols])
@@ -317,12 +324,6 @@ if __name__ == '__main__':
 
             #re-index for missing dates
             df = df.reindex(idx, fill_value=0)
-
-
-            # Match inputs from the paper (?)
-            args.window = 24
-            args.months_prior = 24
-            args.z_thresh = 2
 
             recls, precs, fscrs, ntps, nfps, nfns = [], [], [], [], [], []
             for sent_def in sent_cols:
@@ -382,10 +383,10 @@ if __name__ == '__main__':
         print(f'Saved overall stats for relevant countries, {crisis_def} crisis definitions saved at {overall_out_name}')
 
         # Save to overall crisis defs for comparison
-        all_sentiment_frame.loc[crisis_def][:] = overall_df
+        #all_sentiment_frame.loc[crisis_def][:] = overall_df
 
-    all_sent_name = os.path.join(config.EVAL_WordDefs,'indecy_eval', f'all_country_all_defs_overall_sentiment_eval.csv')
-    all_sentiment_frame.to_csv(all_sent_name)
-    print(f'Saved overall stats for relevant countries, all definitions saved at {all_sent_name}')
+    #all_sent_name = os.path.join(config.EVAL_WordDefs,'indecy_eval', f'all_country_all_defs_overall_sentiment_eval.csv')
+    #all_sentiment_frame.to_csv(all_sent_name)
+    #print(f'Saved overall stats for relevant countries, all definitions saved at {all_sent_name}')
     print('\n\nCountries with no data:\n', no_data_countries)
 

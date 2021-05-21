@@ -71,10 +71,15 @@ if __name__ == '__main__':
     # Remove completed countries - 60 base
     countries_to_sent = countries_to_sent - set(done_countries)
 
-    possible_countries = countries_to_sent
 
-    in_dir = os.path.join(config.EVAL_WordDefs,'final_sent_merge_new')
-    out_dir = os.path.join(config.EVAL_WordDefs,'final_sent_mean_new')
+    #possible_countries = countries_to_sent
+    possible_countries = ['argentina']
+
+
+    #in_dir = os.path.join(config.EVAL_WordDefs,'final_sent_merge_new')
+    in_dir = os.path.join(config.EVAL_WordDefs,'final_sent_merge_new_test')
+    #out_dir = os.path.join(config.EVAL_WordDefs,'final_sent_mean_new')
+    out_dir = os.path.join(config.EVAL_WordDefs,'final_sent_mean_new_test')
     out_f = os.path.join(out_dir, '{}_month_sentiment.csv')
 
     for cntry in possible_countries:
