@@ -127,7 +127,7 @@ def evaluate(frequency_ser, country, method='zscore',
         return np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
 
     if crisis_defs == 'kr':
-        ag_freq = frequency_ser#[:pd.to_datetime(eval_end_date[fq])]  # Don't look beyond when Kaminsky and
+        ag_freq = frequency_ser[:eval_end_date[fq]]  # Don't look beyond when Kaminsky and
         # Get start and 'end' periods for crises depending on definition
         starts = list(pd.PeriodIndex(crisis_points.crisis_points_TEMP_KnR[country]['starts'], freq=fq))
         #print('Starts are:', starts)
@@ -279,6 +279,8 @@ if __name__ == '__main__':
     crisis_definitions = ['kr', 'll', 'IMF_GAP_6', 'IMF_GAP_0', 'RomerRomer', 'LoDuca',
                    'ReinhartRogoff', 'IMF_Monthly_Starts', 'IMF_Monthly_Starts_Gap_3',
                    'IMF_Monthly_Starts_Gap_6']
+    crisis_definitions = ['kr']
+
 
     # all_sentiment_frame uses multi-index on crisis_def, sentiment_def
     midx = pd.MultiIndex.from_product([crisis_definitions,sent_cols])
