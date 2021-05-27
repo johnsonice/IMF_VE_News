@@ -320,6 +320,7 @@ if __name__ == '__main__':
     #compare_out = compare_out.format('argentina')
     compare_freq = pd.read_csv(compare_freq_f).set_index('Unnamed: 0').T
     compare_frame = get_compare_frame(desired_indeces, sims_map, compare_freq, idx)
+    compare_frame.to_csv(os.path.join(config.EVAL_WordDefs,'indecy_eval_test_sum_compare','compare_frame.csv'))
 
     # Match inputs from the paper (?)
     args.window = 24
