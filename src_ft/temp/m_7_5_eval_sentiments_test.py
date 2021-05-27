@@ -267,7 +267,7 @@ def create_agg_index(index_words, all_word_freq):
                 this_val += all_word_freq[word].loc[ind]
             except:
                 this_val += 0
-        print('Ind {} this val {}'.format(ind, this_val))
+        #print('Ind {} this val {}'.format(ind, this_val))
         agg_index.loc[ind] = this_val
 
     return agg_index
@@ -314,8 +314,8 @@ if __name__ == '__main__':
     compare_dir = '/data/News_data_raw/FT_WD_research/frequency/temp/All_Comb'
     compare_freq_base = os.path.join(compare_dir, '{}_month_word_freqs.csv') # Have to generate the compare in based on the freq data
     compare_out = os.path.join(config.EVAL_WordDefs,'indecy_eval_test_sum_compare', '{}_sentiment_eval_on_{}_crisis_def_COMPARE.csv')
-    #desired_indeces = df_a.columns[0:6]
-    desired_indeces = df_a.columns[0:1]
+    desired_indeces = df_a.columns[0:6]
+    #desired_indeces = df_a.columns[0:1]
 
     # Temp
     compare_freq_f = compare_freq_base.format('argentina')
