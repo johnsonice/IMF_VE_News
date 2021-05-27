@@ -309,7 +309,7 @@ if __name__ == '__main__':
     # Temp
     compare_freq_f = compare_freq_base.format('argentina')
     #compare_out = compare_out.format('argentina')
-    compare_freq = pd.read_csv(compare_freq_f).set_index('Unnamed: 0')
+    compare_freq = pd.read_csv(compare_freq_f).set_index('Unnamed: 0').T
     compare_frame = get_compare_frame(desired_indeces, sims_map, compare_freq, idx)
 
     # Match inputs from the paper (?)
