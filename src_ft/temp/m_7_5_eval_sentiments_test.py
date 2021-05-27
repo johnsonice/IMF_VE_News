@@ -256,7 +256,7 @@ def get_countries(crisis_def):
 
 def create_agg_index(index_words, all_word_freq):
     agg_index = pd.Series(name=index_words.name, index=all_word_freq.index)
-
+    print("$$$ {} : TYPE {}".format(index_words, type(index_words)))
     for ind in all_word_freq.index:
         agg_index[ind] = all_word_freq[index_words.dropna().values].loc[ind].sum()
 
