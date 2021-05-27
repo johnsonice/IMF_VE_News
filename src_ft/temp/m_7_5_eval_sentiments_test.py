@@ -258,8 +258,16 @@ def create_agg_index(index_words, all_word_freq):
     agg_index = pd.Series(name=index_words.name, index=all_word_freq.index)
     index_word_vals = list(index_words.dropna().values)
     print("$$$ {} : TYPE {}".format(index_word_vals, type(index_word_vals)))
+
     for ind in all_word_freq.index:
-        agg_index[ind] = all_word_freq[index_word_vals].loc[ind].sum()
+        # Read one-by-one words in case no values
+        this_val = 0
+        for word in index_word_vals:
+            try:
+                this_val += all_word_freq[word].loc[ind]
+            except:
+                continue
+        agg_index[ind] = this_val
 
     return agg_index
 
