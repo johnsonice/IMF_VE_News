@@ -263,10 +263,10 @@ def create_agg_index(index_words, all_word_freq):
         # Read one-by-one words in case no values
         this_val = 0
         for word in index_word_vals:
-            try:
-                this_val += all_word_freq[word].loc[ind]
-            except:
-                continue
+            #try:
+            this_val += all_word_freq[word].loc[ind]
+            #except:
+            #    continue
         agg_index[ind] = this_val
 
     return agg_index
