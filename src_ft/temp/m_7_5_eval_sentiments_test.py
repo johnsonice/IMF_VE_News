@@ -301,7 +301,7 @@ if __name__ == '__main__':
 
     sims_map = pd.read_csv('../libs/all_sims_maps.csv') # works?
     compare_dir = '/data/News_data_raw/FT_WD_research/frequency/temp/All_Comb'
-    compare_freq_base = os.path.join(compare_dir, '{}_month_word_freqa.csv') # Have to generate the compare in based on the freq data
+    compare_freq_base = os.path.join(compare_dir, '{}_month_word_freqs.csv') # Have to generate the compare in based on the freq data
     compare_out = os.path.join(config.EVAL_WordDefs,'indecy_eval_test_sum_compare', '{}_sentiment_eval_on_{}_crisis_def_COMPARE.csv')
     desired_indeces = df_a.columns[1:7]
 
