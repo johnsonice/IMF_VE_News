@@ -290,7 +290,7 @@ if __name__ == '__main__':
 
     #in_name = os.path.join(in_dir, '{}_month_sentiment_indeces.csv')
     in_name = os.path.join(in_dir, '{}_month_sentiment.csv')
-    out_name = os.path.join(config.EVAL_WordDefs,'indecy_eval_test_sum', '{}_sentiment_eval_on_{}_crisis_def.csv')
+    out_name = os.path.join(config.EVAL_WordDefs,'indecy_eval_test_sum_compare', '{}_sentiment_eval_on_{}_crisis_def.csv')
 
     df_a = pd.read_csv(in_name.format('argentina'))
     sent_cols = df_a.columns[1:7]
