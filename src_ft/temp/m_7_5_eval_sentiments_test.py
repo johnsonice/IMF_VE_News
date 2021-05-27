@@ -253,6 +253,25 @@ def get_countries(crisis_def):
     if crisis_def == 'IMF_Monthly_Starts_Gap_6':
         return crisis_points.imf_programs_monthly_gap6.keys()
 
+
+def create_agg_index(index_words, all_word_freq):
+    agg_index = pd.Series(name=index_words.name, index=all_word_freq.index)
+
+    for ind in all_word_freq.index:
+        agg_index[ind] = all_word_freq[index_words.dropna().values].loc[ind].sum()
+
+    return agg_index
+
+def get_compare_frame(desired_indeces, sims_map, all_word_freq, idx):
+    compare_frame = pd.DataFrame(index=idx)
+    compare_frame.index.name = 'month'
+    for col in desired_indeces:
+        agg_index = create_agg_index(sims_map[col].dropna(), all_word_freq)
+        #print(agg_index)
+        compare_frame = compare_frame.join(agg_index)
+
+    return compare_frame
+
 if __name__ == '__main__':
 
     ## load config arguments
@@ -273,20 +292,31 @@ if __name__ == '__main__':
     in_name = os.path.join(in_dir, '{}_month_sentiment.csv')
     out_name = os.path.join(config.EVAL_WordDefs,'indecy_eval_test_sum', '{}_sentiment_eval_on_{}_crisis_def.csv')
 
-
     df_a = pd.read_csv(in_name.format('argentina'))
-    sent_cols = df_a.columns[2:]
+    sent_cols = df_a.columns[1:7]
 
     df_a['month'] = pd.to_datetime(df_a['month'])
     df_a = df_a.set_index('month')
     idx = df_a.index
 
+    sims_map = pd.read_csv('../libs/all_sims_maps.csv') # works?
+    compare_dir = '/data/News_data_raw/FT_WD_research/frequency/temp/All_Comb'
+    compare_freq_base = os.path.join(compare_dir, '{}_month_word_freqa.csv') # Have to generate the compare in based on the freq data
+    compare_out = os.path.join(config.EVAL_WordDefs,'indecy_eval_test_sum_compare', '{}_sentiment_eval_on_{}_crisis_def_COMPARE.csv')
+    desired_indeces = df_a.columns[1:7]
+
+    # Temp
+    compare_freq_f = compare_freq_base.format('argentina')
+    compare_out = compare_out.format('argentina')
+    compare_freq = pd.read_csv(compare_freq_f).set_index('Unnamed: 0')
+    compare_frame = get_compare_frame(desired_indeces, sims_map, compare_freq, idx)
+
     # Match inputs from the paper (?)
     args.window = 24
-    #args.months_prior = 24
-    args.months_prior = 18
-    #args.z_thresh = 2
-    args.z_thresh = 1.96
+    args.months_prior = 24
+    #args.months_prior = 18
+    args.z_thresh = 2
+    #args.z_thresh = 1.96
 
     #crisis_definitions = ['kr', 'll', 'IMF_GAP_6', 'IMF_GAP_0', 'RomerRomer', 'LoDuca',
     #               'ReinhartRogoff', 'IMF_Monthly_Starts', 'IMF_Monthly_Starts_Gap_3',
@@ -367,6 +397,41 @@ if __name__ == '__main__':
             df_out_name = out_name.format(ctry, crisis_def)
             df_out.to_csv(df_out_name)
             print('Saved {} at {}'.format(ctry, df_out_name))
+
+        ###$$$$$ TEMP
+            recls, precs, fscrs, ntps, nfps, nfns = [], [], [], [], [], []
+            for sent_def in desired_indeces:
+                print('\tWorking on', sent_def)
+                freq_ser = compare_frame[sent_def]
+                recall, precision, fscore, ntp, nfp, nfn = evaluate(freq_ser, ctry, method='zscore', crisis_defs=crisis_def,
+                                                              period=args.period,stemmed=False,
+                                                              window=args.window, direction='incr',
+                                                                    months_prior=args.months_prior,
+                                                              fbeta=2,eval_end_date=args.eval_end_date, weights=None,
+                                                                    z_thresh=args.z_thresh)
+
+                recls.append(recall)
+                precs.append(precision)
+                fscrs.append(fscore)
+                ntps.append(ntp)
+                nfps.append(nfp)
+                nfns.append(nfn)
+
+            df_out = pd.DataFrame({
+                'recall':recls,
+                'precision':precs,
+                'fscore':fscrs,
+                'tp': ntps,
+                'fp': nfps,
+                'fn': nfns
+            })
+
+            df_out['sentiment_def'] = sent_cols
+
+            df_out_name = compare_out.format(ctry, crisis_def)
+            df_out.to_csv(df_out_name)
+            print('COMPARE Saved {} at {}'.format(ctry, df_out_name))
+        ###$$$$$
 
         # Save and print overall predictive quality on this crisis defintion
         orec = []
