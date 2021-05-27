@@ -267,7 +267,7 @@ def create_agg_index(index_words, all_word_freq):
                 this_val += all_word_freq[word].loc[ind]
             except:
                 this_val += 0
-        agg_index[ind] = this_val
+        agg_index.loc[ind] = this_val
 
     return agg_index
 
