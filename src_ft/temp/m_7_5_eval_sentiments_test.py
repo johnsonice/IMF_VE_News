@@ -272,13 +272,14 @@ def create_agg_index(index_words, all_word_freq):
     return agg_index
 
 def get_compare_frame(desired_indeces, sims_map, all_word_freq, idx):
-    compare_frame = pd.DataFrame(index=idx)
+    compare_frame = pd.DataFrame(index=all_word_freq.index)
     compare_frame.index.name = 'month'
     for col in desired_indeces:
         agg_index = create_agg_index(sims_map[col].dropna(), all_word_freq)
         #print(agg_index)
         compare_frame = compare_frame.join(agg_index)
 
+    compare_frame = compare_frame.reindex(idx, fill_value=0)
     return compare_frame
 
 if __name__ == '__main__':
