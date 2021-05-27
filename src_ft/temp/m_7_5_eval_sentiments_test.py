@@ -283,8 +283,10 @@ if __name__ == '__main__':
 
     # Match inputs from the paper (?)
     args.window = 24
-    args.months_prior = 24
-    args.z_thresh = 2
+    #args.months_prior = 24
+    args.months_prior = 18
+    #args.z_thresh = 2
+    args.z_thresh = 1.96
 
     #crisis_definitions = ['kr', 'll', 'IMF_GAP_6', 'IMF_GAP_0', 'RomerRomer', 'LoDuca',
     #               'ReinhartRogoff', 'IMF_Monthly_Starts', 'IMF_Monthly_Starts_Gap_3',
