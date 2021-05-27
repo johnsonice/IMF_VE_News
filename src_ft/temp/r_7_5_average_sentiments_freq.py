@@ -79,7 +79,7 @@ if __name__ == '__main__':
     #in_dir = os.path.join(config.EVAL_WordDefs,'final_sent_merge_new')
     in_dir = os.path.join(config.EVAL_WordDefs,'final_sent_merge_new_test')
     #out_dir = os.path.join(config.EVAL_WordDefs,'final_sent_mean_new')
-    out_dir = os.path.join(config.EVAL_WordDefs,'final_sent_mean_new_test')
+    out_dir = os.path.join(config.EVAL_WordDefs,'final_sent_mean_new_test_sum')
     out_f = os.path.join(out_dir, '{}_month_sentiment.csv')
 
     for cntry in possible_countries:

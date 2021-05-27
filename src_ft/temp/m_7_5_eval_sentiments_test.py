@@ -266,10 +266,12 @@ if __name__ == '__main__':
                           z_thresh = config.z_thresh)
 
     #in_dir = os.path.join(config.EVAL_WordDefs, 'final_sent_mean2')
-    in_dir = os.path.join(config.EVAL_WordDefs, 'final_sent_mean_new_test')
+    #in_dir = os.path.join(config.EVAL_WordDefs, 'final_sent_mean_new_test')
+    in_dir = os.path.join(config.EVAL_WordDefs, 'final_sent_mean_new_test_sum')
+
     #in_name = os.path.join(in_dir, '{}_month_sentiment_indeces.csv')
     in_name = os.path.join(in_dir, '{}_month_sentiment.csv')
-    out_name = os.path.join(config.EVAL_WordDefs,'indecy_eval_test', '{}_sentiment_eval_on_{}_crisis_def.csv')
+    out_name = os.path.join(config.EVAL_WordDefs,'indecy_eval_test_sum', '{}_sentiment_eval_on_{}_crisis_def.csv')
 
 
     df_a = pd.read_csv(in_name.format('argentina'))
