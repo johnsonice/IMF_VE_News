@@ -256,9 +256,10 @@ def get_countries(crisis_def):
 
 def create_agg_index(index_words, all_word_freq):
     agg_index = pd.Series(name=index_words.name, index=all_word_freq.index)
-    print("$$$ {} : TYPE {}".format(index_words, type(index_words)))
+    index_word_vals = index_words.dropna().values
+    print("$$$ {} : TYPE {}".format(index_word_vals, type(index_word_vals)))
     for ind in all_word_freq.index:
-        agg_index[ind] = all_word_freq[index_words.dropna().values].loc[ind].sum()
+        agg_index[ind] = all_word_freq[index_word_vals].loc[ind].sum()
 
     return agg_index
 
@@ -303,7 +304,7 @@ if __name__ == '__main__':
     compare_dir = '/data/News_data_raw/FT_WD_research/frequency/temp/All_Comb'
     compare_freq_base = os.path.join(compare_dir, '{}_month_word_freqs.csv') # Have to generate the compare in based on the freq data
     compare_out = os.path.join(config.EVAL_WordDefs,'indecy_eval_test_sum_compare', '{}_sentiment_eval_on_{}_crisis_def_COMPARE.csv')
-    desired_indeces = df_a.columns[1:7]
+    desired_indeces = df_a.columns[0:6]
 
     # Temp
     compare_freq_f = compare_freq_base.format('argentina')
