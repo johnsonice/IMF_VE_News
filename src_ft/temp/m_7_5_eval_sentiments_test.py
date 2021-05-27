@@ -436,7 +436,7 @@ if __name__ == '__main__':
                 'fn': nfns
             })
 
-            df_out['sentiment_def'] = sent_cols
+            df_out['sentiment_def'] = desired_indeces
 
             df_out_name = compare_out.format(ctry, crisis_def)
             df_out.to_csv(df_out_name)
