@@ -313,7 +313,7 @@ if __name__ == '__main__':
     compare_freq_base = os.path.join(compare_dir, '{}_month_word_freqs.csv') # Have to generate the compare in based on the freq data
     compare_out = os.path.join(config.EVAL_WordDefs,'indecy_eval_test_sum_compare', '{}_sentiment_eval_on_{}_crisis_def_COMPARE.csv')
     #desired_indeces = df_a.columns[0:6]
-    desired_indeces = df_a.columns[0]
+    desired_indeces = df_a.columns[0:1]
 
     # Temp
     compare_freq_f = compare_freq_base.format('argentina')
