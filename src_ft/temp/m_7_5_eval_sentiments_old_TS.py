@@ -268,7 +268,7 @@ if __name__ == '__main__':
     in_dir = os.path.join('/data/News_data_raw/FT_WD/eval/time_series')
 
     in_name = os.path.join(in_dir, 'agg_{}_month_z2.1_time_series.csv')
-    out_name = os.path.join(config.EVAL_WordDefs,'indecy_eval', '{}_sentiment_eval_on_{}_crisis_def.csv')
+    out_name = os.path.join(config.NEW_PROCESSING_FOLDER,'eval_compares_country', '{}_sentiment_eval_on_{}_crisis_def.csv')
 
 
     df_a = pd.read_csv(in_name.format('argentina'))
@@ -317,7 +317,7 @@ if __name__ == '__main__':
                 no_data_countries.append(ctry)
                 continue
             #df = df[df['country'] == ctry]
-            df['month'] = pd.to_datetime(df['month'])
+            df['month'] = pd.to_datetime(df['Unnamed: 0'])
             df = df.set_index('month')
 
             #re-index for missing dates
@@ -388,11 +388,7 @@ if __name__ == '__main__':
         overall_df.to_csv(overall_out_name)
         print(f'Saved overall stats for relevant countries, {crisis_def} crisis definitions saved at {overall_out_name}')
 
-        # Save to overall crisis defs for comparison
-        all_sentiment_frame.loc[crisis_def][:] = overall_df
 
-    all_sent_name = os.path.join(config.EVAL_WordDefs,'indecy_eval', f'all_country_all_defs_overall_sentiment_eval.csv')
-    all_sentiment_frame.to_csv(all_sent_name)
     print(f'Saved overall stats for relevant countries, all definitions saved at {all_sent_name}')
     print('\n\nCountries with no data:\n', no_data_countries)
 
