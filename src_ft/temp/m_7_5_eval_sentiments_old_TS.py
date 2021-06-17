@@ -308,7 +308,7 @@ if __name__ == '__main__':
         #countries = config.countries
         #countries = config.countries # TODO SWAP ^ add other crisis defs
         countries = get_countries(crisis_def)
-        countries = ['argentina']
+        #countries = ['argentina']
 
         overall_tp, overall_fp, overall_fn = np.zeros(shape=len(sent_cols)), np.zeros(shape=len(sent_cols)), \
                                              np.zeros(shape=len(sent_cols))
