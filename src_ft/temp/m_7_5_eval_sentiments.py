@@ -127,7 +127,11 @@ def evaluate(frequency_ser, country, method='zscore',
         return np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
 
     if crisis_defs == 'kr':
-        ag_freq = frequency_ser[:eval_end_date[fq]]  # Don't look beyond when Kaminsky and
+        #starts before dataset starts
+        start = '1978-01'
+        eval_end_date = {'q': '2001Q4',
+                         'm': '2001-12'}
+        ag_freq = frequency_ser[start:eval_end_date[fq]]  # Don't look beyond when Kaminsky and
         # Get start and 'end' periods for crises depending on definition
         starts = list(pd.PeriodIndex(crisis_points.crisis_points_TEMP_KnR[country]['starts'], freq=fq))
         #print('Starts are:', starts)
@@ -135,22 +139,27 @@ def evaluate(frequency_ser, country, method='zscore',
         #print('Ends are:', ends)
 
     elif crisis_defs == 'll':
-        ag_freq = frequency_ser[:eval_end_date[fq]]  # Don't look beyond when ll ends
+        start = '1967-01'
+        eval_end_date = {'q': '2012Q4',
+                         'm': '2012-12'}
+        ag_freq = frequency_ser[start:eval_end_date[fq]]  # Don't look beyond when ll ends
         # Get start and 'end' periods for crises depending on definition
         starts = list(pd.PeriodIndex(crisis_points.ll_crisis_points[country]['starts'], freq=fq))
         ends = list(pd.PeriodIndex(crisis_points.ll_crisis_points[country]['peaks'], freq=fq))
 
     elif crisis_defs == 'IMF_GAP_6':
+        start = '1952-07'
         end = '2019-12'
-        ag_freq = frequency_ser[:end]  # Don't look beyond when ll ends
+        ag_freq = frequency_ser[start:end]  # Don't look beyond when ll ends
         # Get start and 'end' periods for crises depending on definition
         crisis_dict = crisis_points.imf_gap_6_events
         starts = list(pd.PeriodIndex(crisis_dict[country]['starts'], freq=fq))
         ends = list(pd.PeriodIndex(crisis_dict[country]['peaks'], freq=fq))
 
     elif crisis_defs == 'IMF_GAP_0':
+        start = '1952-07'
         end = '2019-12'
-        ag_freq = frequency_ser[:end]  # Don't look beyond when ll ends
+        ag_freq = frequency_ser[start:end]  # Don't look beyond when ll ends
         # Get start and 'end' periods for crises depending on definition
 
         crisis_dict = crisis_points.imf_all_events
@@ -158,8 +167,9 @@ def evaluate(frequency_ser, country, method='zscore',
         ends = list(pd.PeriodIndex(crisis_dict[country]['peaks'], freq=fq))
 
     elif crisis_defs == 'RomerRomer':
+        start = '1967-01'
         end = '2012-12'
-        ag_freq = frequency_ser[:end]  # Don't look beyond when ll ends
+        ag_freq = frequency_ser[start:end]  # Don't look beyond when ll ends
         # Get start and 'end' periods for crises depending on definition
 
         crisis_dict = crisis_points.crisis_points_RomerNRomer
@@ -167,8 +177,9 @@ def evaluate(frequency_ser, country, method='zscore',
         ends = list(pd.PeriodIndex(crisis_dict[country]['peaks'], freq=fq))
 
     elif crisis_defs == 'LoDuca':
+        start = '1978-01'
         end = '2016-12'
-        ag_freq = frequency_ser[:end]  # Don't look beyond when ll ends
+        ag_freq = frequency_ser[start:end]  # Don't look beyond when ll ends
         # Get start and 'end' periods for crises depending on definition
 
         crisis_dict = crisis_points.crisis_points_LoDuca
@@ -176,14 +187,16 @@ def evaluate(frequency_ser, country, method='zscore',
         ends = list(pd.PeriodIndex(crisis_dict[country]['peaks'], freq=fq))
 
     elif crisis_defs == 'ReinhartRogoff':
+        start = '1977-01'
         end = '2014-12'
-        ag_freq = frequency_ser[:end]
+        ag_freq = frequency_ser[start:end]
 
         crisis_dict = crisis_points.crisis_points_Reinhart_Rogoff_All
         starts = list(pd.PeriodIndex(crisis_dict[country]['starts'], freq=fq))
         ends = list(pd.PeriodIndex(crisis_dict[country]['peaks'], freq=fq))
 
     elif crisis_defs in ['IMF_Monthly_Starts', 'IMF_Monthly_Starts_Gap_3', 'IMF_Monthly_Starts_Gap_6']:
+        start = '1952-07'
         assess_dict = {
             'IMF_Monthly_Starts': crisis_points.imf_programs_monthly,
             'IMF_Monthly_Starts_Gap_3': crisis_points.imf_programs_monthly_gap3,
@@ -208,6 +221,7 @@ def evaluate(frequency_ser, country, method='zscore',
 
     # recall, precision, fscore, len(tp), len(fp), len(fn)
     return get_eval_stats(fq, starts, ends, preds, period, months_prior, fbeta)
+
 
 def get_recall(tp, fn):
     try:
@@ -266,7 +280,8 @@ if __name__ == '__main__':
 
     in_dir = os.path.join(config.EVAL_WordDefs, 'final_sent_mean2')
     in_name = os.path.join(in_dir, '{}_month_sentiment_indeces.csv')
-    out_name = os.path.join(config.EVAL_WordDefs,'indecy_eval', '{}_sentiment_eval_on_{}_crisis_def.csv')
+    pn_eval = 'indecy_eval_pos_neg'
+    out_name = os.path.join(config.EVAL_WordDefs, pn_eval, '{}_sentiment_eval_on_{}_crisis_def.csv')
 
 
     df_a = pd.read_csv(in_name.format('argentina'))
@@ -379,7 +394,7 @@ if __name__ == '__main__':
         overall_df['precision'] = opre
         overall_df['fscore'] = of2
         overall_df.sort_values(by='fscore', ascending=False)
-        overall_out_name = os.path.join(config.EVAL_WordDefs,'indecy_eval', f'all_country_overall_sentiment_{crisis_def}_eval.csv')
+        overall_out_name = os.path.join(config.EVAL_WordDefs,pn_eval, f'all_country_overall_sentiment_{crisis_def}_eval.csv')
         overall_df.to_csv(overall_out_name)
         print(f'Saved overall stats for relevant countries, {crisis_def} crisis definitions saved at {overall_out_name}')
 
