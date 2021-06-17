@@ -127,9 +127,11 @@ def evaluate(frequency_ser, country, method='zscore',
         return np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
 
     if crisis_defs == 'kr':
+        #starts before dataset starts
+        start = '1978-01'
         eval_end_date = {'q': '2001Q4',
                          'm': '2001-12'}
-        ag_freq = frequency_ser[:eval_end_date[fq]]  # Don't look beyond when Kaminsky and
+        ag_freq = frequency_ser[start:eval_end_date[fq]]  # Don't look beyond when Kaminsky and
         # Get start and 'end' periods for crises depending on definition
         starts = list(pd.PeriodIndex(crisis_points.crisis_points_TEMP_KnR[country]['starts'], freq=fq))
         #print('Starts are:', starts)
@@ -137,24 +139,27 @@ def evaluate(frequency_ser, country, method='zscore',
         #print('Ends are:', ends)
 
     elif crisis_defs == 'll':
+        start = '1967-01'
         eval_end_date = {'q': '2012Q4',
                          'm': '2012-12'}
-        ag_freq = frequency_ser[:eval_end_date[fq]]  # Don't look beyond when ll ends
+        ag_freq = frequency_ser[start:eval_end_date[fq]]  # Don't look beyond when ll ends
         # Get start and 'end' periods for crises depending on definition
         starts = list(pd.PeriodIndex(crisis_points.ll_crisis_points[country]['starts'], freq=fq))
         ends = list(pd.PeriodIndex(crisis_points.ll_crisis_points[country]['peaks'], freq=fq))
 
     elif crisis_defs == 'IMF_GAP_6':
+        start = '1952-07'
         end = '2019-12'
-        ag_freq = frequency_ser[:end]  # Don't look beyond when ll ends
+        ag_freq = frequency_ser[start:end]  # Don't look beyond when ll ends
         # Get start and 'end' periods for crises depending on definition
         crisis_dict = crisis_points.imf_gap_6_events
         starts = list(pd.PeriodIndex(crisis_dict[country]['starts'], freq=fq))
         ends = list(pd.PeriodIndex(crisis_dict[country]['peaks'], freq=fq))
 
     elif crisis_defs == 'IMF_GAP_0':
+        start = '1952-07'
         end = '2019-12'
-        ag_freq = frequency_ser[:end]  # Don't look beyond when ll ends
+        ag_freq = frequency_ser[start:end]  # Don't look beyond when ll ends
         # Get start and 'end' periods for crises depending on definition
 
         crisis_dict = crisis_points.imf_all_events
@@ -162,8 +167,9 @@ def evaluate(frequency_ser, country, method='zscore',
         ends = list(pd.PeriodIndex(crisis_dict[country]['peaks'], freq=fq))
 
     elif crisis_defs == 'RomerRomer':
+        start = '1967-01'
         end = '2012-12'
-        ag_freq = frequency_ser[:end]  # Don't look beyond when ll ends
+        ag_freq = frequency_ser[start:end]  # Don't look beyond when ll ends
         # Get start and 'end' periods for crises depending on definition
 
         crisis_dict = crisis_points.crisis_points_RomerNRomer
@@ -171,8 +177,9 @@ def evaluate(frequency_ser, country, method='zscore',
         ends = list(pd.PeriodIndex(crisis_dict[country]['peaks'], freq=fq))
 
     elif crisis_defs == 'LoDuca':
+        start = '1978-01'
         end = '2016-12'
-        ag_freq = frequency_ser[:end]  # Don't look beyond when ll ends
+        ag_freq = frequency_ser[start:end]  # Don't look beyond when ll ends
         # Get start and 'end' periods for crises depending on definition
 
         crisis_dict = crisis_points.crisis_points_LoDuca
@@ -180,14 +187,16 @@ def evaluate(frequency_ser, country, method='zscore',
         ends = list(pd.PeriodIndex(crisis_dict[country]['peaks'], freq=fq))
 
     elif crisis_defs == 'ReinhartRogoff':
+        start = '1977-01'
         end = '2014-12'
-        ag_freq = frequency_ser[:end]
+        ag_freq = frequency_ser[start:end]
 
         crisis_dict = crisis_points.crisis_points_Reinhart_Rogoff_All
         starts = list(pd.PeriodIndex(crisis_dict[country]['starts'], freq=fq))
         ends = list(pd.PeriodIndex(crisis_dict[country]['peaks'], freq=fq))
 
     elif crisis_defs in ['IMF_Monthly_Starts', 'IMF_Monthly_Starts_Gap_3', 'IMF_Monthly_Starts_Gap_6']:
+        start = '1952-07'
         assess_dict = {
             'IMF_Monthly_Starts': crisis_points.imf_programs_monthly,
             'IMF_Monthly_Starts_Gap_3': crisis_points.imf_programs_monthly_gap3,
