@@ -294,7 +294,7 @@ if __name__ == '__main__':
     crisis_definitions = ['kr', 'll', 'IMF_GAP_6', 'IMF_GAP_0', 'RomerRomer', 'LoDuca',
                    'ReinhartRogoff', 'IMF_Monthly_Starts', 'IMF_Monthly_Starts_Gap_3',
                    'IMF_Monthly_Starts_Gap_6']
-    crisis_definitions = ['kr']
+    #crisis_definitions = ['kr']
 
 
     # all_sentiment_frame uses multi-index on crisis_def, sentiment_def
@@ -343,7 +343,7 @@ if __name__ == '__main__':
 
             recls, precs, fscrs, ntps, nfps, nfns = [], [], [], [], [], []
             for sent_def in sent_cols:
-                print('\tWorking on', sent_def)
+                #print('\tWorking on', sent_def)
                 freq_ser = df[sent_def]
                 recall, precision, fscore, ntp, nfp, nfn = evaluate(freq_ser, ctry, method='zscore', crisis_defs=crisis_def,
                                                               period=args.period,stemmed=False,
