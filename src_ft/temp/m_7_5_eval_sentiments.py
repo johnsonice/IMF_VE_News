@@ -287,6 +287,10 @@ if __name__ == '__main__':
 
 
     df_a = pd.read_csv(in_name.format('argentina'))
+    try:
+        df_a = df_a.drop(columns='Unnamed: 0')
+    except:
+        pass
     sent_cols = df_a.columns[2:]
 
     df_a['month'] = pd.to_datetime(df_a['month'])
