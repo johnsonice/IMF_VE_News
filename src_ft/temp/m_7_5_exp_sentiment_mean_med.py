@@ -66,4 +66,3 @@ if __name__ == "__main__":
         add_medians(in_df)
         out_name = os.path.join(out_dir, file.split('/')[-1])
         in_df.to_csv(out_name)
-    

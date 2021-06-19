@@ -278,9 +278,11 @@ if __name__ == '__main__':
                           weighted= config.WEIGHTED,
                           z_thresh = config.z_thresh)
 
-    in_dir = os.path.join(config.EVAL_WordDefs, 'final_sent_mean2')
+    #in_dir = os.path.join(config.EVAL_WordDefs, 'final_sent_mean2')
+    in_dir = os.path.join(config.EVAL_WordDefs, 'final_sent_mean2_mm')
     in_name = os.path.join(in_dir, '{}_month_sentiment_indeces.csv')
-    pn_eval = 'indecy_eval_pos_neg'
+    #pn_eval = 'indecy_eval_pos_neg'
+    pn_eval = 'indecy_eval_pos_neg_mm'
     out_name = os.path.join(config.EVAL_WordDefs, pn_eval, '{}_sentiment_eval_on_{}_crisis_def.csv')
 
 
