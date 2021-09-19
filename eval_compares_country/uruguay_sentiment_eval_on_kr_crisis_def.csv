@@ -1,0 +1,11 @@
+,recall,precision,fscore,tp,fp,fn,sentiment_def
+0,0.0,0.0,0.0,0,8,1,fear_language
+1,0.0,0.0,0.0,0,3,1,risk_language
+2,0.0,0.0,0.0,0,1,1,hedging_language
+3,0.0,0.0,0.0,0,5,1,opinion_language
+4,0.0,0.0,0.0,0,13,1,crisis_language
+5,0.0,0.0,0.0,0,1,1,positive_sentiment_language
+6,0.0,0.0,0.0,0,5,1,negative_sentiment_language
+7,0.0,,0.0,0,0,1,agg_all_other_sentiments
+8,0.0,,0.0,0,0,1,agg_other_and_negative
+9,0.0,,0.0,0,0,1,all_language

@@ -1,0 +1,11 @@
+,recall,precision,fscore,tp,fp,fn,sentiment_def
+0,1.0,0.07692307692307693,0.29411764705882354,1,12,0,fear_language
+1,1.0,0.16666666666666666,0.5,2,10,0,risk_language
+2,0.0,0.0,0.0,0,11,1,hedging_language
+3,1.0,0.16666666666666666,0.5,1,5,0,opinion_language
+4,0.0,0.0,0.0,0,12,1,crisis_language
+5,1.0,0.1,0.35714285714285715,1,9,0,positive_sentiment_language
+6,1.0,0.14285714285714285,0.45454545454545453,1,6,0,negative_sentiment_language
+7,1.0,0.08333333333333333,0.3125,1,11,0,agg_all_other_sentiments
+8,0.0,0.0,0.0,0,7,1,agg_other_and_negative
+9,0.0,0.0,0.0,0,9,1,all_language
