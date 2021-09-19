@@ -32,7 +32,7 @@ def evaluate(word_list, country, frequency_path, method='zscore',
         direction: (str or nonetype) ['decr', 'incr', None] which significant differences to count as hits in the
             z-score eval. if 'incr', only significant increases will be counted as hits. if 'decr', only significant
             decreases. if None, both. 
-        years_prior: (int) this determines the forecast window. e.g. if set to 2, any hits within 2 years of a crisis
+        months_prior: (int) this determines the forecast window. e.g. if set to 24, any hits within 24 months of a crisis
             onset will be considered a true positive. 
         fbeta: (int) beta value to use in fscore calculation. 2 is default, since recall is more important for this task.
             NB beta determines how you weight recall wrt precision. 2 means recall is weighted as twice as important.

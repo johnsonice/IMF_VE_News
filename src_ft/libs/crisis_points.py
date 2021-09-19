@@ -966,7 +966,8 @@ imf_all_events = {
 }
 
 # Temp - TODO move to other file - add dictionary options
-read_df = pd.read_csv('/home/apsurek/IMF_VE_News/src_ft/libs/imf_dates_new_fix.csv')
+#read_df = pd.read_csv('/home/apsurek/IMF_VE_News/src_ft/libs/imf_dates_new_fix.csv') # Remote
+read_df = pd.read_csv('C:/Repos/IMF_VE_News/src_ft/libs/imf_dates_new_fix.csv') # Local
 unique_countries = read_df['country'].unique()
 read_df['Date of Arrangement'] = pd.to_datetime(read_df['Date of Arrangement'])
 read_df['Actual/Current Expiration Date'] = pd.to_datetime(read_df['Actual/Current Expiration Date'])

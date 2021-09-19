@@ -152,7 +152,7 @@ def load_search_words(folder, path):
     return words_list
 
 
-targets = load_search_words(SEARCH_TERMS,GROUPED_SEARCH_FILE)
+#targets = load_search_words(SEARCH_TERMS,GROUPED_SEARCH_FILE) # Remote
 
 #targets= ['fear','worry','concern','afraid','trouble','uneasy','nervous','anxious',
 #          'risk','threat','warn','hazard','contagious','impact','infect','terror','danger',
@@ -166,7 +166,15 @@ targets = load_search_words(SEARCH_TERMS,GROUPED_SEARCH_FILE)
 #         'say','feel','predict','tell','believe','think','recession',
 #         'financial_crisis','crisis','depression','shock']
 
-#targets= ['able', 'enable', 'grow', 'adequately', 'benign', 'buoyant', 'buoyancy', 'calm', 'comfortable', 'confidence', 'confident', 'effective', 'enhance', 'favorable', 'favourable', 'favourably', 'healthy', 'improve', 'improvement', 'mitigate', 'mitigation', 'positive', 'positively', 'profits', 'profitable', 'rally', 'rebound', 'recover', 'recovery', 'resilience', 'resilient', 'smooth', 'solid', 'sound', 'stabilise', 'stabilize', 'stable', 'success', 'successful', 'successfully']
+targets= ['able', 'enable', 'grow', 'adequately', 'benign', 'buoyant', 'buoyancy', 'calm', 'comfortable', 'confidence', 'confident', 'effective', 'enhance', 'favorable', 'favourable', 'favourably', 'healthy', 'improve', 'improvement', 'mitigate', 'mitigation', 'positive', 'positively', 'profits', 'profitable', 'rally', 'rebound', 'recover', 'recovery', 'resilience', 'resilient', 'smooth', 'solid', 'sound', 'stabilise', 'stabilize', 'stable', 'success', 'successful', 'successfully']
+class_type_setups = [
+    #['Min1_AllCountry', 1, None, None, None, None], #Tmp
+    #['Min1_LoDuca', 1, None, None, None, None], #Tmp
+    #['Min1_RomerRomer', 1, None, None, None, None], #Tmp
+    #['Min1_ReinhartRogoffAll', 1, None, None, None, None], #Tmp
+    #['Min1_Thin', 1, None, None, None, None], #Tmp
+    ['Min1_Gap6', 1, None, None, None, None], #Tmp
+]
 '''TEMP
 class_type_setups = [
 
@@ -197,14 +205,6 @@ class_type_setups = [
         ]
 
 '''
-class_type_setups = [
-    #['Min1_AllCountry', 1, None, None, None, None], #Tmp
-    #['Min1_LoDuca', 1, None, None, None, None], #Tmp
-    #['Min1_RomerRomer', 1, None, None, None, None], #Tmp
-    #['Min1_ReinhartRogoffAll', 1, None, None, None, None], #Tmp
-    #['Min1_Thin', 1, None, None, None, None], #Tmp
-    ['Min1_Gap6', 1, None, None, None, None], #Tmp
-]
 
 eval_type = 'grouped_words' #TEMP
 #%%
