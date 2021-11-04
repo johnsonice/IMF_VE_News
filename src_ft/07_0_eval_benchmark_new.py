@@ -55,7 +55,7 @@ def get_stats(starts,ends,preds,offset,period,fbeta=2):
     return recall,precision,fscore
 
 def get_country_vocab(country,period='quarter',frequency_path=config.FREQUENCY):
-    data_path = os.path.join(frequency_path,'{}_{}_word_freqs.pkl'.format(country, period))
+    data_path = os.path.join('/data/News_data_raw/FT_WD_research/frequency/temp/All_Comb','{}_{}_word_freqs.csv'.format(country, period))
     data = pd.read_pickle(data_path)
     vocab = list(data.index)
     return vocab
