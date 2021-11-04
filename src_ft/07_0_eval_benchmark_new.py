@@ -56,7 +56,8 @@ def get_stats(starts,ends,preds,offset,period,fbeta=2):
 
 def get_country_vocab(country,period='quarter',frequency_path=config.FREQUENCY):
     data_path = os.path.join('/data/News_data_raw/FT_WD_research/frequency/temp/All_Comb','{}_{}_word_freqs.csv'.format(country, period))
-    data = pd.read_pickle(data_path)
+    data = pd.read_csv(data_path)
+    data = data.set_index('Unnamed: 0')
     vocab = list(data.index)
     return vocab
 
@@ -106,14 +107,62 @@ if __name__ == "__main__":
                 print(country)
                 print(df.head(2))
             #offset = pd.DateOffset(months=config.months_prior)
-            
+
             if crisis_defs == 'kr':
-                starts = list(pd.PeriodIndex(crisis_points[country]['starts'], freq=fq))
-                ends = list(pd.PeriodIndex(crisis_points[country]['peaks'], freq=fq))
+                # Get start and 'end' periods for crises depending on definition
+                starts = list(pd.PeriodIndex(crisis_points.crisis_points[country]['starts'], freq=fq))
+                ends = list(pd.PeriodIndex(crisis_points.crisis_points[country]['peaks'], freq=fq))
+
             elif crisis_defs == 'll':
+                # Get start and 'end' periods for crises depending on definition
                 starts = list(pd.PeriodIndex(ll_crisis_points[country]['starts'], freq=fq))
                 ends = list(pd.PeriodIndex(ll_crisis_points[country]['peaks'], freq=fq))
-                
+
+            elif crisis_defs == 'IMF_GAP_6':
+                # Get start and 'end' periods for crises depending on definition
+                crisis_dict = crisis_points.imf_gap_6_events
+                starts = list(pd.PeriodIndex(crisis_dict[country]['starts'], freq=fq))
+                ends = list(pd.PeriodIndex(crisis_dict[country]['peaks'], freq=fq))
+
+            elif crisis_defs == 'IMF_GAP_0':
+                # Get start and 'end' periods for crises depending on definition
+                crisis_dict = crisis_points.imf_all_events
+                starts = list(pd.PeriodIndex(crisis_dict[country]['starts'], freq=fq))
+                ends = list(pd.PeriodIndex(crisis_dict[country]['peaks'], freq=fq))
+
+            elif crisis_defs == 'RomerRomer':
+                # Get start and 'end' periods for crises depending on definition
+
+                crisis_dict = crisis_points.crisis_points_RomerNRomer
+                starts = list(pd.PeriodIndex(crisis_dict[country]['starts'], freq=fq))
+                ends = list(pd.PeriodIndex(crisis_dict[country]['peaks'], freq=fq))
+
+            elif crisis_defs == 'LoDuca':
+                # Get start and 'end' periods for crises depending on definition
+
+                crisis_dict = crisis_points.crisis_points_LoDuca
+                starts = list(pd.PeriodIndex(crisis_dict[country]['starts'], freq=fq))
+                ends = list(pd.PeriodIndex(crisis_dict[country]['peaks'], freq=fq))
+
+            elif crisis_defs == 'ReinhartRogoff':
+                crisis_dict = crisis_points.crisis_points_Reinhart_Rogoff_All
+                starts = list(pd.PeriodIndex(crisis_dict[country]['starts'], freq=fq))
+                ends = list(pd.PeriodIndex(crisis_dict[country]['peaks'], freq=fq))
+
+            elif crisis_defs in ['IMF_Monthly_Starts', 'IMF_Monthly_Starts_Gap_3', 'IMF_Monthly_Starts_Gap_6']:
+                assess_dict = {
+                    'IMF_Monthly_Starts': crisis_points.imf_programs_monthly,
+                    'IMF_Monthly_Starts_Gap_3': crisis_points.imf_programs_monthly_gap3,
+                    'IMF_Monthly_Starts_Gap_6': crisis_points.imf_programs_monthly_gap6
+                }
+                # Get start and 'end' periods for crises depending on definition
+                crisis_dict = assess_dict[crisis_defs]
+                starts = list(pd.PeriodIndex(crisis_dict[country]['starts'], freq=fq))
+                ends = list(pd.PeriodIndex(crisis_dict[country]['peaks'], freq=fq))
+
+            else:
+                raise ValueError("Wrong crisis_defs value presented")
+
             #preds = list(signif_change(df, window=config.smooth_window_size, direction='incr').index)
             preds = get_preds_from_pd(df,
                           country,
