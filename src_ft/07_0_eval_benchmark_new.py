@@ -200,6 +200,8 @@ if __name__ == "__main__":
     #out_csv = os.path.join(config.EVAL, '{}_offset_{}_smooth_{}_ramdom_sampling_bench_mark_TEST.csv'.format(period,config.months_prior,config.smooth_window_size))
     out_csv = os.path.join(config.EVAL, '{}_offset_{}_smooth_{}_ramdom_sampling_bench_mark_TEST.csv'.format(period,config.months_prior,config.smooth_window_size))
     agg_df_all.to_csv(out_csv)
+    country_df.to_csv(out_csv+'_country_.csv')
+
     print(agg_df_all)
     #final_df.to_csv('temp_data/agg_tuning_res.csv')
 #%%
