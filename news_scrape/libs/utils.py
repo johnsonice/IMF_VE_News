@@ -43,7 +43,7 @@ def list_difference_left(list1, list2):
     
     return list(set1 - set2)
 
-def retry(attempts=3, delay=1):
+def retry(attempts=3, delay=1,raise_error=False):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
@@ -56,7 +56,8 @@ def retry(attempts=3, delay=1):
                         time.sleep(delay)
                     else:
                         print("Function failed after several attempts. Raising the exception...")
-                        raise
+                        if raise_error:
+                            raise
         return wrapper
     return decorator
 

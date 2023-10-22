@@ -8,6 +8,7 @@ Created on Sun May 21 11:14:55 2023
 import os,sys
 sys.path.insert(0, './libs')
 from pygooglenews_ch import GoogleNews ## some customized fixes 
+from utils import retry
 #from bs4 import BeautifulSoup
 import pandas as pd
 import time,random
@@ -64,7 +65,10 @@ def run_one_test():
     res = run_one_query_with_keys(key_list,periods[0],site='bloomberg.com',verbose=True)
     return res
 
-def run_one_query_with_keys(key_list,time_interval,site=None,verbose=False,scraping_bee_key=None):
+@retry(attempts=2, delay=3)
+def run_one_query_with_keys(key_list,time_interval,site=None,
+                            verbose=False,scraping_bee_key=None,
+                            retry=True):
     query= ' OR '.join(key_list)
     if site:
         query += " site:{}".format(site)
@@ -80,6 +84,10 @@ def run_one_query_with_keys(key_list,time_interval,site=None,verbose=False,scrap
         print('returned results : {}'.format(len(res['entries'])))
         if len(res['entries'])>0:
             print(res['entries'][0]['title'])
+    
+    if retry:
+        if len(res['entries'])==0:
+            raise Exception('Warning: no article found for this try')
         
     return res
 
@@ -90,8 +98,10 @@ def run_by_keychunks(k_chunks,time_interval,site=None,verbose=False,scraping_bee
                                       site=site,
                                       verbose=verbose,
                                       scraping_bee_key=scraping_bee_key)
-        if len(res['entries'])>0:
-            agg_results.extend(res['entries'])
+        if res.get('entries'):
+            if len(res['entries'])>0:
+                agg_results.extend(res['entries'])
+
             
         if not scraping_bee_key:
             wait_time = random.randint(10, 30)
@@ -106,13 +116,28 @@ def read_newspapers(input_path):
 
     return websites, key_list
 
+def remove_duplicates(dicts_list,check_key='link'):
+    """
+    check for duplicate values 
+    """
+    seen_links=set()
+    unique_dicts=[]
+    for d in dicts_list:
+        link_value = d.get(check_key)
+        if link_value not in seen_links:
+            seen_links.add(link_value)
+            unique_dicts.append(d)
+    
+    return unique_dicts
+
 def run_one_website(site,periods,anchor_keywords_chunks,output_f):
     for time_interval in tqdm(periods):
         #print('working on {}'.format(time_interval))
-        out_name = '{}_{}_{}.json'.format(site.split('.')[0],time_interval[0],time_interval[-1])
+        #out_name = '{}_{}_{}.json'.format(site.split('.')[0],time_interval[0],time_interval[-1])
+        out_name = '{}_{}_{}.json'.format(site,time_interval[0],time_interval[-1])
         res_list = run_by_keychunks(anchor_keywords_chunks,time_interval,
-                                    site=site,verbose=False,scraping_bee_key=None)
-        
+                                    site=site,verbose=True,scraping_bee_key=None)
+        res_list = remove_duplicates(res_list,check_key='link')
         with open(os.path.join(output_f,out_name), 'w',encoding='utf8') as f:
             json.dump(res_list, f, indent=4)
 
@@ -133,10 +158,10 @@ if __name__ == "__main__":
     #               'cnbc.com':2}
     #site = 'reuters.com'
     #site = 'thestkittsnevisobserver.com'
-    stride = 7
+    stride = 3  # set it to 4, run every quarter
     periods = date_periods(start,end,pair=True,stride=stride)
     websites, key_list = read_newspapers(key_words_p)
-    anchor_keywords_chunks = chunk_list(key_list,n=8)
+    anchor_keywords_chunks = chunk_list(key_list,n=3)
     #%%
     ## initiate google news agent
     gn = GoogleNews(lang = 'en')  #, country = 'US'

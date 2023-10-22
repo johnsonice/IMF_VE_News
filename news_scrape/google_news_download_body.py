@@ -79,7 +79,7 @@ def _article2dict(article,style='ft'):
         
     return res_dict
 
-@retry(attempts=5, delay=2)
+@retry(attempts=3, delay=3)
 def get_news_article(url,to_dict=True,ScrapingBee_client=None,dict_stype='ft'):
     if not ScrapingBee_client:
         article = newspaper.Article(url=url, language='en',request_timeout=15)
@@ -112,7 +112,7 @@ def get_news_article(url,to_dict=True,ScrapingBee_client=None,dict_stype='ft'):
 if __name__ == "__main__":
     raw_data_f = '/data/chuang/news_scrape/data/raw'
     res_data_f = '/data/chuang/news_scrape/data/news_with_body'
-    news_agency = 'thestkittsnevisobserver'
+    news_agency = None # none means get them all 'thestkittsnevisobserver'
     ## get remaining files to download 
     file_ps = get_all_files(raw_data_f,end_with='.json',start_with=news_agency,return_name=True) ## cnbc bloomberg reuters
     downlaoded_ps = get_all_files(res_data_f,end_with='.json',start_with=news_agency,return_name=True)
