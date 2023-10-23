@@ -17,6 +17,7 @@ from tqdm import tqdm
 import json
 import time 
 import os, sys , ssl
+import time,random
 
 # ssl._create_default_https_context = ssl._create_unverified_context
 # os.environ['PYTHONHTTPSVERIFY'] = "0"
@@ -79,15 +80,23 @@ def _article2dict(article,style='ft'):
         
     return res_dict
 
-@retry(attempts=3, delay=3)
+@retry(attempts=3, delay=5)
 def get_news_article(url,to_dict=True,ScrapingBee_client=None,dict_stype='ft'):
     if not ScrapingBee_client:
+
         article = newspaper.Article(url=url, language='en',request_timeout=15)
         article.download()
         article.parse()
         
+        # if not article.is_valid_body():
+        #     raise Exception('Warning: no body found for this atempt; url : {}'.format(url))
+        if len(article.text)<10:
+            raise Exception('Warning: no body found for this atempt; url : {}'.format(url))
+            ## this will triger it to retry 
+
         if to_dict:
             article =_article2dict(article,dict_stype)
+
     else:
 
         response = ScrapingBee_client.get(
@@ -107,6 +116,13 @@ def get_news_article(url,to_dict=True,ScrapingBee_client=None,dict_stype='ft'):
             
     return article
 
+def check_body_edist(input_dict):
+    if input_dict.get('extracted_content'):
+        body = input_dict.get('extracted_content').get('bodyXML')
+        if len(body)>30:
+            return True
+    
+    return False
 
 #%%
 if __name__ == "__main__":
@@ -125,6 +141,10 @@ if __name__ == "__main__":
         out_p = os.path.join(res_data_f,j_name)
         data = read_json(file_p)
         for i in tqdm(data):
+            if check_body_edist(i):
+                print('text body already exist, skip to the next line')
+                continue
+
             link = i['link']
             real_link = decode_google_news_url(link,clean=True)
             try:
@@ -135,7 +155,9 @@ if __name__ == "__main__":
             # print(doc['title'])
             # print(doc['text'])
             i['extracted_content'] = doc
-            time.sleep(1)
+            wait_time = random.randint(3, 10)
+            time.sleep(wait_time)
+            #time.sleep(1)
         with open(out_p, 'w',encoding='utf8') as f:
             json.dump(data, f, indent=4)
     #%%

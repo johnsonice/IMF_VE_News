@@ -65,7 +65,7 @@ def run_one_test():
     res = run_one_query_with_keys(key_list,periods[0],site='bloomberg.com',verbose=True)
     return res
 
-@retry(attempts=2, delay=3)
+@retry(attempts=3, delay=3)
 def run_one_query_with_keys(key_list,time_interval,site=None,
                             verbose=False,scraping_bee_key=None,
                             retry=True):
@@ -87,24 +87,25 @@ def run_one_query_with_keys(key_list,time_interval,site=None,
     
     if retry:
         if len(res['entries'])==0:
-            raise Exception('Warning: no article found for this try')
+            raise Exception('Warning: no article found for this query')
         
     return res
 
 def run_by_keychunks(k_chunks,time_interval,site=None,verbose=False,scraping_bee_key=None):
     agg_results = []    
     for kc in anchor_keywords_chunks:
-        res = run_one_query_with_keys(kc,time_interval,
-                                      site=site,
-                                      verbose=verbose,
-                                      scraping_bee_key=scraping_bee_key)
-        if res.get('entries'):
-            if len(res['entries'])>0:
+        try:
+            res = run_one_query_with_keys(kc,time_interval,
+                                        site=site,
+                                        verbose=verbose,
+                                        scraping_bee_key=scraping_bee_key)
+            if len(res.get('entries'))>0:
                 agg_results.extend(res['entries'])
-
+        except:
+            print('Warning: no article found for this try')
             
         if not scraping_bee_key:
-            wait_time = random.randint(10, 30)
+            wait_time = random.randint(10, 50)
             time.sleep(wait_time)
             
     return agg_results

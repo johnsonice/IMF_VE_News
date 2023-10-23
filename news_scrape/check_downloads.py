@@ -53,10 +53,7 @@ if __name__ == "__main__":
             temp_res = (news,time_start,time_end,year,month,day,d.get('title'))
             ext = d.get('extracted_content')
             if ext:
-                if ext.get('has_body'):
-                    news_body = ext.get('bodyXML')
-                else:
-                    news_body = None
+                news_body = ext.get('bodyXML')
             temp_res = temp_res + (news_body,)
             download_body_stats.append(temp_res)
         
@@ -73,4 +70,17 @@ if __name__ == "__main__":
     #%%
     missing_report.columns = ['_'.join(col).strip() for col in missing_report.columns.values]
 
+# %%
+import os,sys
+sys.path.insert(0, './libs')
+import newspaper
+from newspaper import Config, Article
+#url = 'https://www.thestkittsnevisobserver.com/two-arrested-on-possession-charges-in-st-kitts/'
+url = 'http://www-intranet.imf.org/Pages/IntranetHome.aspx'
+article = newspaper.Article(url=url, language='en',request_timeout=15)
+# %%
+article.download()
+article.parse()
+#%%
+a = get_news_article(url,to_dict=True)
 # %%
