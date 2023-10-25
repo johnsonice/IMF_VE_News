@@ -65,7 +65,7 @@ def run_one_test():
     res = run_one_query_with_keys(key_list,periods[0],site='bloomberg.com',verbose=True)
     return res
 
-@retry(attempts=3, delay=3)
+@retry(attempts=2, delay=5)
 def run_one_query_with_keys(key_list,time_interval,site=None,
                             verbose=False,scraping_bee_key=None,
                             retry=True):
@@ -159,7 +159,7 @@ if __name__ == "__main__":
     #               'cnbc.com':2}
     #site = 'reuters.com'
     #site = 'thestkittsnevisobserver.com'
-    stride = 3  # set it to 4, run every quarter
+    stride = 4  # set it to 4, run every quarter
     periods = date_periods(start,end,pair=True,stride=stride)
     websites, key_list = read_newspapers(key_words_p)
     anchor_keywords_chunks = chunk_list(key_list,n=3)

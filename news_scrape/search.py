@@ -28,7 +28,7 @@ def merge_all_news(input_file_paths,output_path=None):
         data = read_json(file_p)
         for d in data:
             year,month,day = d.get('published_parsed')[:3]
-            temp_res = (news,time_start,time_end,year,month,day,d.get('title'))
+            temp_res = (news,time_start,time_end,year,month,day,d.get('title'),d.get('link'))
             ext = d.get('extracted_content')
             if ext:
                 news_body = ext.get('bodyXML')
@@ -37,7 +37,16 @@ def merge_all_news(input_file_paths,output_path=None):
             temp_res = temp_res + (news_body,)
             keep_info.append(temp_res)
     
-    df = pd.DataFrame(keep_info,columns=['newspaper_name','time_start','time_end','year','month','day','title','body'])
+    df = pd.DataFrame(keep_info,columns=['newspaper_name','time_start','time_end','year',
+                                         'month','day','title','link','body'])
+    
+    ## remove duplicates by link , keep the one with largest length 
+    df['body_length'] = df['body'].str.len()
+    df = df.sort_values(by='body_length',ascending=False)
+    df = df.drop_duplicates(subset='link',keep='first')
+    df = df.sort_values(by=['newspaper_name','year',
+                                      'month','day'],ascending=True)
+
     if output_path:
         df.to_csv(output_path,index=False,encoding='utf8')
         print('export results to {}'.format(output_path))
@@ -98,6 +107,8 @@ if __name__ == "__main__":
     else:
         news_df = pd.read_csv(news_output_p)
     
+    #%%
+
     ## read search keys and construct match pattern 
     and_key = '\+'
     keywords_dict , all_search_keywords, logical_keys = process_keywords_with_logic(key_words_p,
@@ -115,4 +126,5 @@ if __name__ == "__main__":
     news_df['text'] = news_df['title'] + " ; "+news_df['body'] 
     res_df = run_search(news_df,[search_rex_1,search_rex_2],all_search_keywords,logical_keys,keywords_dict)
     res_df.to_csv(search_res_output_p,index=False,encoding='utf8')
+    print('export search results to {}'.format(search_res_output_p))
 # %%

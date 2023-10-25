@@ -18,7 +18,7 @@ import json
 import time 
 import os, sys , ssl
 import time,random
-
+import argparse
 # ssl._create_default_https_context = ssl._create_unverified_context
 # os.environ['PYTHONHTTPSVERIFY'] = "0"
 
@@ -124,10 +124,25 @@ def check_body_edist(input_dict):
     
     return False
 
+def t_args(args_list=None):
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-raw_data_folder', '--raw_data_folder', action='store', dest='raw_data_folder',
+                    default='/data/chuang/news_scrape/data/raw',type=str)
+    parser.add_argument('-res_data_folder', '--res_data_folder', action='store', dest='res_data_folder',
+                    default='/data/chuang/news_scrape/data/news_with_body',type=str)  
+    parser.add_argument('-batch', '--batch', action='store', dest='batch',
+                    default='',type=str)  
+    if args_list is not None:
+        args = parser.parse_args(args_list) 
+    else:
+        args = parser.parse_args()    
+        
+    return args
 #%%
 if __name__ == "__main__":
-    raw_data_f = '/data/chuang/news_scrape/data/raw'
-    res_data_f = '/data/chuang/news_scrape/data/news_with_body'
+    args = t_args()
+    raw_data_f = args.raw_data_folder + args.batch
+    res_data_f = args.res_data_folder 
     news_agency = None # none means get them all 'thestkittsnevisobserver'
     ## get remaining files to download 
     file_ps = get_all_files(raw_data_f,end_with='.json',start_with=news_agency,return_name=True) ## cnbc bloomberg reuters
@@ -135,7 +150,7 @@ if __name__ == "__main__":
     file_ps = list_difference_left(file_ps,downlaoded_ps)
     file_ps = [os.path.join(raw_data_f,f_n) for f_n in file_ps]
     #%%
-    for file_p in file_ps:
+    for file_p in tqdm(file_ps):
         j_name = os.path.basename(file_p)
         print(j_name)
         out_p = os.path.join(res_data_f,j_name)
