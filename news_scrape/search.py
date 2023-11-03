@@ -46,6 +46,7 @@ def merge_all_news(input_file_paths,output_path=None):
     df = df.drop_duplicates(subset='link',keep='first')
     df = df.sort_values(by=['newspaper_name','year',
                                       'month','day'],ascending=True)
+    df = df.reset_index(drop=True)
 
     if output_path:
         df.to_csv(output_path,index=False,encoding='utf8')
@@ -64,6 +65,8 @@ def run_search(df,rex_groups,all_search_keywords,logical_keys,keywords_dict):
     df['search_res'] = df['text'].str.lower().apply(find_exact_keywords_with_overlaps,
                                                     rex_groups=rex_groups,
                                                     return_count=False)   
+    
+    df = df.reset_index(drop=True) ## make sure it ignore index, if it was resoted before
     df = df.join(pd.json_normalize(df.pop('search_res'))).fillna(0)
     matched_cols = [k for k in df.columns if k in all_search_keywords] ## all are lower case, so we are fine here  
     df[matched_cols] = df[matched_cols].applymap(lambda x: 1 if x >= 1 else 0)
@@ -75,10 +78,6 @@ def run_search(df,rex_groups,all_search_keywords,logical_keys,keywords_dict):
             df[lk] = np.where(df[lk] == len(ks), 1, 0)
         else:
             df[lk] = 0 
-    ## drop original columns 
-    for k in ks:
-        if k in matched_cols:
-            df.drop([k],axis=1)
 
     ## clean up and add dummy for keep 
     orginal_columns.remove('body')
@@ -122,9 +121,13 @@ if __name__ == "__main__":
                               rex_groups=[search_rex_1,search_rex_2],
                               return_count=False)
     print(res)
-    #%%
+    #%% export to different versions
     news_df['text'] = news_df['title'] + " ; "+news_df['body'] 
     res_df = run_search(news_df,[search_rex_1,search_rex_2],all_search_keywords,logical_keys,keywords_dict)
     res_df.to_csv(search_res_output_p,index=False,encoding='utf8')
     print('export search results to {}'.format(search_res_output_p))
+    #%%
+    res_df=res_df.drop(['text'],axis=1)
+    res_df.to_csv(os.path.join(res_folder,'search_results_no_text.csv'),index=False,encoding='utf8')
+    #res_df.to_excel(os.path.join(res_folder,'search_results_no_text.xlsx'),index=False,encoding='utf8')
 # %%
