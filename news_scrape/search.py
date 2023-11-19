@@ -99,7 +99,7 @@ if __name__ == "__main__":
     file_ps = get_all_files(data_folder,end_with='.json',start_with=news_agency,return_name=True) ## cnbc bloomberg reuters
     
     MERGE_NEWS=True
-
+    SEARCH_NEWS = False
     #%%
     if MERGE_NEWS:
         news_df = merge_all_news(file_ps,output_path=news_output_p)
@@ -107,27 +107,27 @@ if __name__ == "__main__":
         news_df = pd.read_csv(news_output_p)
     
     #%%
-
-    ## read search keys and construct match pattern 
-    and_key = '\+'
-    keywords_dict , all_search_keywords, logical_keys = process_keywords_with_logic(key_words_p,
-                                                                                    search_sheet_name='post_search_key')
-    g1,g2 = separate_overlapping(all_search_keywords)
-    search_rex_1 = construct_rex(g1,casing=False,plural=False)  ## here we are using case insensitive
-    search_rex_2 = construct_rex(g2,casing=False,plural=False)
-    #%%
-    ## run one test 
-    res = find_exact_keywords_with_overlaps('this is about climate change review Climate policy',
-                              rex_groups=[search_rex_1,search_rex_2],
-                              return_count=False)
-    print(res)
-    #%% export to different versions
-    news_df['text'] = news_df['title'] + " ; "+news_df['body'] 
-    res_df = run_search(news_df,[search_rex_1,search_rex_2],all_search_keywords,logical_keys,keywords_dict)
-    res_df.to_csv(search_res_output_p,index=False,encoding='utf8')
-    print('export search results to {}'.format(search_res_output_p))
-    #%%
-    res_df=res_df.drop(['text'],axis=1)
-    res_df.to_csv(os.path.join(res_folder,'search_results_no_text.csv'),index=False,encoding='utf8')
-    #res_df.to_excel(os.path.join(res_folder,'search_results_no_text.xlsx'),index=False,encoding='utf8')
+    if SEARCH_NEWS:
+        ## read search keys and construct match pattern 
+        and_key = '\+'
+        keywords_dict , all_search_keywords, logical_keys = process_keywords_with_logic(key_words_p,
+                                                                                        search_sheet_name='post_search_key')
+        g1,g2 = separate_overlapping(all_search_keywords)
+        search_rex_1 = construct_rex(g1,casing=False,plural=False)  ## here we are using case insensitive
+        search_rex_2 = construct_rex(g2,casing=False,plural=False)
+        #%%
+        ## run one test 
+        # res = find_exact_keywords_with_overlaps('this is about climate change review Climate policy',
+        #                           rex_groups=[search_rex_1,search_rex_2],
+        #                           return_count=False)
+        # print(res)
+        #%% export to different versions
+        news_df['text'] = news_df['title'] + " ; "+news_df['body'] 
+        res_df = run_search(news_df,[search_rex_1,search_rex_2],all_search_keywords,logical_keys,keywords_dict)
+        res_df.to_csv(search_res_output_p,index=False,encoding='utf8')
+        print('export search results to {}'.format(search_res_output_p))
+        #%%
+        res_df=res_df.drop(['text'],axis=1)
+        res_df.to_csv(os.path.join(res_folder,'search_results_no_text.csv'),index=False,encoding='utf8')
+        #res_df.to_excel(os.path.join(res_folder,'search_results_no_text.xlsx'),index=False,encoding='utf8')
 # %%

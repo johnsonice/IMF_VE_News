@@ -60,7 +60,12 @@ def retry(attempts=3, delay=1,raise_error=True):
         return wrapper
     return decorator
 
-
+class Args:
+    def __init__(self, json_file):
+        with open(json_file, 'r') as file:
+            data = json.load(file)
+            for key, value in data.items():
+                setattr(self, key, value)
 
 
 

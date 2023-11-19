@@ -159,7 +159,7 @@ if __name__ == "__main__":
     #               'cnbc.com':2}
     #site = 'reuters.com'
     #site = 'thestkittsnevisobserver.com'
-    stride = 4  # set it to 4, run every quarter
+    stride = 2  # set it to 4, run every quarter
     periods = date_periods(start,end,pair=True,stride=stride)
     websites, key_list = read_newspapers(key_words_p)
     anchor_keywords_chunks = chunk_list(key_list,n=3)

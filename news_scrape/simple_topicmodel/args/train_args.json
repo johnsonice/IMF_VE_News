@@ -1,0 +1,15 @@
+{
+   "TUNE":false,
+   "verbose":false,
+   "model_name": "sentence-transformers/all-MiniLM-L6-v2",
+   "model_checkpoint": "sentence-transformers/all-MiniLM-L6-v2",
+   "n_neighbors": 15,
+   "n_components": 5,
+   "min_cluster_size": 5,
+   "min_samples": 5,
+   "min_df": 5,
+   "nr_topics": "auto",
+   "metric": "euclidean",
+   "calculate_probabilities": false,
+   "top_n_words":10
+}
