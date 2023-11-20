@@ -1,6 +1,5 @@
 {
-   "TUNE":false,
-   "verbose":false,
+   "verbose":true,
    "model_name": "sentence-transformers/all-MiniLM-L6-v2",
    "model_checkpoint": "sentence-transformers/all-MiniLM-L6-v2",
    "n_neighbors": 15,

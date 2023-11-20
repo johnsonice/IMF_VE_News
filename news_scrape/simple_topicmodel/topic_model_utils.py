@@ -138,12 +138,10 @@ def model_setup(train_args):
                                         )               
     ## ctfidf param can be pass in topicbert main function 
 
-    if train_args.TUNE:
-        emb_model = None
-    else:
-        if train_args.verbose:
-            print('use {} as embeding model'.format(train_args.model_checkpoint))
-        emb_model = SentenceTransformer(train_args.model_checkpoint)  
+
+    if train_args.verbose:
+        print('use {} as embeding model'.format(train_args.model_checkpoint))
+    emb_model = SentenceTransformer(train_args.model_checkpoint)  
 
     ## call main function 
     topic_model = BERTopic(
