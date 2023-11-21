@@ -41,7 +41,7 @@ def merge_all_news(input_file_paths,output_path=None):
                                          'month','day','title','link','body'])
     
     ## remove duplicates by link , keep the one with largest length 
-    df['body_length'] = df['body'].str.len()
+    df['body_length'] = df['body'].str.split().str.len()
     df = df.sort_values(by='body_length',ascending=False)
     df = df.drop_duplicates(subset='link',keep='first')
     df = df.sort_values(by=['newspaper_name','year',
@@ -99,7 +99,7 @@ if __name__ == "__main__":
     file_ps = get_all_files(data_folder,end_with='.json',start_with=news_agency,return_name=True) ## cnbc bloomberg reuters
     
     MERGE_NEWS=True
-    SEARCH_NEWS = False
+    SEARCH_NEWS = True
     #%%
     if MERGE_NEWS:
         news_df = merge_all_news(file_ps,output_path=news_output_p)

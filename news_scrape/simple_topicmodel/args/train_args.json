@@ -1,5 +1,5 @@
 {
-   "verbose":true,
+   "verbose":false,
    "model_name": "sentence-transformers/all-MiniLM-L6-v2",
    "model_checkpoint": "sentence-transformers/all-MiniLM-L6-v2",
    "n_neighbors": 15,
