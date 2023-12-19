@@ -144,6 +144,7 @@ def model_setup(train_args):
     emb_model = SentenceTransformer(train_args.model_checkpoint)  
 
     ## call main function 
+    #print(train_args.verbose)
     topic_model = BERTopic(
                     umap_model=umap_model,              # Reduce dimensionality 
                     hdbscan_model=hdbscan_model,        # Step 3 - Cluster reduced embeddings
