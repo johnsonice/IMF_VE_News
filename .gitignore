@@ -5,6 +5,12 @@ data/
 models/
 *temp_data/
 src_ft/temp/figs/
+log/
+logs/
+*/log/
+*/logs/
+**/log/
+**/logs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
