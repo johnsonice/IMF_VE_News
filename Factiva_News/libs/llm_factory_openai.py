@@ -12,6 +12,7 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 import logging
 import datetime
 import math
+import asyncio
 from tqdm.asyncio import tqdm
 now = datetime.datetime.now()
 USER = os.environ.get("USER", "UNKNOWN").upper()
@@ -74,12 +75,13 @@ class LLMAgent:
         stop=stop_after_attempt(3),
         wait=wait_exponential(multiplier=1, min=1, max=10)
     )
-    def _make_api_call(self, messages: List[Dict[str, str]], **kwargs) -> Any:
+    def _make_api_call(self, messages: List[Dict[str, str]],**kwargs) -> Any:
         """Make a retry-enabled API call to OpenAI with Pydantic model support."""
         # get response_format from kwargs, use different parser for different response_format
         response_format = kwargs.get("response_format")
         # Determine temperature: use user-passed value if present, else self.temperature
         temperature = kwargs.pop("temperature", self.temperature)
+        
         # Check if response_format is a Pydantic model
         if self._is_pydantic_model(response_format):
             return self.client.beta.chat.completions.parse(
@@ -97,23 +99,28 @@ class LLMAgent:
                 **kwargs
             )
 
-    def get_response_content(self, messages: List[Dict[str, str]], **kwargs) -> Union[str, Any]:
+    def get_response_content(self, messages: List[Dict[str, str]], safe_mode: bool = False, **kwargs) -> Union[str, Any]:
         """Get just the content from a completion response."""
-        response = self._make_api_call(messages, **kwargs)
-        response_format = kwargs.get("response_format")
-        
-        # Check if response_format is a Pydantic model (structured output)
-        if self._is_pydantic_model(response_format):
-            # Return parsed Pydantic model
-            return response.choices[0].message.parsed
-        else:
-            # Return text content for regular responses and JSON objects
-            return response.choices[0].message.content
+        try:
+            response = self._make_api_call(messages, **kwargs)
+            response_format = kwargs.get("response_format")
+            
+            # Check if response_format is a Pydantic model (structured output)
+            if self._is_pydantic_model(response_format):
+                # Return parsed Pydantic model
+                return response.choices[0].message.parsed
+            else:
+                # Return text content for regular responses and JSON objects
+                return response.choices[0].message.content
+        except Exception as e:
+            if safe_mode:
+                return "LLM_ERROR"
+            else:
+                raise Exception(f"LLM API call failed: {str(e)}")
 
     @staticmethod
     def parse_json(text: str) -> Dict:
-        """Parse JSON from response, handling code blocks."""
-        # Remove code block markers if present
+        """Parse JSON from response, handling code"""       # Remove code block markers if present
         text = re.sub(r'```json\s*\n?', '', text)
         text = re.sub(r'\n?```', '', text)
         text = text.strip()
@@ -186,16 +193,22 @@ class AsyncLLMAgent(LLMAgent):
             **kwargs,
         )
 
-    async def get_response_content(self, messages: List[Dict[str, str]], **kwargs) -> Union[str, Any]:
+    async def get_response_content(self, messages: List[Dict[str, str]], safe_mode: bool = False, **kwargs) -> Union[str, Any]:
         """Async wrapper around :py:meth:`LLMAgent.get_response_content`."""
+        #print(safe_mode)
+        try:
+            response = await self._make_api_call(messages, **kwargs)
+            response_format = kwargs.get("response_format")
 
-        response = await self._make_api_call(messages, **kwargs)
-        response_format = kwargs.get("response_format")
+            if self._is_pydantic_model(response_format):
+                return response.choices[0].message.parsed
 
-        if self._is_pydantic_model(response_format):
-            return response.choices[0].message.parsed
-
-        return response.choices[0].message.content
+            return response.choices[0].message.content
+        except Exception as e:
+            if safe_mode:
+                return "LLM_ERROR"
+            else:
+                raise Exception(f"LLM API call failed: {str(e)}")
 
     async def test_connection(self, test_message: str = "Hello, can you respond?") -> str:
         """Convenience helper to quickly verify the async client works."""
@@ -249,8 +262,7 @@ class BatchAsyncLLMAgent(AsyncLLMAgent):
             A list of model responses in the same order as the *batch* input.
         """
 
-        import asyncio  # local import to avoid polluting module namespace unnecessarily
-
+        #import asyncio  # local import to avoid polluting module namespace unnecessarily
         # Schedule concurrent LLM calls – `asyncio.gather` preserves order.
         tasks = [self.get_response_content(msgs, **kwargs) for msgs in batch]
         return await asyncio.gather(*tasks)
