@@ -6,7 +6,7 @@
 # engine params : https://docs.sglang.ai/backend/server_arguments.html
 
 
-PORT=8101
+PORT=8102
 API_KEY="abc"
 
 MODEL_PATH="/ephemeral/home/xiong/data/hf_cache/Qwen/Qwen3-8B"
@@ -16,9 +16,14 @@ REASONING_PARSER="qwen3"
 #TP_SIZE=4
 DP_SIZE=2
 
+# Check if the specified PORT is already in use
+if lsof -iTCP:$PORT -sTCP:LISTEN -t >/dev/null ; then
+    echo "Error: Port $PORT is already in use. Please choose a different port or stop the process using it."
+    exit 1
+fi
+
 # Set GPU device
 export CUDA_VISIBLE_DEVICES=$GPU_DEVICE
-
 # Start SGLang server
 python -m sglang.launch_server \
     --model-path "$MODEL_PATH" \
